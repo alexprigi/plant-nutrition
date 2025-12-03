@@ -38,8 +38,8 @@ export default function Contatti() {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="max-w-md mx-auto text-center">
           <div className="text-6xl mb-6">✅</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Messaggio Inviato!</h1>
-          <p className="text-gray-600 mb-8">
+          <h1 className="text-3xl font-bold mb-4" style={{ color: 'var(--color-main-dark)' }}>Messaggio Inviato!</h1>
+          <p className="mb-8" style={{ color: 'var(--color-main)' }}>
             Grazie per aver contattato Pura Essenza Vegetale. Ti risponderemo entro 24 ore.
           </p>
           <Button href="/">Torna alla Home</Button>
@@ -49,33 +49,36 @@ export default function Contatti() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-green-50 to-green-100 py-20">
+      <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
             Contattaci
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--color-main-dark)' }}>
             Siamo qui per rispondere alle tue domande e aiutarti a iniziare 
             il tuo percorso verso il benessere con Pura Essenza Vegetale.
           </p>
         </div>
       </section>
 
-      <section className="py-20">
+      {/* Transizione sfumata */}
+      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+
+      <section className="py-20" style={{ background: 'var(--bg-section-light)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Form di Contatto */}
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">
+              <h2 className="text-3xl font-bold mb-8" style={{ color: 'var(--brand-title)' }}>
                 Prenota una Consulenza Gratuita
               </h2>
               
               <Card className="p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label htmlFor="nome" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="nome" className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
                       Nome e Cognome *
                     </label>
                     <input
@@ -85,13 +88,16 @@ export default function Contatti() {
                       required
                       value={formData.nome}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--foreground)' }}
+                      onFocus={e => e.currentTarget.style.boxShadow = '0 0 0 2px var(--color-main)'}
+                      onBlur={e => e.currentTarget.style.boxShadow = 'none'}
                       placeholder="Il tuo nome completo"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="email" className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
                       Email *
                     </label>
                     <input
@@ -101,13 +107,16 @@ export default function Contatti() {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--foreground)' }}
+                      onFocus={e => e.currentTarget.style.boxShadow = '0 0 0 2px var(--color-main)'}
+                      onBlur={e => e.currentTarget.style.boxShadow = 'none'}
                       placeholder="la-tua-email@esempio.com"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="telefono" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="telefono" className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
                       Telefono
                     </label>
                     <input
@@ -116,13 +125,16 @@ export default function Contatti() {
                       name="telefono"
                       value={formData.telefono}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--foreground)' }}
+                      onFocus={e => e.currentTarget.style.boxShadow = '0 0 0 2px var(--color-main)'}
+                      onBlur={e => e.currentTarget.style.boxShadow = 'none'}
                       placeholder="+39 123 456 789"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="servizio" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="servizio" className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
                       Servizio di Interesse *
                     </label>
                     <select
@@ -131,7 +143,10 @@ export default function Contatti() {
                       required
                       value={formData.servizio}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--foreground)' }}
+                      onFocus={e => e.currentTarget.style.boxShadow = '0 0 0 2px var(--color-main)'}
+                      onBlur={e => e.currentTarget.style.boxShadow = 'none'}
                     >
                       <option value="">Seleziona un servizio</option>
                       <option value="consulenza-nutrizionale">Consulenza Nutrizionale</option>
@@ -146,7 +161,7 @@ export default function Contatti() {
                   </div>
 
                   <div>
-                    <label htmlFor="messaggio" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="messaggio" className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
                       Messaggio
                     </label>
                     <textarea
@@ -155,7 +170,10 @@ export default function Contatti() {
                       rows={5}
                       value={formData.messaggio}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--foreground)' }}
+                      onFocus={e => e.currentTarget.style.boxShadow = '0 0 0 2px var(--color-main)'}
+                      onBlur={e => e.currentTarget.style.boxShadow = 'none'}
                       placeholder="Raccontami i tuoi obiettivi e le tue esigenze..."
                     />
                   </div>
@@ -168,7 +186,7 @@ export default function Contatti() {
                     {isSubmitting ? 'Invio in corso...' : 'Invia Messaggio'}
                   </Button>
 
-                  <p className="text-sm text-gray-500 text-center">
+                  <p className="text-sm text-center" style={{ color: 'var(--color-main)' }}>
                     * Campi obbligatori. Ti risponderò entro 24 ore.
                   </p>
                 </form>
@@ -177,7 +195,7 @@ export default function Contatti() {
 
             {/* Informazioni di Contatto */}
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">
+              <h2 className="text-3xl font-bold mb-8" style={{ color: 'var(--brand-title)' }}>
                 Informazioni di Contatto
               </h2>
 
@@ -187,7 +205,7 @@ export default function Contatti() {
                     <div className="text-2xl">📧</div>
                     <div>
                       <h3 className="font-semibold">Email</h3>
-                      <p className="text-gray-600">info@puraessenzavegetale.it</p>
+                      <p style={{ color: 'var(--color-main)' }}>info@puraessenzavegetale.it</p>
                     </div>
                   </div>
                 </Card>
@@ -197,7 +215,7 @@ export default function Contatti() {
                     <div className="text-2xl">📞</div>
                     <div>
                       <h3 className="font-semibold">Telefono</h3>
-                      <p className="text-gray-600">+39 349 123 4567</p>
+                      <p style={{ color: 'var(--color-main)' }}>+39 349 123 4567</p>
                     </div>
                   </div>
                 </Card>
@@ -207,7 +225,7 @@ export default function Contatti() {
                     <div className="text-2xl">📍</div>
                     <div>
                       <h3 className="font-semibold">Studio</h3>
-                      <p className="text-gray-600">
+                      <p style={{ color: 'var(--color-main)' }}>
                         Via Roma 123<br />
                         20121 Milano (MI)
                       </p>
@@ -220,7 +238,7 @@ export default function Contatti() {
                     <div className="text-2xl">🕒</div>
                     <div>
                       <h3 className="font-semibold">Orari</h3>
-                      <div className="text-gray-600">
+                      <div style={{ color: 'var(--color-main)' }}>
                         <p>Lun - Ven: 9:00 - 18:00</p>
                         <p>Sab: 9:00 - 13:00</p>
                         <p>Dom: Chiuso</p>
@@ -270,10 +288,13 @@ export default function Contatti() {
         </div>
       </section>
 
+      {/* Transizione sfumata */}
+      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }} />
+
       {/* FAQ Rapide */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20" style={{ background: 'var(--bg-section-warm)' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
+          <h2 className="text-3xl font-bold mb-12 text-center" style={{ color: 'var(--brand-title)' }}>
             Domande Frequenti
           </h2>
           
@@ -282,7 +303,7 @@ export default function Contatti() {
               <h3 className="text-lg font-semibold mb-3">
                 La prima consulenza è davvero gratuita?
               </h3>
-              <p className="text-gray-600">
+              <p style={{ color: 'var(--foreground)' }}>
                 Sì! Offro sempre una consulenza gratuita di 30 minuti per conoscerci 
                 e capire se posso aiutarti a raggiungere i tuoi obiettivi.
               </p>
@@ -292,7 +313,7 @@ export default function Contatti() {
               <h3 className="text-lg font-semibold mb-3">
                 Quanto tempo prima devo prenotare?
               </h3>
-              <p className="text-gray-600">
+              <p style={{ color: 'var(--foreground)' }}>
                 Generalmente ho disponibilità entro 1-2 settimane. 
                 Per urgenze posso trovare uno spazio prima.
               </p>
@@ -302,7 +323,7 @@ export default function Contatti() {
               <h3 className="text-lg font-semibold mb-3">
                 Offri consulenze online?
               </h3>
-              <p className="text-gray-600">
+              <p style={{ color: 'var(--foreground)' }}>
                 Sì, le consulenze online sono molto efficaci e mi permettono 
                 di seguire pazienti da tutta Italia.
               </p>
@@ -312,7 +333,7 @@ export default function Contatti() {
               <h3 className="text-lg font-semibold mb-3">
                 Cosa devo portare alla prima visita?
               </h3>
-              <p className="text-gray-600">
+              <p style={{ color: 'var(--foreground)' }}>
                 Eventuali esami del sangue recenti e una lista dei farmaci/integratori 
                 che assumi. Ti invierò un questionario preliminare.
               </p>
@@ -321,21 +342,23 @@ export default function Contatti() {
         </div>
       </section>
 
+      {/* Transizione sfumata */}
+      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-hero) 100%)' }} />
+
       {/* Mappa (placeholder) */}
-      <section className="py-20">
+      <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+          <h2 className="text-3xl font-bold mb-8 text-center" style={{ color: 'var(--brand-title)' }}>
             Come Raggiungermi
           </h2>
-          
-          <div className="bg-gray-200 h-96 rounded-lg flex items-center justify-center">
+          <div style={{ background: 'var(--color-main-light)', height: '24rem', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div className="text-center">
               <div className="text-4xl mb-4">🗺️</div>
-              <p className="text-gray-600">
+              <p style={{ color: 'var(--foreground)' }}>
                 Mappa interattiva dello studio<br />
                 Via Roma 123, Milano
               </p>
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm mt-2" style={{ color: 'var(--color-main)' }}>
                 Metro: Duomo (Linea 1, 3) - 5 minuti a piedi
               </p>
             </div>

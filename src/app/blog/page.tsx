@@ -68,22 +68,25 @@ export default function Blog() {
   const categorie = ["Tutti", "Nutrizione", "Ricette", "Guide Pratiche", "Scienza", "Lifestyle", "Famiglia"];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-green-50 to-green-100 py-20">
+      <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
             Blog & Articoli
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--color-main-dark)' }}>
             Consigli pratici, ricette deliziose e approfondimenti scientifici 
             per vivere al meglio la tua alimentazione vegana.
           </p>
         </div>
       </section>
 
+      {/* Transizione sfumata */}
+      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+
       {/* Filtri Categorie */}
-      <section className="py-8 bg-white border-b">
+      <section className="py-8 border-b" style={{ background: 'var(--bg-section-light)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-3">
             {categorie.map((categoria) => (
@@ -91,8 +94,8 @@ export default function Blog() {
                 key={categoria}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   categoria === "Tutti" 
-                    ? "bg-green-600 text-white" 
-                    : "bg-gray-100 text-gray-700 hover:bg-green-100 hover:text-green-700"
+                    ? "bg-[var(--color-main)] text-[var(--color-main-dark)] hover:bg-[var(--color-main-dark)] hover:text-white" 
+                    : "bg-[var(--background)] text-[var(--color-main-dark)] hover:bg-[var(--color-main)] hover:text-white"
                 }`}
               >
                 {categoria}
@@ -102,30 +105,32 @@ export default function Blog() {
         </div>
       </section>
 
+      {/* Transizione sfumata */}
+      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }} />
+
       {/* Articolo in Evidenza */}
-      <section className="py-20">
+      <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
+          <h2 className="text-3xl font-bold mb-12 text-center" style={{ color: 'var(--brand-title)' }}>
             Articolo in Evidenza
           </h2>
-          
           <Card hover className="overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="bg-green-100 p-12 flex items-center justify-center">
+              <div className="p-12 flex items-center justify-center" style={{ background: 'var(--color-main-light)' }}>
                 <span className="text-8xl">{articoli[0].immagine}</span>
               </div>
               <div className="p-8">
                 <div className="flex items-center space-x-4 mb-4">
-                  <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ background: 'var(--color-main-light)', color: 'var(--color-main-dark)' }}>
                     {articoli[0].categoria}
                   </span>
-                  <span className="text-gray-500 text-sm">{articoli[0].data}</span>
-                  <span className="text-gray-500 text-sm">• {articoli[0].tempoLettura} di lettura</span>
+                  <span className="text-sm" style={{ color: 'var(--foreground)' }}>{articoli[0].data}</span>
+                  <span className="text-sm" style={{ color: 'var(--foreground)' }}>• {articoli[0].tempoLettura} di lettura</span>
                 </div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                <h3 className="text-3xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>
                   {articoli[0].titolo}
                 </h3>
-                <p className="text-lg text-gray-600 mb-6">
+                <p className="text-lg mb-6" style={{ color: 'var(--foreground)' }}>
                   {articoli[0].descrizione}
                 </p>
                 <Button>
@@ -137,34 +142,36 @@ export default function Blog() {
         </div>
       </section>
 
+      {/* Transizione sfumata */}
+      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+
       {/* Griglia Articoli */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20" style={{ background: 'var(--bg-section-light)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
+          <h2 className="text-3xl font-bold mb-12 text-center" style={{ color: 'var(--brand-title)' }}>
             Tutti gli Articoli
           </h2>
-          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {articoli.slice(1).map((articolo) => (
               <Card key={articolo.id} hover className="overflow-hidden">
-                <div className="bg-green-100 p-8 text-center">
+                <div className="p-8 text-center" style={{ background: 'var(--color-main-light)' }}>
                   <span className="text-4xl">{articolo.immagine}</span>
                 </div>
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">
+                    <span className="px-2 py-1 rounded text-xs font-medium" style={{ background: 'var(--color-main-light)', color: 'var(--color-main-dark)' }}>
                       {articolo.categoria}
                     </span>
-                    <span className="text-gray-500 text-xs">{articolo.tempoLettura}</span>
+                    <span className="text-xs" style={{ color: 'var(--foreground)' }}>{articolo.tempoLettura}</span>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>
                     {articolo.titolo}
                   </h3>
-                  <p className="text-gray-600 mb-4 text-sm">
+                  <p className="mb-4 text-sm" style={{ color: 'var(--foreground)' }}>
                     {articolo.descrizione}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-500 text-xs">{articolo.data}</span>
+                    <span className="text-xs" style={{ color: 'var(--foreground)' }}>{articolo.data}</span>
                     <Button size="sm" variant="outline">
                       Leggi
                     </Button>
@@ -176,50 +183,55 @@ export default function Blog() {
         </div>
       </section>
 
+      {/* Transizione sfumata */}
+      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--accent) 100%)' }} />
+
       {/* Newsletter */}
-      <section className="py-20 bg-green-600 text-white">
+      <section className="py-20" style={{ background: 'var(--accent)' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-6">
+          <h2 className="text-3xl font-bold mb-6" style={{ color: 'white' }}>
             Iscriviti alla Newsletter
           </h2>
-          <p className="text-xl mb-8">
+          <p className="text-xl mb-8" style={{ color: 'white' }}>
             Ricevi ogni settimana ricette, consigli nutrizionali e articoli 
             per vivere al meglio la tua alimentazione vegana.
           </p>
-          
           <div className="max-w-md mx-auto">
             <div className="flex flex-col sm:flex-row gap-4">
               <input
                 type="email"
                 placeholder="La tua email"
-                className="flex-1 px-4 py-3 rounded-full text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
+                className="flex-1 px-4 py-3 rounded-full"
+                style={{ color: 'var(--color-main-dark)', background: 'var(--color-main-light)', border: 'none' }}
               />
               <Button 
                 variant="secondary" 
-                className="bg-white text-green-600 hover:bg-gray-100"
+                className="bg-white text-[var(--accent)] hover:bg-[var(--color-main-light)] hover:text-[var(--color-main-dark)]"
               >
                 Iscriviti
               </Button>
             </div>
-            <p className="text-green-100 text-sm mt-4">
+            <p className="text-sm mt-4" style={{ color: 'white' }}>
               Niente spam, solo contenuti di valore. Puoi cancellarti quando vuoi.
             </p>
           </div>
         </div>
       </section>
 
+      {/* Transizione sfumata */}
+      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--accent) 0%, var(--bg-section-warm) 100%)' }} />
+
       {/* Risorse Gratuite */}
-      <section className="py-20">
+      <section className="py-20" style={{ background: 'var(--bg-section-warm)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
+          <h2 className="text-3xl font-bold mb-12 text-center" style={{ color: 'var(--brand-title)' }}>
             Risorse Gratuite
           </h2>
-          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Card hover className="p-8 text-center">
               <div className="text-4xl mb-4">📋</div>
-              <h3 className="text-xl font-semibold mb-4">Guida alla Transizione</h3>
-              <p className="text-gray-600 mb-6">
+              <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--brand-title)' }}>Guida alla Transizione</h3>
+              <p className="mb-6" style={{ color: 'var(--foreground)' }}>
                 PDF gratuito con tutto quello che devi sapere per passare 
                 all'alimentazione vegana in modo graduale e sicuro.
               </p>
@@ -227,11 +239,10 @@ export default function Blog() {
                 Scarica Gratis
               </Button>
             </Card>
-
             <Card hover className="p-8 text-center">
               <div className="text-4xl mb-4">🍽️</div>
-              <h3 className="text-xl font-semibold mb-4">Menu Settimanale</h3>
-              <p className="text-gray-600 mb-6">
+              <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--brand-title)' }}>Menu Settimanale</h3>
+              <p className="mb-6" style={{ color: 'var(--foreground)' }}>
                 Un menu completo di 7 giorni con ricette bilanciate, 
                 lista della spesa e valori nutrizionali.
               </p>
@@ -239,11 +250,10 @@ export default function Blog() {
                 Scarica Gratis
               </Button>
             </Card>
-
             <Card hover className="p-8 text-center">
               <div className="text-4xl mb-4">🥘</div>
-              <h3 className="text-xl font-semibold mb-4">10 Ricette Veloci</h3>
-              <p className="text-gray-600 mb-6">
+              <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--brand-title)' }}>10 Ricette Veloci</h3>
+              <p className="mb-6" style={{ color: 'var(--foreground)' }}>
                 Ricette vegane pronte in 15 minuti per quando hai poco tempo 
                 ma non vuoi rinunciare alla qualità.
               </p>

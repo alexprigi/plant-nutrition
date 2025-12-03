@@ -23,8 +23,8 @@ const Header = () => {
             <Link href="/" className="flex items-center space-x-2">
               <span className="text-2xl">🌱</span>
               <div className="flex flex-col">
-                <span className="text-xl font-bold text-green-700">Pura Essenza</span>
-                <span className="text-sm font-medium text-green-600">Vegetale</span>
+                <span className="text-xl font-bold" style={{ color: 'var(--accent)' }}>Pura Essenza</span>
+                <span className="text-sm font-medium" style={{ color: 'var(--color-main-dark)' }}>Vegetale</span>
               </div>
             </Link>
           </div>
@@ -35,7 +35,10 @@ const Header = () => {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200"
+                className="font-semibold text-lg tracking-wide transition-colors duration-200 menu-lift"
+                style={{ color: 'var(--accent)', letterSpacing: '0.02em' }}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-main-dark)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--accent)')}
               >
                 {item.name}
               </Link>
@@ -45,8 +48,11 @@ const Header = () => {
           {/* CTA Button */}
           <div className="hidden md:flex">
             <Link
-              href="/contatti"
-              className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition-colors duration-200"
+              href="/prenota"
+              className="px-6 py-2 rounded-full font-medium transition-colors duration-200 btn-lift"
+              style={{ background: 'var(--button-bg)', color: 'var(--foreground)' }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'var(--button-hover)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'var(--button-bg)')}
             >
               Prenota Consulenza
             </Link>
@@ -56,7 +62,10 @@ const Header = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-green-600"
+              className=""
+              style={{ color: 'var(--foreground)' }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'var(--foreground)')}
             >
               <span className="sr-only">Apri menu</span>
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -74,15 +83,21 @@ const Header = () => {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-gray-700 hover:text-green-600 font-medium py-2"
+                  className="font-semibold text-lg py-2 tracking-wide menu-lift"
+                  style={{ color: 'var(--accent)', letterSpacing: '0.02em' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-main-dark)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--accent)')}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
               ))}
               <Link
-                href="/contatti"
-                className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition-colors duration-200 text-center mt-4"
+                href="/prenota"
+                className="px-6 py-2 rounded-full font-medium transition-colors duration-200 text-center mt-4 btn-lift"
+                style={{ background: 'var(--button-bg)', color: 'var(--foreground)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'var(--button-hover)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'var(--button-bg)')}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Prenota Consulenza
