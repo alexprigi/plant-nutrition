@@ -1,0 +1,43 @@
+<svg width="140" height="170" viewBox="0 0 140 170" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="watercolorMonstera">
+      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation="0.8"/>
+    </filter>
+    
+    <radialGradient id="monsteraWater" cx="45%" cy="40%" r="65%">
+      <stop offset="0%" style="stop-color:#d8ead5;stop-opacity:0.9"/>
+      <stop offset="50%" style="stop-color:#b5d4b0;stop-opacity:0.8"/>
+      <stop offset="100%" style="stop-color:#8faa85;stop-opacity:0.7"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Stelo con effetto acquerello -->
+  <path d="M70,165 Q65,120 70,80 L72,30" 
+    stroke="#8a9b85" 
+    strokeWidth="4.5" 
+    fill="none"
+    filter="url(#watercolorMonstera)"
+    opacity="0.75"/>
+  
+  <!-- Foglia monstera grande con buchi -->
+  <g filter="url(#watercolorMonstera)">
+    <ellipse cx="70" cy="85" rx="45" ry="58" fill="url(#monsteraWater)" opacity="0.85"/>
+    
+    <!-- Buchi caratteristici monstera -->
+    <ellipse cx="55" cy="70" rx="6" ry="12" fill="white" opacity="0.9"/>
+    <ellipse cx="70" cy="65" rx="5" ry="10" fill="white" opacity="0.9"/>
+    <ellipse cx="85" cy="70" rx="6" ry="12" fill="white" opacity="0.9"/>
+    <ellipse cx="60" cy="90" rx="5" ry="11" fill="white" opacity="0.9"/>
+    <ellipse cx="80" cy="90" rx="5" ry="11" fill="white" opacity="0.9"/>
+    <ellipse cx="70" cy="105" rx="6" ry="10" fill="white" opacity="0.9"/>
+  </g>
+  
+  <!-- Foglia piccola emergente -->
+  <ellipse cx="72" cy="30" rx="14" ry="18" 
+    fill="url(#monsteraWater)" 
+    filter="url(#watercolorMonstera)"
+    transform="rotate(25 72 30)"
+    opacity="0.75"/>
+</svg>

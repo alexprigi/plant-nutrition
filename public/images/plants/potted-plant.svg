@@ -1,0 +1,49 @@
+<svg width="120" height="200" viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="watercolorPot">
+      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation="0.6"/>
+    </filter>
+    
+    <linearGradient id="potGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8c9ad;stop-opacity:0.9"/>
+      <stop offset="50%" style="stop-color:#d4b59f;stop-opacity:0.85"/>
+      <stop offset="100%" style="stop-color:#c0a28b;stop-opacity:0.8"/>
+    </linearGradient>
+    <radialGradient id="leafWaterPot" cx="40%" cy="35%">
+      <stop offset="0%" style="stop-color:#d5e8d0;stop-opacity:0.9"/>
+      <stop offset="60%" style="stop-color:#a5bca0;stop-opacity:0.85"/>
+      <stop offset="100%" style="stop-color:#8a9d85;stop-opacity:0.75"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Vaso con effetto acquerello -->
+  <g filter="url(#watercolorPot)" opacity="0.85">
+    <path d="M35,120 L30,180 Q30,195 60,195 Q90,195 90,180 L85,120 Z" fill="url(#potGrad)"/>
+    <ellipse cx="60" cy="120" rx="25" ry="8" fill="url(#potGrad)" opacity="0.95"/>
+  </g>
+  
+  <!-- Terra -->
+  <ellipse cx="60" cy="120" rx="22" ry="6" fill="#7a6a55" opacity="0.7" filter="url(#watercolorPot)"/>
+  
+  <!-- Steli con curve naturali -->
+  <path d="M60,118 Q52,85 48,50 Q46,30 48,10" stroke="#8a9b85" strokeWidth="2.8" fill="none" opacity="0.8" filter="url(#watercolorPot)"/>
+  <path d="M60,118 Q60,80 60,40 Q60,25 60,10" stroke="#8a9b85" strokeWidth="3.2" fill="none" opacity="0.85" filter="url(#watercolorPot)"/>
+  <path d="M60,118 Q68,85 72,50 Q74,30 72,10" stroke="#8a9b85" strokeWidth="2.8" fill="none" opacity="0.8" filter="url(#watercolorPot)"/>
+  
+  <!-- Foglie stile acquerello -->
+  <g filter="url(#watercolorPot)">
+    <ellipse cx="42" cy="48" rx="13" ry="20" fill="url(#leafWaterPot)" transform="rotate(-38 42 48)" opacity="0.86"/>
+    <ellipse cx="35" cy="73" rx="12" ry="18" fill="url(#leafWaterPot)" transform="rotate(-42 35 73)" opacity="0.84"/>
+    <ellipse cx="48" cy="23" rx="11" ry="17" fill="url(#leafWaterPot)" transform="rotate(-22 48 23)" opacity="0.85"/>
+    
+    <ellipse cx="60" cy="15" rx="12" ry="19" fill="url(#leafWaterPot)" transform="rotate(-5 60 15)" opacity="0.88"/>
+    <ellipse cx="55" cy="48" rx="13" ry="20" fill="url(#leafWaterPot)" transform="rotate(10 55 48)" opacity="0.85"/>
+    
+    <ellipse cx="78" cy="48" rx="13" ry="20" fill="url(#leafWaterPot)" transform="rotate(38 78 48)" opacity="0.86"/>
+    <ellipse cx="85" cy="73" rx="12" ry="18" fill="url(#leafWaterPot)" transform="rotate(42 85 73)" opacity="0.84"/>
+    <ellipse cx="72" cy="23" rx="11" ry="17" fill="url(#leafWaterPot)" transform="rotate(22 72 23)" opacity="0.85"/>
+    <ellipse cx="65" cy="53" rx="12" ry="19" fill="url(#leafWaterPot)" transform="rotate(-12 65 53)" opacity="0.84"/>
+  </g>
+</svg>

@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D1DBC9;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#c6e4e3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#9dcfcd;stop-opacity:1" />
+    </linearGradient>
+    
+    <filter id="organic">
+      <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="turbulence"/>
+      <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="50" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    
+    <radialGradient id="leafGrad">
+      <stop offset="0%" style="stop-color:#7bbab8;stop-opacity:0.6"/>
+      <stop offset="100%" style="stop-color:#256943;stop-opacity:0.3"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="800" fill="url(#bgGrad)"/>
+  
+  <!-- Abstract organic shapes -->
+  <path d="M 100,400 Q 300,200 500,400 T 900,400" stroke="#6fa7a5" stroke-width="80" 
+        fill="none" opacity="0.15" filter="url(#organic)">
+    <animate attributeName="d" 
+             values="M 100,400 Q 300,200 500,400 T 900,400;
+                     M 100,400 Q 300,250 500,400 T 900,400;
+                     M 100,400 Q 300,200 500,400 T 900,400"
+             dur="15s" repeatCount="indefinite"/>
+  </path>
+  
+  <path d="M 200,600 Q 400,450 600,600 T 1000,600" stroke="#7bbab8" stroke-width="60" 
+        fill="none" opacity="0.12" filter="url(#organic)">
+    <animate attributeName="d" 
+             values="M 200,600 Q 400,450 600,600 T 1000,600;
+                     M 200,600 Q 400,500 600,600 T 1000,600;
+                     M 200,600 Q 400,450 600,600 T 1000,600"
+             dur="18s" repeatCount="indefinite"/>
+  </path>
+  
+  <!-- Floating leaf shapes -->
+  <g opacity="0.4">
+    <ellipse cx="300" cy="200" rx="80" ry="120" fill="url(#leafGrad)" transform="rotate(-25 300 200)">
+      <animateTransform attributeName="transform" type="rotate"
+                        values="-25 300 200; -20 300 200; -25 300 200"
+                        dur="6s" repeatCount="indefinite"/>
+    </ellipse>
+    
+    <ellipse cx="800" cy="300" rx="90" ry="130" fill="url(#leafGrad)" transform="rotate(35 800 300)">
+      <animateTransform attributeName="transform" type="rotate"
+                        values="35 800 300; 40 800 300; 35 800 300"
+                        dur="7s" repeatCount="indefinite"/>
+    </ellipse>
+    
+    <ellipse cx="500" cy="600" rx="70" ry="110" fill="url(#leafGrad)" transform="rotate(-45 500 600)">
+      <animateTransform attributeName="transform" type="rotate"
+                        values="-45 500 600; -40 500 600; -45 500 600"
+                        dur="8s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+  
+  <!-- Botanical details -->
+  <g opacity="0.2" stroke="#256943" stroke-width="3" fill="none">
+    <path d="M 150,400 Q 180,350 150,300">
+      <animate attributeName="d" 
+               values="M 150,400 Q 180,350 150,300;
+                       M 150,400 Q 190,350 150,300;
+                       M 150,400 Q 180,350 150,300"
+               dur="5s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 150,400 Q 120,350 150,300">
+      <animate attributeName="d" 
+               values="M 150,400 Q 120,350 150,300;
+                       M 150,400 Q 110,350 150,300;
+                       M 150,400 Q 120,350 150,300"
+               dur="5s" repeatCount="indefinite"/>
+    </path>
+    
+    <path d="M 1000,500 Q 1030,450 1000,400">
+      <animate attributeName="d" 
+               values="M 1000,500 Q 1030,450 1000,400;
+                       M 1000,500 Q 1040,450 1000,400;
+                       M 1000,500 Q 1030,450 1000,400"
+               dur="6s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 1000,500 Q 970,450 1000,400">
+      <animate attributeName="d" 
+               values="M 1000,500 Q 970,450 1000,400;
+                       M 1000,500 Q 960,450 1000,400;
+                       M 1000,500 Q 970,450 1000,400"
+               dur="6s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  
+  <!-- Sparkle effects -->
+  <g opacity="0.6">
+    <circle cx="250" cy="150" r="8" fill="white">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="700" cy="250" r="6" fill="white">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="950" cy="180" r="7" fill="white">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="650" r="9" fill="white">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="4.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>
