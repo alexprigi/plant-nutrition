@@ -24,6 +24,9 @@
   --color-main-dark: #6fa7a5;
   --accent: #7bbab8;
   --brand-title: #256943;
+  --text-hero: #a8e6e3;
+  --text-dark-green: #1a5233;
+  --text-darker: #1E3232;
   
   /* Background sezioni */
   --bg-hero: #D1DBC9;
@@ -31,6 +34,7 @@
   --bg-section-warm: #d0e3c4;
   --bg-card-warm: #f3e8d3;
   --bg-card-dark: #183232;
+  --bg-card-border: #d2b48c;
   
   /* Colori base */
   --background: #f6fbfb;

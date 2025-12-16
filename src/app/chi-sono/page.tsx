@@ -22,7 +22,7 @@ export default function ChiSono() {
                 con oltre 10 anni di esperienza nel guidare le persone verso 
                 uno stile di vita più sano e sostenibile.
               </p>
-              <p className="text-lg mb-8" style={{ color: 'var(--foreground)' }}>
+              <p className="text-lg mb-8" style={{ color: 'var(--text-darker)' }}>
                 La mia missione è dimostrare che l'alimentazione vegetale non è solo 
                 una scelta etica, ma anche la via per il benessere ottimale.
               </p>
@@ -47,17 +47,17 @@ export default function ChiSono() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold mb-8 text-center" style={{ color: 'var(--brand-title)' }}>La Mia Storia</h2>
           <div className="prose prose-lg max-w-none">
-            <p className="mb-6" style={{ color: 'var(--foreground)' }}>
+            <p className="text-lg mb-6" style={{ color: 'var(--color-main-dark)' }}>
               Il mio percorso verso la nutrizione vegana è iniziato più di 15 anni fa, 
               quando ho deciso di abbracciare uno stile di vita più consapevole e sostenibile. 
               Quello che è iniziato come una scelta personale si è trasformato nella mia passione professionale.
             </p>
-            <p className="mb-6" style={{ color: 'var(--foreground)' }}>
+            <p className="text-lg mb-6" style={{ color: 'var(--text-darker)' }}>
               Durante i miei studi in Biologia e successivamente in Scienze dell'Alimentazione, 
               ho approfondito sempre di più i benefici dell'alimentazione plant-based, 
               scoprendo un mondo di possibilità nutrizionali che spesso viene sottovalutato.
             </p>
-            <p className="mb-6" style={{ color: 'var(--foreground)' }}>
+            <p className="text-lg mb-6" style={{ color: 'var(--text-darker)' }}>
               Oggi, dopo aver seguito centinaia di pazienti nel loro percorso di transizione 
               verso un'alimentazione vegana, posso dire con certezza che questa scelta 
               porta benefici incredibili sia per la salute individuale che per quella del pianeta.
@@ -119,8 +119,8 @@ export default function ChiSono() {
                 <div className="flex items-start space-x-4">
                   <div className="text-2xl">🔬</div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Basato sulla Scienza</h3>
-                    <p style={{ color: 'var(--foreground)' }}>
+                    <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Basato sulla Scienza</h3>
+                    <p style={{ color: 'var(--text-darker)' }}>
                       Ogni consiglio è supportato dalle più recenti ricerche scientifiche 
                       in ambito nutrizionale e di medicina preventiva.
                     </p>
@@ -129,8 +129,8 @@ export default function ChiSono() {
                 <div className="flex items-start space-x-4">
                   <div className="text-2xl">👤</div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Personalizzato</h3>
-                    <p style={{ color: 'var(--foreground)' }}>
+                    <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Personalizzato</h3>
+                    <p style={{ color: 'var(--text-darker)' }}>
                       Ogni piano nutrizionale è studiato specificatamente per te, 
                       considerando la tua storia, i tuoi obiettivi e le tue preferenze.
                     </p>
@@ -139,8 +139,8 @@ export default function ChiSono() {
                 <div className="flex items-start space-x-4">
                   <div className="text-2xl">🤗</div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Empatico e Supportivo</h3>
-                    <p style={{ color: 'var(--foreground)' }}>
+                    <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Empatico e Supportivo</h3>
+                    <p style={{ color: 'var(--text-darker)' }}>
                       Ti accompagno passo dopo passo, senza giudizi, 
                       celebrando ogni piccolo progresso nel tuo percorso.
                     </p>
@@ -149,8 +149,8 @@ export default function ChiSono() {
                 <div className="flex items-start space-x-4">
                   <div className="text-2xl">🌍</div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Sostenibile</h3>
-                    <p style={{ color: 'var(--foreground)' }}>
+                    <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Sostenibile</h3>
+                    <p style={{ color: 'var(--text-darker)' }}>
                       Credo che prendersi cura di sé stessi significhi anche 
                       prendersi cura del nostro pianeta.
                     </p>
@@ -160,12 +160,12 @@ export default function ChiSono() {
             </div>
             <div className="p-8 rounded-lg" style={{ background: 'var(--bg-section-warm)' }}>
               <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>La Mia Missione</h3>
-              <blockquote className="text-lg italic mb-6" style={{ color: 'var(--color-main)' }}>
+              <blockquote className="text-lg italic mb-6" style={{ color: 'var(--brand-title)' }}>
                 "Rendere l'alimentazione vegana accessibile, gustosa e nutrizionalmente 
                 completa per tutti, dimostrando che è possibile vivere in salute 
                 rispettando ogni forma di vita."
               </blockquote>
-              <p className="font-semibold" style={{ color: 'var(--color-main)' }}>- Dott.ssa Arianna Ciervo, Fondatrice di Pura Essenza Vegetale</p>
+              <p className="font-semibold" style={{ color: 'var(--brand-title)' }}>- Dott.ssa Arianna Ciervo, Fondatrice di Pura Essenza Vegetale</p>
             </div>
           </div>
         </div>
@@ -182,27 +182,27 @@ export default function ChiSono() {
           <div className="max-w-4xl mx-auto">
             <div className="space-y-8">
               <div className="border-l-4 pl-8" style={{ borderColor: 'var(--color-main)' }}>
-                <div className="font-semibold" style={{ color: 'var(--color-main)' }}>2020 - Presente</div>
+                <div className="font-semibold text-lg" style={{ color: 'var(--brand-title)' }}>2020 - Presente</div>
                 <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--brand-title)' }}>Studio Privato di Nutrizione</h3>
-                <p style={{ color: 'var(--foreground)' }}>
+                <p style={{ color: 'var(--text-darker)' }}>
                   Consulenze nutrizionali specializzate in alimentazione vegana. 
                   Oltre 500 pazienti seguiti con successo nella transizione verso uno stile di vita plant-based.
                 </p>
               </div>
               
               <div className="border-l-4 pl-8" style={{ borderColor: 'var(--color-main)' }}>
-                <div className="font-semibold" style={{ color: 'var(--color-main)' }}>2018 - 2020</div>
+                <div className="font-semibold text-lg" style={{ color: 'var(--brand-title)' }}>2018 - 2020</div>
                 <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--brand-title)' }}>Collaborazione con Centro Benessere "Vita Sana"</h3>
-                <p style={{ color: 'var(--foreground)' }}>
+                <p style={{ color: 'var(--text-darker)' }}>
                   Sviluppo di protocolli nutrizionali per pazienti con patologie metaboliche. 
                   Conduzione di workshop educativi sull'alimentazione consapevole.
                 </p>
               </div>
               
               <div className="border-l-4 pl-8" style={{ borderColor: 'var(--color-main)' }}>
-                <div className="font-semibold" style={{ color: 'var(--color-main)' }}>2015 - 2018</div>
+                <div className="font-semibold text-lg" style={{ color: 'var(--brand-title)' }}>2015 - 2018</div>
                 <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--brand-title)' }}>Ricerca presso Università di Milano</h3>
-                <p style={{ color: 'var(--foreground)' }}>
+                <p style={{ color: 'var(--text-darker)' }}>
                   Ricerca sui benefici cardiovascolari dell'alimentazione plant-based. 
                   Pubblicazione di 3 articoli su riviste scientifiche internazionali.
                 </p>
@@ -216,20 +216,19 @@ export default function ChiSono() {
       <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-hero) 100%)' }} />
 
       {/* Call to Action */}
-      <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
+      <section className="py-24" style={{ background: 'var(--accent)', color: 'var(--foreground)' }}>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center rounded-3xl shadow-2xl bg-white/20 backdrop-blur-md py-16 border-2 border-white/20" style={{ boxShadow: '0 8px 40px 0 rgba(39, 89, 67, 0.18)' }}>
+          <h2 className="text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight" style={{ color: 'white', textShadow: '0 2px 16px rgba(39,89,67,0.18)' }}>
             Vuoi Saperne di Più sul Mio Approccio?
           </h2>
-          <p className="text-xl mb-8" style={{ color: 'var(--color-main)' }}>
-            Prenota una consulenza gratuita per scoprire come posso aiutarti 
+          <p className="text-2xl mb-10 font-medium" style={{ color: 'white', textShadow: '0 1px 8px rgba(39,89,67,0.10)' }}>
+            Prenota una consulenza gratuita per scoprire come posso aiutarti <br />
             a raggiungere i tuoi obiettivi di salute e benessere.
           </p>
           <Button 
             href="/contatti" 
-            variant="secondary" 
+            variant="primary" 
             size="lg"
-            className="bg-[var(--color-main)] text-[var(--color-main-dark)] hover:bg-[var(--color-main-dark)] hover:text-white"
           >
             Prenota Consulenza Gratuita
           </Button>

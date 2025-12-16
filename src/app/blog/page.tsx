@@ -124,13 +124,13 @@ export default function Blog() {
                   <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ background: 'var(--color-main-light)', color: 'var(--color-main-dark)' }}>
                     {articoli[0].categoria}
                   </span>
-                  <span className="text-sm" style={{ color: 'var(--foreground)' }}>{articoli[0].data}</span>
-                  <span className="text-sm" style={{ color: 'var(--foreground)' }}>• {articoli[0].tempoLettura} di lettura</span>
+                  <span className="text-sm" style={{ color: 'var(--text-darker)' }}>{articoli[0].data}</span>
+                  <span className="text-sm" style={{ color: 'var(--text-darker)' }}>• {articoli[0].tempoLettura} di lettura</span>
                 </div>
                 <h3 className="text-3xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>
                   {articoli[0].titolo}
                 </h3>
-                <p className="text-lg mb-6" style={{ color: 'var(--foreground)' }}>
+                <p className="text-lg mb-6" style={{ color: 'var(--text-darker)' }}>
                   {articoli[0].descrizione}
                 </p>
                 <Button>
@@ -162,16 +162,16 @@ export default function Blog() {
                     <span className="px-2 py-1 rounded text-xs font-medium" style={{ background: 'var(--color-main-light)', color: 'var(--color-main-dark)' }}>
                       {articolo.categoria}
                     </span>
-                    <span className="text-xs" style={{ color: 'var(--foreground)' }}>{articolo.tempoLettura}</span>
+                    <span className="text-xs" style={{ color: 'var(--text-darker)' }}>{articolo.tempoLettura}</span>
                   </div>
                   <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>
                     {articolo.titolo}
                   </h3>
-                  <p className="mb-4 text-sm" style={{ color: 'var(--foreground)' }}>
+                  <p className="mb-4 text-sm" style={{ color: 'var(--text-darker)' }}>
                     {articolo.descrizione}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs" style={{ color: 'var(--foreground)' }}>{articolo.data}</span>
+                    <span className="text-xs" style={{ color: 'var(--text-darker)' }}>{articolo.data}</span>
                     <Button size="sm" variant="outline">
                       Leggi
                     </Button>

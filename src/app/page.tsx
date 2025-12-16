@@ -31,17 +31,17 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-2xl">
               <h1 className="text-5xl lg:text-7xl font-bold mb-6 text-white drop-shadow-lg">
-                Ritrova energia e forma con <span style={{ color: '#a8e6e3', textShadow: '2px 2px 8px rgba(0,0,0,0.6)' }}>la nutrizione vegetale</span>
+                Ritrova energia e forma con <span style={{ color: 'var(--text-hero)', textShadow: '2px 2px 8px rgba(0,0,0,0.6)' }}>la nutrizione vegetale</span>
               </h1>
               <p className="text-xl lg:text-2xl mb-8 text-white drop-shadow-md">
                 Benvenuto in Pura Essenza Vegetale, il centro specializzato in nutrizione vegana. <br />
-                <span style={{ color: '#a8e6e3', textShadow: '2px 2px 8px rgba(0,0,0,0.6)' }}>Sono la Dott.ssa Arianna Ciervo e ti accompagno verso uno stile di vita sano, equilibrato e sostenibile.</span>
+                <span style={{ color: 'var(--text-hero)', textShadow: '2px 2px 8px rgba(0,0,0,0.6)' }}>Sono la Dott.ssa Arianna Ciervo e ti accompagno verso uno stile di vita sano, equilibrato e sostenibile.</span>
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button href="/prenota" size="lg" variant="primary">
                   Prenota Consulenza Gratuita
                 </Button>
-                <Button href="/chi-sono" variant="outline" size="lg" className="!bg-white/90 !text-[#256943] !border-white">
+                <Button href="/chi-sono" variant="outline" size="lg" className="!bg-white/90 !text-[var(--brand-title)] !border-white">
                   Scopri la Mia Storia
                 </Button>
               </div>
@@ -180,7 +180,7 @@ export default function Home() {
                 Biologa Nutrizionista e fondatrice di Pura Essenza Vegetale. <br />
                 La mia passione per la nutrizione vegana nasce dalla convinzione che il cibo sia la medicina più potente che abbiamo a disposizione.
               </p>
-              <p className="text-lg mb-8" style={{ color: '#1E3232' }}>
+              <p className="text-lg mb-8" style={{ color: 'var(--text-darker)' }}>
                 Dal mio studio domestico professionale, circondato dalle piante che amo e con la strumentazione più avanzata, offro consulenze online personalizzate in tutta Italia. <br />
                 <span style={{ color: 'var(--color-main-dark)' }}>Ogni consulenza è un viaggio verso il benessere che intraprendiamo insieme.</span>
               </p>
@@ -219,7 +219,7 @@ export default function Home() {
             <div className="order-1 lg:order-2 relative">
               <div className="relative">
                 {/* Box per foto reale dello studio/cucina */}
-                <div className="image-box-hover w-full h-[500px] rounded-2xl shadow-xl relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #E6EFE6 0%, #d0e3c4 100%)' }}>
+                <div className="image-box-hover w-full h-[500px] rounded-2xl shadow-xl relative overflow-hidden" style={{ background: 'linear-gradient(135deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }}>
                   
                   {/* Placeholder per foto reale - sostituisci con: */}
                   {/* <img src="/images/studio-kitchen.jpg" alt="Studio con piante" className="w-full h-full object-cover" /> */}
@@ -232,9 +232,9 @@ export default function Home() {
                         <span className="text-5xl">💻</span>
                         <span className="text-5xl">🪴</span>
                       </div>
-                      <p className="text-2xl font-bold mb-2" style={{ color: '#256943' }}>Foto Studio/Cucina</p>
-                      <p className="text-lg" style={{ color: '#6fa7a5' }}>Con piante e setup professionale</p>
-                      <p className="text-sm mt-2" style={{ color: '#9dcfcd' }}>Suggerito: 800x600px</p>
+                      <p className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-title)' }}>Foto Studio/Cucina</p>
+                      <p className="text-lg" style={{ color: 'var(--color-main-dark)' }}>Con piante e setup professionale</p>
+                      <p className="text-sm mt-2" style={{ color: 'var(--color-main)' }}>Suggerito: 800x600px</p>
                     </div>
                   </div>
                   
@@ -242,9 +242,9 @@ export default function Home() {
                   <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0, opacity: 0.08, pointerEvents: 'none' }}>
                     <defs>
                       <pattern id="studioPattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-                        <circle cx="30" cy="30" r="15" fill="#9dcfcd"/>
-                        <path d="M60,40 Q70,30 60,20 Q50,30 60,40 Z" fill="#7bbab8"/>
-                        <rect x="10" y="60" width="20" height="30" rx="3" fill="#c6e4e3"/>
+                        <circle cx="30" cy="30" r="15" fill="var(--color-main)"/>
+                        <path d="M60,40 Q70,30 60,20 Q50,30 60,40 Z" fill="var(--accent)"/>
+                        <rect x="10" y="60" width="20" height="30" rx="3" fill="var(--color-main-light)"/>
                       </pattern>
                     </defs>
                     <rect width="100%" height="100%" fill="url(#studioPattern)"/>
@@ -295,14 +295,14 @@ export default function Home() {
                 background: 'var(--bg-card-warm)',
                 color: 'var(--foreground)',
                 borderRadius: '1.5rem',
-                boxShadow: '0 8px 32px 0 rgba(0,0,0,0.12), 0 -8px 24px -8px #e0c9a6',
-                borderTop: '6px solid #d2b48c',
+                boxShadow: '0 8px 32px 0 rgba(0,0,0,0.12), 0 -8px 24px -8px var(--bg-card-warm)',
+                borderTop: '6px solid var(--bg-card-border)',
                 transform: 'rotate(-2deg)'
               }}
             >
               <div className="text-4xl mb-4">🥕</div>
               <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--brand-title)' }}>Consulenze Nutrizionali</h3>
-              <p className="mb-6" style={{ color: '#1a5233' }}>
+              <p className="mb-6" style={{ color: 'var(--text-dark-green)' }}>
                 Piani alimentari personalizzati per ogni fase della vita, 
                 dall'infanzia alla terza età.
               </p>
@@ -318,14 +318,14 @@ export default function Home() {
                 background: 'var(--bg-card-warm)',
                 color: 'var(--foreground)',
                 borderRadius: '1.5rem',
-                boxShadow: '0 8px 32px 0 rgba(0,0,0,0.12), 0 -8px 24px -8px #e0c9a6',
-                borderTop: '6px solid #d2b48c',
+                boxShadow: '0 8px 32px 0 rgba(0,0,0,0.12), 0 -8px 24px -8px var(--bg-card-warm)',
+                borderTop: '6px solid var(--bg-card-border)',
                 transform: 'rotate(0.5deg)'
               }}
             >
               <div className="text-4xl mb-4">📚</div>
               <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--brand-title)' }}>Educazione Alimentare</h3>
-              <p className="mb-6" style={{ color: '#1a5233' }}>
+              <p className="mb-6" style={{ color: 'var(--text-dark-green)' }}>
                 Workshop e corsi per imparare a nutrirsi consapevolmente 
                 e in modo sostenibile.
               </p>
@@ -341,14 +341,14 @@ export default function Home() {
                 background: 'var(--bg-card-warm)',
                 color: 'var(--foreground)',
                 borderRadius: '1.5rem',
-                boxShadow: '0 8px 32px 0 rgba(0,0,0,0.12), 0 -8px 24px -8px #e0c9a6',
-                borderTop: '6px solid #d2b48c',
+                boxShadow: '0 8px 32px 0 rgba(0,0,0,0.12), 0 -8px 24px -8px var(--bg-card-warm)',
+                borderTop: '6px solid var(--bg-card-border)',
                 transform: 'rotate(2deg)'
               }}
             >
               <div className="text-4xl mb-4">🌱</div>
               <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--brand-title)' }}>Supporto Transizione</h3>
-              <p className="mb-6" style={{ color: '#1a5233' }}>
+              <p className="mb-6" style={{ color: 'var(--text-dark-green)' }}>
                 Ti accompagno nel passaggio graduale verso 
                 un'alimentazione 100% vegetale.
               </p>
@@ -406,19 +406,19 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-white p-6 rounded-lg shadow-md text-center">
                 <div className="text-3xl font-bold mb-2" style={{ color: 'var(--color-main)' }}>70%</div>
-                <p style={{ color: '#1a5233' }}>Riduzione impatto CO₂</p>
+                <p style={{ color: 'var(--text-dark-green)' }}>Riduzione impatto CO₂</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-md text-center">
                 <div className="text-3xl font-bold mb-2" style={{ color: 'var(--color-main)' }}>50%</div>
-                <p style={{ color: '#1a5233' }}>Meno rischio diabete</p>
+                <p style={{ color: 'var(--text-dark-green)' }}>Meno rischio diabete</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-md text-center">
                 <div className="text-3xl font-bold mb-2" style={{ color: 'var(--color-main)' }}>30%</div>
-                <p style={{ color: '#1a5233' }}>Riduzione malattie cardiache</p>
+                <p style={{ color: 'var(--text-dark-green)' }}>Riduzione malattie cardiache</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-md text-center">
                 <div className="text-3xl font-bold mb-2" style={{ color: 'var(--color-main)' }}>+5</div>
-                <p style={{ color: '#1a5233' }}>Anni di vita in salute</p>
+                <p style={{ color: 'var(--text-dark-green)' }}>Anni di vita in salute</p>
               </div>
             </div>
           </div>
