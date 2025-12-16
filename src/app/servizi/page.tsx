@@ -15,7 +15,7 @@ export default function Servizi() {
           <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
             I Nostri Servizi
           </h1>
-          <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--color-main-dark)' }}>
+          <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--brand-title)' }}>
             Percorsi personalizzati per guidarti verso uno stile di vita vegano 
             sano, equilibrato e sostenibile. Ogni servizio di Pura Essenza Vegetale è pensato per le tue esigenze specifiche.
           </p>
@@ -32,30 +32,30 @@ export default function Servizi() {
             {/* Consulenza Nutrizionale */}
             <Card className="p-8">
               <div className="text-4xl mb-4">🌿</div>
-              <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--color-main)' }}>Consulenza Nutrizionale</h2>
+              <h2 className="text-3xl font-bold mb-4">Consulenza Nutrizionale</h2>
               <p className="text-lg mb-6" style={{ color: 'var(--foreground)' }}>
                 Un percorso completamente personalizzato per raggiungere i tuoi obiettivi di salute 
                 attraverso un'alimentazione vegana bilanciata e gustosa.
               </p>
               
               <div className="mb-6">
-                <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--color-main)' }}>Cosa Include:</h3>
+                <h3 className="text-xl font-semibold mb-3">Cosa Include:</h3>
                 <ul className="space-y-2" style={{ color: 'var(--foreground)' }}>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--color-main)' }}>✓</span> Analisi completa dello stato nutrizionale</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--color-main)' }}>✓</span> Piano alimentare personalizzato</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--color-main)' }}>✓</span> Lista della spesa e ricette</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--color-main)' }}>✓</span> Monitoraggio costante dei progressi</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--color-main)' }}>✓</span> Supporto WhatsApp per 30 giorni</li>
+                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Analisi completa dello stato nutrizionale</li>
+                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Piano alimentare personalizzato</li>
+                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Lista della spesa e ricette</li>
+                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Monitoraggio costante dei progressi</li>
+                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Supporto WhatsApp per 30 giorni</li>
                 </ul>
               </div>
               
-              <div className="p-4 rounded-lg mb-6" style={{ background: 'rgba(157, 207, 205, 0.1)' }}>
-                <div className="text-2xl font-bold" style={{ color: 'var(--color-main)' }}>€120</div>
+              <div className="p-4 rounded-lg mb-6" style={{ background: 'rgba(157, 207, 205, 0.1)', border: '2px solid var(--brand-title)' }}>
+                <div className="text-2xl font-bold" style={{ color: 'white' }}>€120</div>
                 <div style={{ color: 'var(--foreground)' }}>Prima consulenza (90 minuti)</div>
                 <div className="text-sm mt-1" style={{ color: 'var(--foreground)' }}>Controlli successivi €60 (45 minuti)</div>
               </div>
               
-              <Button href="/contatti" className="w-full">
+              <Button href="/contatti" variant="outline" className="w-full !bg-white !text-[var(--brand-title)] !border-[var(--brand-title)]">
                 Prenota Consulenza
               </Button>
             </Card>
@@ -63,30 +63,30 @@ export default function Servizi() {
             {/* Piano Transizione Graduale */}
             <Card className="p-8">
               <div className="text-4xl mb-4">🌱</div>
-              <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--color-main)' }}>Piano Transizione Graduale</h2>
+              <h2 className="text-3xl font-bold mb-4">Piano Transizione Graduale</h2>
               <p className="text-lg mb-6" style={{ color: 'var(--foreground)' }}>
                 Un percorso di 3 mesi per passare gradualmente ad un'alimentazione vegana, 
                 senza stress e con il pieno controllo dei nutrienti.
               </p>
               
               <div className="mb-6">
-                <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--color-main)' }}>Il Percorso:</h3>
+                <h3 className="text-xl font-semibold mb-3">Il Percorso:</h3>
                 <ul className="space-y-2" style={{ color: 'var(--foreground)' }}>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--color-main)' }}>✓</span> Mese 1: Eliminazione carni rosse</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--color-main)' }}>✓</span> Mese 2: Eliminazione carni bianche e pesce</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--color-main)' }}>✓</span> Mese 3: Eliminazione latticini e uova</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--color-main)' }}>✓</span> 3 consulenze di follow-up</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--color-main)' }}>✓</span> Ricettario personalizzato</li>
+                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Mese 1: Eliminazione carni rosse</li>
+                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Mese 2: Eliminazione carni bianche e pesce</li>
+                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Mese 3: Eliminazione latticini e uova</li>
+                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> 3 consulenze di follow-up</li>
+                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Ricettario personalizzato</li>
                 </ul>
               </div>
               
-              <div className="p-4 rounded-lg mb-6" style={{ background: 'rgba(157, 207, 205, 0.1)' }}>
-                <div className="text-2xl font-bold" style={{ color: 'var(--color-main)' }}>€300</div>
+              <div className="p-4 rounded-lg mb-6" style={{ background: 'rgba(157, 207, 205, 0.1)', border: '2px solid var(--brand-title)' }}>
+                <div className="text-2xl font-bold" style={{ color: 'white' }}>€300</div>
                 <div style={{ color: 'var(--foreground)' }}>Pacchetto completo 3 mesi</div>
                 <div className="text-sm mt-1" style={{ color: 'var(--foreground)' }}>Risparmi €60 rispetto alle singole consulenze</div>
               </div>
               
-              <Button href="/contatti" variant="outline" className="w-full">
+              <Button href="/contatti" variant="outline" className="w-full !bg-transparent !text-white !border-white hover:!bg-white hover:!text-[var(--brand-title)]">
                 Scopri di Più
               </Button>
             </Card>
@@ -97,14 +97,14 @@ export default function Servizi() {
 
             <Card hover className="p-6 flex flex-col">
               <div className="text-3xl mb-4">💚</div>
-              <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--color-main)' }}>Gestione Patologie</h3>
+              <h3 className="text-xl font-semibold mb-4">Gestione Patologie</h3>
               <p className="mb-6 flex-grow" style={{ color: 'var(--foreground)' }}>
                 Supporto nutrizionale per la gestione di patologie croniche come diabete, 
                 ipertensione e problemi cardiovascolari attraverso l'alimentazione vegana.
               </p>
               <div className="mt-auto">
-                <div className="text-lg font-bold mb-4" style={{ color: 'var(--color-main)' }}>€150</div>
-                <Button href="/contatti" variant="outline" size="sm" className="w-full">
+                <div className="text-lg font-bold mb-4" style={{ color: 'white' }}>€150</div>
+                <Button href="/contatti" variant="outline" size="sm" className="w-full !bg-transparent !text-white !border-white hover:!bg-white hover:!text-[var(--brand-title)]">
                   Informazioni
                 </Button>
               </div>
@@ -113,14 +113,14 @@ export default function Servizi() {
 
             <Card hover className="p-6 flex flex-col">
               <div className="text-3xl mb-4">🤰</div>
-              <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--color-main)' }}>Nutrizione in Gravidanza</h3>
+              <h3 className="text-xl font-semibold mb-4">Nutrizione in Gravidanza</h3>
               <p className="mb-6 flex-grow" style={{ color: 'var(--foreground)' }}>
                 Supporto nutrizionale specializzato per mamme vegane, 
                 dalla pre-gravidanza all'allattamento.
               </p>
               <div className="mt-auto">
-                <div className="text-lg font-bold mb-4" style={{ color: 'var(--color-main)' }}>€140</div>
-                <Button href="/contatti" variant="outline" size="sm" className="w-full">
+                <div className="text-lg font-bold mb-4" style={{ color: 'white' }}>€140</div>
+                <Button href="/contatti" variant="outline" size="sm" className="w-full !bg-transparent !text-white !border-white hover:!bg-white hover:!text-[var(--brand-title)]">
                   Informazioni
                 </Button>
               </div>
@@ -129,14 +129,14 @@ export default function Servizi() {
 
             <Card hover className="p-6 flex flex-col">
               <div className="text-3xl mb-4">🏃‍♀️</div>
-              <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--color-main)' }}>Nutrizione Sportiva</h3>
+              <h3 className="text-xl font-semibold mb-4">Nutrizione Sportiva</h3>
               <p className="mb-6 flex-grow" style={{ color: 'var(--foreground)' }}>
                 Piani alimentari vegani per atleti e sportivi, 
                 per massimizzare performance e recupero.
               </p>
               <div className="mt-auto">
-                <div className="text-lg font-bold mb-4" style={{ color: 'var(--color-main)' }}>€130</div>
-                <Button href="/contatti" variant="outline" size="sm" className="w-full">
+                <div className="text-lg font-bold mb-4" style={{ color: 'white' }}>€130</div>
+                <Button href="/contatti" variant="outline" size="sm" className="w-full !bg-transparent !text-white !border-white hover:!bg-white hover:!text-[var(--brand-title)]">
                   Informazioni
                 </Button>
               </div>
@@ -157,7 +157,7 @@ export default function Servizi() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <Card className="p-8 flex flex-col">
               <div className="text-4xl mb-4">📚</div>
-              <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--color-main)' }}>
+              <h3 className="text-2xl font-bold mb-4">
                 Corso "Diventa Vegano in 30 Giorni"
               </h3>
               <p className="mb-6" style={{ color: 'var(--foreground)' }}>
@@ -175,19 +175,19 @@ export default function Servizi() {
                 </ul>
               </div>
               <div className="mt-auto">
-                <div className="p-4 rounded-lg mb-6" style={{ background: 'rgba(157, 207, 205, 0.1)' }}>
-                  <div className="text-2xl font-bold" style={{ color: 'var(--color-main)' }}>€97</div>
+                <div className="p-4 rounded-lg mb-6" style={{ background: 'rgba(157, 207, 205, 0.1)', border: '2px solid var(--brand-title)' }}>
+                  <div className="text-2xl font-bold" style={{ color: 'white' }}>€97</div>
                   <div style={{ color: 'var(--foreground)' }}>Accesso a vita</div>
                   <div className="text-sm mt-1" style={{ color: 'transparent' }}> </div>
                 </div>
-                <Button href="/contatti" className="w-full">
+                <Button href="/contatti" variant="outline" className="w-full !bg-white !text-[var(--brand-title)] !border-[var(--brand-title)]">
                   Iscriviti al Corso
                 </Button>
               </div>
             </Card>
             <Card className="p-8 flex flex-col">
               <div className="text-4xl mb-4">👥</div>
-              <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--color-main)' }}>
+              <h3 className="text-2xl font-bold mb-4">
                 Workshop "Cucina Vegana per Principianti"
               </h3>
               <p className="mb-6" style={{ color: 'var(--foreground)' }}>
@@ -195,7 +195,7 @@ export default function Servizi() {
                 tecniche, ingredienti e preparazioni essenziali.
               </p>
               <div className="mb-6 flex-grow">
-                <h4 className="font-semibold mb-2" style={{ color: 'var(--color-main)' }}>Include:</h4>
+                <h4 className="font-semibold mb-2">Include:</h4>
                 <ul className="text-sm space-y-1" style={{ color: 'var(--foreground)' }}>
                   <li>• 4 ore di corso pratico</li>
                   <li>• Preparazione di 6 ricette</li>
@@ -205,12 +205,12 @@ export default function Servizi() {
                 </ul>
               </div>
               <div className="mt-auto">
-                <div className="p-4 rounded-lg mb-6" style={{ background: 'rgba(157, 207, 205, 0.1)' }}>
-                  <div className="text-2xl font-bold" style={{ color: 'var(--color-main)' }}>€80</div>
+                <div className="p-4 rounded-lg mb-6" style={{ background: 'rgba(157, 207, 205, 0.1)', border: '2px solid var(--brand-title)' }}>
+                  <div className="text-2xl font-bold" style={{ color: 'white' }}>€80</div>
                   <div style={{ color: 'var(--foreground)' }}>Workshop singolo</div>
                   <div className="text-sm mt-1" style={{ color: 'var(--foreground)' }}>Prossima data: 15 Dicembre</div>
                 </div>
-                <Button href="/contatti" variant="outline" className="w-full">
+                <Button href="/contatti" variant="outline" className="w-full !bg-transparent !text-white !border-white hover:!bg-white hover:!text-[var(--brand-title)]">
                   Prenota Posto
                 </Button>
               </div>
@@ -231,7 +231,7 @@ export default function Servizi() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-main-light)' }}>
-                <span className="text-2xl" style={{ color: 'var(--color-main)' }}>1️⃣</span>
+                <span className="text-2xl" style={{ color: 'var(--brand-title)' }}>1️⃣</span>
               </div>
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Consulenza Iniziale</h3>
               <p style={{ color: 'var(--text-darker)' }}>
@@ -241,7 +241,7 @@ export default function Servizi() {
             </div>
             <div className="text-center">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-main-light)' }}>
-                <span className="text-2xl" style={{ color: 'var(--color-main)' }}>2️⃣</span>
+                <span className="text-2xl" style={{ color: 'var(--brand-title)' }}>2️⃣</span>
               </div>
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Piano Personalizzato</h3>
               <p style={{ color: 'var(--text-darker)' }}>
@@ -251,7 +251,7 @@ export default function Servizi() {
             </div>
             <div className="text-center">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-main-light)' }}>
-                <span className="text-2xl" style={{ color: 'var(--color-main)' }}>3️⃣</span>
+                <span className="text-2xl" style={{ color: 'var(--brand-title)' }}>3️⃣</span>
               </div>
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Supporto Costante</h3>
               <p style={{ color: 'var(--text-darker)' }}>
@@ -261,7 +261,7 @@ export default function Servizi() {
             </div>
             <div className="text-center">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-main-light)' }}>
-                <span className="text-2xl" style={{ color: 'var(--color-main)' }}>4️⃣</span>
+                <span className="text-2xl" style={{ color: 'var(--brand-title)' }}>4️⃣</span>
               </div>
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Risultati Duraturi</h3>
               <p style={{ color: 'var(--text-darker)' }}>
@@ -281,7 +281,7 @@ export default function Servizi() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>Domande Frequenti</h2>
-            <p className="text-xl" style={{ color: 'var(--color-main-dark)' }}>
+            <p className="text-xl" style={{ color: 'var(--brand-title)' }}>
               Le risposte alle domande più comuni sui nostri servizi
             </p>
           </div>
@@ -291,7 +291,7 @@ export default function Servizi() {
               <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>
                 Le consulenze sono disponibili anche online?
               </h3>
-              <p style={{ color: 'var(--color-main-dark)' }}>
+              <p style={{ color: 'var(--brand-title)' }}>
                 Sì, offro consulenze sia in presenza nel mio studio che online via video-chiamata. 
                 L'efficacia del percorso è la stessa in entrambe le modalità.
               </p>
@@ -301,7 +301,7 @@ export default function Servizi() {
               <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>
                 Quanto tempo ci vuole per vedere i primi risultati?
               </h3>
-              <p style={{ color: 'var(--color-main-dark)' }}>
+              <p style={{ color: 'var(--brand-title)' }}>
                 I primi benefici si notano già dopo 2-3 settimane: più energia, 
                 migliore digestione e senso di benessere generale. I risultati a lungo termine 
                 dipendono dagli obiettivi specifici.
@@ -312,7 +312,7 @@ export default function Servizi() {
               <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>
                 È adatta anche a chi fa sport a livello agonistico?
               </h3>
-              <p style={{ color: 'var(--color-main-dark)' }}>
+              <p style={{ color: 'var(--brand-title)' }}>
                 Assolutamente sì! Ho seguito diversi atleti professionisti nella transizione 
                 verso l'alimentazione vegana, con risultati eccellenti in termini di performance e recupero.
               </p>
@@ -322,7 +322,7 @@ export default function Servizi() {
               <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>
                 Cosa succede se non riesco a seguire il piano alimentare?
               </h3>
-              <p style={{ color: 'var(--color-main-dark)' }}>
+              <p style={{ color: 'var(--brand-title)' }}>
                 Nessun problema! Il piano è sempre flessibile e adattabile. 
                 Durante i controlli valutiamo insieme le difficoltà e modifichiamo il percorso 
                 per renderlo più sostenibile per te.
@@ -336,19 +336,20 @@ export default function Servizi() {
       <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-hero) 100%)' }} />
 
       {/* Call to Action */}
-      <section className="py-24" style={{ background: 'var(--accent)', color: 'var(--foreground)' }}>
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center rounded-3xl shadow-2xl bg-white/20 backdrop-blur-md py-16 border-2 border-white/20" style={{ boxShadow: '0 8px 40px 0 rgba(39, 89, 67, 0.18)' }}>
-          <h2 className="text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight" style={{ color: 'white', textShadow: '0 2px 16px rgba(39,89,67,0.18)' }}>
+      <section className="py-24" style={{ background: 'var(--brand-title)', color: 'var(--foreground)' }}>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center rounded-3xl shadow-2xl bg-white/20 backdrop-blur-md py-16 border-2 border-white/20" style={{ boxShadow: '0 8px 40px 0 rgba(37, 105, 67, 0.25)' }}>
+          <h2 className="text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight" style={{ color: 'white', textShadow: '0 2px 16px rgba(0,0,0,0.2)' }}>
             Pronto a Iniziare il Tuo Percorso?
           </h2>
-          <p className="text-2xl mb-10 font-medium" style={{ color: 'white', textShadow: '0 1px 8px rgba(39,89,67,0.10)' }}>
+          <p className="text-2xl mb-10 font-medium" style={{ color: 'white', textShadow: '0 1px 8px rgba(0,0,0,0.15)' }}>
             Prenota una consulenza gratuita di 30 minuti per parlare dei tuoi obiettivi <br />
             e scoprire quale servizio è più adatto a te.
           </p>
           <Button 
             href="/contatti" 
-            variant="primary" 
+            variant="outline"
             size="lg"
+            className="!bg-white !text-[var(--brand-title)] !border-white hover:!bg-white/90"
           >
             Prenota Consulenza Gratuita
           </Button>

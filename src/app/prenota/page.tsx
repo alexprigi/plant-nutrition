@@ -277,7 +277,7 @@ Riceverai una conferma via email entro 24 ore.`);
           <p className="text-xl mb-4" style={{ color: 'var(--color-main)' }}>
             Scegli il giorno e l'orario più comodo per te
           </p>
-          <div className="rounded-lg p-4 max-w-2xl mx-auto" style={{ background: 'var(--color-main-light)', color: 'var(--color-main-dark)', border: '1px solid var(--color-main)' }}>
+          <div className="rounded-lg p-4 max-w-2xl mx-auto" style={{ background: 'var(--color-main-light)', color: 'var(--brand-title)', border: '1px solid var(--color-main)' }}>
             <p className="text-sm">
               ℹ️ <strong>Nota:</strong> Tutte le prenotazioni sono soggette a conferma.
               Riceverai una risposta entro 24 ore per confermare l'appuntamento.
@@ -289,15 +289,15 @@ Riceverai una conferma via email entro 24 ore.`);
         {/* Progress Steps */}
         <div className="flex justify-center mb-8">
           <div className="flex items-center space-x-4">
-            <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1 ? 'bg-[var(--color-main)] text-[var(--color-main-dark)]' : 'bg-[var(--background)] text-[var(--foreground)]'}`}>
+            <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1 ? 'bg-[var(--color-main)] text-[var(--brand-title)]' : 'bg-[var(--background)] text-[var(--foreground)]'}`}>
               1
             </div>
             <div className={`h-1 w-16 ${currentStep > 1 ? 'bg-[var(--color-main)]' : 'bg-[var(--background)]'}`}></div>
-            <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2 ? 'bg-[var(--color-main)] text-[var(--color-main-dark)]' : 'bg-[var(--background)] text-[var(--foreground)]'}`}>
+            <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2 ? 'bg-[var(--color-main)] text-[var(--brand-title)]' : 'bg-[var(--background)] text-[var(--foreground)]'}`}>
               2
             </div>
             <div className={`h-1 w-16 ${currentStep > 2 ? 'bg-[var(--color-main)]' : 'bg-[var(--background)]'}`}></div>
-            <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 3 ? 'bg-[var(--color-main)] text-[var(--color-main-dark)]' : 'bg-[var(--background)] text-[var(--foreground)]'}`}>
+            <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 3 ? 'bg-[var(--color-main)] text-[var(--brand-title)]' : 'bg-[var(--background)] text-[var(--foreground)]'}`}>
               3
             </div>
           </div>
@@ -358,7 +358,7 @@ Riceverai una conferma via email entro 24 ore.`);
                     setBookingData(prev => ({ ...prev, consultationType: consultation.value }));
                   }}
                   className={`w-full p-6 rounded-lg border-2 transition-colors duration-200 text-left cursor-pointer hover:shadow-md ${bookingData.consultationType === consultation.value
-                      ? 'border-[var(--color-main-dark)] bg-[var(--color-main-light)]'
+                      ? 'border-[var(--brand-title)] bg-[var(--color-main-light)]'
                       : 'border-[var(--color-main-light)] hover:border-[var(--color-main)]'
                     }`}
                 >
@@ -370,7 +370,7 @@ Riceverai una conferma via email entro 24 ore.`);
                           {consultation.title}
                         </h3>
                         <div className="text-right">
-                          <div className="text-lg font-bold" style={{ color: 'var(--color-main-dark)' }}>
+                          <div className="text-lg font-bold" style={{ color: 'var(--brand-title)' }}>
                             {consultation.price}
                           </div>
                           <div className="text-sm" style={{ color: 'var(--color-main)' }}>
@@ -388,7 +388,7 @@ Riceverai una conferma via email entro 24 ore.`);
             </div>
             {bookingData.consultationType && (
               <div className="mt-8 text-center">
-                <p className="text-lg mb-4" style={{ color: 'var(--color-main-dark)' }}>
+                <p className="text-lg mb-4" style={{ color: 'var(--brand-title)' }}>
                   Tipo selezionato: <strong>
                     {bookingData.consultationType === 'prima-visita' ? 'Prima Visita (60 min) - €80' :
                       bookingData.consultationType === 'controllo' ? 'Controllo (30 min) - €50' :
@@ -421,7 +421,7 @@ Riceverai una conferma via email entro 24 ore.`);
                 ← Cambia tipo consulenza
               </button>
             </div>
-            <div className="rounded-lg p-4 mb-8" style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--color-main-dark)' }}>
+            <div className="rounded-lg p-4 mb-8" style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}>
               <p>
                 📋 <strong>Tipo selezionato:</strong> {
                   bookingData.consultationType === 'prima-visita' ? 'Prima Visita (60 min) - €80' :
@@ -432,7 +432,7 @@ Riceverai una conferma via email entro 24 ore.`);
             </div>
             {/* Month Selector with arrows */}
             <div className="mb-8">
-              <label className="block text-sm font-medium mb-3" style={{ color: 'var(--color-main-dark)' }}>
+              <label className="block text-sm font-medium mb-3" style={{ color: 'var(--brand-title)' }}>
                 Seleziona il mese
               </label>
               <div className="flex items-center justify-center space-x-6">
@@ -446,11 +446,11 @@ Riceverai una conferma via email entro 24 ore.`);
                   }}
                   disabled={availableMonths.findIndex(m => m.key === selectedMonth) === 0}
                   className="flex items-center justify-center w-10 h-10 rounded-full font-bold text-lg cursor-pointer"
-                  style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--color-main-dark)' }}
+                  style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}
                 >
                   ‹
                 </button>
-                <div className="text-xl font-semibold min-w-[250px] text-center" style={{ color: 'var(--color-main-dark)' }}>
+                <div className="text-xl font-semibold min-w-[250px] text-center" style={{ color: 'var(--brand-title)' }}>
                   {availableMonths.find(m => m.key === selectedMonth)?.label}
                 </div>
                 <button
@@ -463,7 +463,7 @@ Riceverai una conferma via email entro 24 ore.`);
                   }}
                   disabled={availableMonths.findIndex(m => m.key === selectedMonth) === availableMonths.length - 1}
                   className="flex items-center justify-center w-10 h-10 rounded-full font-bold text-lg cursor-pointer"
-                  style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--color-main-dark)' }}
+                  style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}
                 >
                   ›
                 </button>
@@ -504,7 +504,7 @@ Riceverai una conferma via email entro 24 ore.`);
                           handleDateSelect(date);
                         }}
                         className={`p-3 rounded-lg border-2 transition-colors duration-200 flex items-center justify-center min-h-[60px] cursor-pointer hover:shadow-md ${selectedDate === date
-                            ? 'border-[var(--color-main-dark)] bg-[var(--color-main-light)] text-[var(--color-main-dark)]'
+                            ? 'border-[var(--brand-title)] bg-[var(--color-main-light)] text-[var(--brand-title)]'
                             : 'border-[var(--color-main-light)] hover:border-[var(--color-main)] text-[var(--foreground)]'
                           }`}
                       >
@@ -524,7 +524,7 @@ Riceverai una conferma via email entro 24 ore.`);
             )}
             {selectedDate && (
               <div className="mt-8 text-center">
-                <p className="text-lg mb-4" style={{ color: 'var(--color-main-dark)' }}>
+                <p className="text-lg mb-4" style={{ color: 'var(--brand-title)' }}>
                   Data selezionata: <strong>{formatDate(selectedDate)}</strong>
                 </p>
                 <Button
@@ -553,7 +553,7 @@ Riceverai una conferma via email entro 24 ore.`);
                 ← Cambia data
               </button>
             </div>
-            <div className="rounded-lg p-4 mb-8" style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--color-main-dark)' }}>
+            <div className="rounded-lg p-4 mb-8" style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}>
               <p>
                 📅 <strong>Data selezionata:</strong> {formatDate(selectedDate)}<br />
                 📋 <strong>Consulenza:</strong> {
@@ -573,7 +573,7 @@ Riceverai una conferma via email entro 24 ore.`);
                   className={`p-4 rounded-lg border-2 transition-colors duration-200 hover:shadow-md ${!slot.available
                       ? 'border-[var(--color-main-light)] bg-[var(--background)]' // disabled: keep gray-400 for now for disabled text
                       : selectedTime === slot.time
-                        ? 'border-[var(--color-main-dark)] bg-[var(--color-main-light)] text-[var(--color-main-dark)] cursor-pointer'
+                        ? 'border-[var(--brand-title)] bg-[var(--color-main-light)] text-[var(--brand-title)] cursor-pointer'
                         : 'border-[var(--color-main-light)] hover:border-[var(--color-main)] text-[var(--foreground)] cursor-pointer'
                     }`}
                 >
@@ -587,7 +587,7 @@ Riceverai una conferma via email entro 24 ore.`);
 
             {selectedTime && (
               <div className="text-center">
-                <div className="rounded-lg p-4 mb-6" style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--color-main-dark)' }}>
+                <div className="rounded-lg p-4 mb-6" style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}>
                   <p>
                     📅 <strong>Riepilogo:</strong> {formatDate(selectedDate)} alle {selectedTime}<br />
                     📋 <strong>Consulenza:</strong> {
@@ -624,7 +624,7 @@ Riceverai una conferma via email entro 24 ore.`);
 
             {/* Summary */}
             <div className="p-4 rounded-lg mb-8" style={{ background: 'var(--color-main-light)' }}>
-              <h3 className="font-semibold mb-2" style={{ color: 'var(--color-main-dark)' }}>Riepilogo Appuntamento</h3>
+              <h3 className="font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Riepilogo Appuntamento</h3>
               <p style={{ color: 'var(--color-main)' }}>
                 📅 {formatDate(selectedDate)} alle {selectedTime}<br />
                 📋 {
@@ -638,7 +638,7 @@ Riceverai una conferma via email entro 24 ore.`);
             <div className="space-y-6">
               {/* First Name */}
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>
                   Nome *
                 </label>
                 <input
@@ -654,7 +654,7 @@ Riceverai una conferma via email entro 24 ore.`);
 
               {/* Last Name */}
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>
                   Cognome *
                 </label>
                 <input
@@ -670,7 +670,7 @@ Riceverai una conferma via email entro 24 ore.`);
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>
                   Email *
                 </label>
                 <input
@@ -686,7 +686,7 @@ Riceverai una conferma via email entro 24 ore.`);
 
               {/* Phone */}
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>
                   Telefono *
                 </label>
                 <input
@@ -702,7 +702,7 @@ Riceverai una conferma via email entro 24 ore.`);
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>
                   Note aggiuntive
                 </label>
                 <textarea

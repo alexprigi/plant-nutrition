@@ -41,8 +41,8 @@
   --foreground: #183232;
   
   /* Componenti */
-  --button-bg: var(--color-main);
-  --button-hover: var(--color-main-dark);
+  --button-bg: var(--brand-title);
+  --button-hover: var(--text-dark-green);
   --card-bg: #f3faf8;
   --card-faq-bg: var(--bg-card-warm);
 }
@@ -52,8 +52,8 @@
     --background: #183232;
     --foreground: #e6f4f4;
     --card-bg: #254646;
-    --button-bg: var(--color-main-dark);
-    --button-hover: var(--color-main);
+    --button-bg: var(--brand-title);
+    --button-hover: var(--text-dark-green);
   }
 }
 
@@ -70,6 +70,7 @@ html {
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -77,12 +78,21 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-main);
+  background: var(--brand-title);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-main-dark);
+  background: var(--text-dark-green);
+}
+
+/* Nascondi scrollbar orizzontale */
+html {
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
 }
 
 /* Focus styles for accessibility */

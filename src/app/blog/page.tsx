@@ -75,7 +75,7 @@ export default function Blog() {
           <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
             Blog & Articoli
           </h1>
-          <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--color-main-dark)' }}>
+          <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--brand-title)' }}>
             Consigli pratici, ricette deliziose e approfondimenti scientifici 
             per vivere al meglio la tua alimentazione vegana.
           </p>
@@ -94,8 +94,8 @@ export default function Blog() {
                 key={categoria}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   categoria === "Tutti" 
-                    ? "bg-[var(--color-main)] text-[var(--color-main-dark)] hover:bg-[var(--color-main-dark)] hover:text-white" 
-                    : "bg-[var(--background)] text-[var(--color-main-dark)] hover:bg-[var(--color-main)] hover:text-white"
+                    ? "bg-[var(--color-main)] text-[var(--brand-title)] hover:bg-[var(--brand-title)] hover:text-white" 
+                    : "bg-[var(--background)] text-[var(--brand-title)] hover:bg-[var(--color-main)] hover:text-white"
                 }`}
               >
                 {categoria}
@@ -121,7 +121,7 @@ export default function Blog() {
               </div>
               <div className="p-8">
                 <div className="flex items-center space-x-4 mb-4">
-                  <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ background: 'var(--color-main-light)', color: 'var(--color-main-dark)' }}>
+                  <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ background: 'var(--color-main-light)', color: 'var(--brand-title)' }}>
                     {articoli[0].categoria}
                   </span>
                   <span className="text-sm" style={{ color: 'var(--text-darker)' }}>{articoli[0].data}</span>
@@ -159,7 +159,7 @@ export default function Blog() {
                 </div>
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="px-2 py-1 rounded text-xs font-medium" style={{ background: 'var(--color-main-light)', color: 'var(--color-main-dark)' }}>
+                    <span className="px-2 py-1 rounded text-xs font-medium" style={{ background: 'var(--color-main-light)', color: 'var(--brand-title)' }}>
                       {articolo.categoria}
                     </span>
                     <span className="text-xs" style={{ color: 'var(--text-darker)' }}>{articolo.tempoLettura}</span>
@@ -202,11 +202,11 @@ export default function Blog() {
                 type="email"
                 placeholder="La tua email"
                 className="flex-1 px-4 py-3 rounded-full"
-                style={{ color: 'var(--color-main-dark)', background: 'var(--color-main-light)', border: 'none' }}
+                style={{ color: 'var(--brand-title)', background: 'var(--color-main-light)', border: 'none' }}
               />
               <Button 
                 variant="secondary" 
-                className="bg-white text-[var(--accent)] hover:bg-[var(--color-main-light)] hover:text-[var(--color-main-dark)]"
+                className="bg-white text-[var(--accent)] hover:bg-[var(--color-main-light)] hover:text-[var(--brand-title)]"
               >
                 Iscriviti
               </Button>

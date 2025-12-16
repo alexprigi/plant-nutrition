@@ -38,7 +38,7 @@ export default function Contatti() {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="max-w-md mx-auto text-center">
           <div className="text-6xl mb-6">✅</div>
-          <h1 className="text-3xl font-bold mb-4" style={{ color: 'var(--color-main-dark)' }}>Messaggio Inviato!</h1>
+          <h1 className="text-3xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>Messaggio Inviato!</h1>
           <p className="mb-8" style={{ color: 'var(--color-main)' }}>
             Grazie per aver contattato Pura Essenza Vegetale. Ti risponderemo entro 24 ore.
           </p>
@@ -56,7 +56,7 @@ export default function Contatti() {
           <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
             Contattaci
           </h1>
-          <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--color-main-dark)' }}>
+          <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--brand-title)' }}>
             Siamo qui per rispondere alle tue domande e aiutarti a iniziare 
             il tuo percorso verso il benessere con Pura Essenza Vegetale.
           </p>
@@ -78,7 +78,7 @@ export default function Contatti() {
               <Card className="p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label htmlFor="nome" className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
+                    <label htmlFor="nome" className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>
                       Nome e Cognome *
                     </label>
                     <input
@@ -97,7 +97,7 @@ export default function Contatti() {
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
+                    <label htmlFor="email" className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>
                       Email *
                     </label>
                     <input
@@ -116,7 +116,7 @@ export default function Contatti() {
                   </div>
 
                   <div>
-                    <label htmlFor="telefono" className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
+                    <label htmlFor="telefono" className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>
                       Telefono
                     </label>
                     <input
@@ -134,7 +134,7 @@ export default function Contatti() {
                   </div>
 
                   <div>
-                    <label htmlFor="servizio" className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
+                    <label htmlFor="servizio" className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>
                       Servizio di Interesse *
                     </label>
                     <select
@@ -161,7 +161,7 @@ export default function Contatti() {
                   </div>
 
                   <div>
-                    <label htmlFor="messaggio" className="block text-sm font-medium mb-2" style={{ color: 'var(--color-main-dark)' }}>
+                    <label htmlFor="messaggio" className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>
                       Messaggio
                     </label>
                     <textarea

@@ -1,3 +1,6 @@
+'use client';
+
+import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import ParallaxEffect from '@/components/ParallaxEffect';
@@ -8,11 +11,11 @@ export default function Home() {
       <ParallaxEffect />
 
       {/* Hero Section - Full Width */}
-      <section className="relative h-screen overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
+      <section className="relative h-screen overflow-hidden" style={{ background: 'linear-gradient(135deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }}>
         <div className="absolute inset-0 parallax-hero" id="heroImage">
           {/* Box per la foto reale della nutrizionista */}
           <div className="w-full h-full relative" style={{ 
-            background: 'linear-gradient(135deg, rgba(198, 228, 227, 0.3) 0%, rgba(157, 207, 205, 0.2) 100%)',
+            background: 'linear-gradient(135deg, rgba(230, 239, 230, 0.8) 0%, rgba(209, 219, 201, 0.7) 100%)',
           }}>
             {/* Immagine hero della nutrizionista */}
             <img 
@@ -30,17 +33,23 @@ export default function Home() {
         <div className="relative z-10 h-full flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-2xl">
-              <h1 className="text-5xl lg:text-7xl font-bold mb-6 text-white drop-shadow-lg">
-                Ritrova energia e forma con <span style={{ color: 'var(--text-hero)', textShadow: '2px 2px 8px rgba(0,0,0,0.6)' }}>la nutrizione vegetale</span>
+              <h1 className="text-5xl lg:text-7xl font-bold mb-6 text-white" style={{ textShadow: '2px 2px 0 rgba(0,0,0,0.8), -1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8)' }}>
+                Ritrova energia e forma con <span style={{ color: 'var(--brand-title)', textShadow: '2px 2px 0 rgba(255,255,255,0.9), -1px -1px 0 rgba(255,255,255,0.9), 1px -1px 0 rgba(255,255,255,0.9), -1px 1px 0 rgba(255,255,255,0.9)' }}>la nutrizione vegetale</span>
               </h1>
-              <p className="text-xl lg:text-2xl mb-8 text-white drop-shadow-md">
+              <p className="text-xl lg:text-2xl mb-8 text-white" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.8), -1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8)' }}>
                 Benvenuto in Pura Essenza Vegetale, il centro specializzato in nutrizione vegana. <br />
-                <span style={{ color: 'var(--text-hero)', textShadow: '2px 2px 8px rgba(0,0,0,0.6)' }}>Sono la Dott.ssa Arianna Ciervo e ti accompagno verso uno stile di vita sano, equilibrato e sostenibile.</span>
+                <span style={{ color: 'var(--brand-title)', textShadow: '2px 2px 4px rgba(255,255,255,0.95), 1px 1px 0 rgba(255,255,255,0.9), -1px -1px 0 rgba(255,255,255,0.9), 1px -1px 0 rgba(255,255,255,0.9), -1px 1px 0 rgba(255,255,255,0.9)' }}>Sono la Dott.ssa Arianna Ciervo e ti accompagno verso uno stile di vita sano, equilibrato e sostenibile.</span>
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button href="/prenota" size="lg" variant="primary">
+                <Link
+                  href="/prenota"
+                  className="inline-flex items-center justify-center px-8 py-4 rounded-full font-medium transition-all duration-200 btn-lift text-lg"
+                  style={{ background: 'var(--brand-title)', color: 'white' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--text-dark-green)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--brand-title)')}
+                >
                   Prenota Consulenza Gratuita
-                </Button>
+                </Link>
                 <Button href="/chi-sono" variant="outline" size="lg" className="!bg-white/90 !text-[var(--brand-title)] !border-white">
                   Scopri la Mia Storia
                 </Button>
@@ -176,13 +185,13 @@ export default function Home() {
               <h2 className="text-3xl lg:text-4xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
                 Ciao, sono la Dott.ssa Arianna Ciervo
               </h2>
-              <p className="text-lg mb-6" style={{ color: 'var(--color-main-dark)' }}>
+              <p className="text-lg mb-6" style={{ color: 'var(--brand-title)' }}>
                 Biologa Nutrizionista e fondatrice di Pura Essenza Vegetale. <br />
                 La mia passione per la nutrizione vegana nasce dalla convinzione che il cibo sia la medicina più potente che abbiamo a disposizione.
               </p>
               <p className="text-lg mb-8" style={{ color: 'var(--text-darker)' }}>
                 Dal mio studio domestico professionale, circondato dalle piante che amo e con la strumentazione più avanzata, offro consulenze online personalizzate in tutta Italia. <br />
-                <span style={{ color: 'var(--color-main-dark)' }}>Ogni consulenza è un viaggio verso il benessere che intraprendiamo insieme.</span>
+                <span style={{ color: 'var(--brand-title)' }}>Ogni consulenza è un viaggio verso il benessere che intraprendiamo insieme.</span>
               </p>
               
               <div className="p-6 rounded-lg mb-8" style={{ background: 'var(--bg-section-warm)', color: 'var(--brand-title)' }}>
@@ -199,15 +208,15 @@ export default function Home() {
               <div className="space-y-4 mb-8">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 rounded-full" style={{ background: 'var(--color-main)' }}></div>
-                  <span style={{ color: 'var(--color-main-dark)' }}>10+ anni di esperienza in nutrizione vegana</span>
+                  <span style={{ color: 'var(--brand-title)' }}>10+ anni di esperienza in nutrizione vegana</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 rounded-full" style={{ background: 'var(--color-main)' }}></div>
-                  <span style={{ color: 'var(--color-main-dark)' }}>500+ pazienti seguiti con successo</span>
+                  <span style={{ color: 'var(--brand-title)' }}>500+ pazienti seguiti con successo</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 rounded-full" style={{ background: 'var(--color-main)' }}></div>
-                  <span style={{ color: 'var(--color-main-dark)' }}>Formazione internazionale certificata</span>
+                  <span style={{ color: 'var(--brand-title)' }}>Formazione internazionale certificata</span>
                 </div>
               </div>
               
@@ -233,7 +242,7 @@ export default function Home() {
                         <span className="text-5xl">🪴</span>
                       </div>
                       <p className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-title)' }}>Foto Studio/Cucina</p>
-                      <p className="text-lg" style={{ color: 'var(--color-main-dark)' }}>Con piante e setup professionale</p>
+                      <p className="text-lg" style={{ color: 'var(--brand-title)' }}>Con piante e setup professionale</p>
                       <p className="text-sm mt-2" style={{ color: 'var(--color-main)' }}>Suggerito: 800x600px</p>
                     </div>
                   </div>
@@ -265,7 +274,7 @@ export default function Home() {
                 </div>
                 
                 {/* Specialization badge con animazione */}
-                <div className="absolute top-6 right-6 px-4 py-2 rounded-full text-sm font-medium image-box-float" style={{ background: 'var(--color-main)', color: 'white', boxShadow: '0 4px 16px rgba(0,0,0,0.15)' }}>
+                <div className="absolute top-6 right-6 px-4 py-2 rounded-full text-sm font-medium image-box-float" style={{ background: 'var(--brand-title)', color: 'white', boxShadow: '0 4px 16px rgba(0,0,0,0.15)' }}>
                   Consulenze Online
                 </div>
               </div>
@@ -281,7 +290,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>I Miei Servizi</h2>
-            <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--color-main-dark)' }}>
+            <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--brand-title)' }}>
               Ogni percorso è personalizzato per le tue esigenze specifiche, 
               basato su evidenze scientifiche e amore per il benessere naturale.
             </p>
@@ -370,7 +379,7 @@ export default function Home() {
               <h2 className="text-4xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
                 Nutri il tuo corpo, rispetta il pianeta
               </h2>
-              <p className="text-xl mb-8" style={{ color: 'var(--color-main-dark)' }}>
+              <p className="text-xl mb-8" style={{ color: 'var(--brand-title)' }}>
                 L'alimentazione vegana è la scelta perfetta per chi vuole prendersi cura di sé stesso e dell'ambiente che ci circonda.
               </p>
               <div className="space-y-6">
@@ -378,7 +387,7 @@ export default function Home() {
                   <div className="text-2xl">💪</div>
                   <div>
                     <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Salute Ottimale</h3>
-                    <p style={{ color: 'var(--color-main-dark)' }}>
+                    <p style={{ color: 'var(--brand-title)' }}>
                       Riduzione del rischio di malattie cardiovascolari, diabete e alcuni tumori.
                     </p>
                   </div>
@@ -387,7 +396,7 @@ export default function Home() {
                   <div className="text-2xl">🌍</div>
                   <div>
                     <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Sostenibilità Ambientale</h3>
-                    <p style={{ color: 'var(--color-main-dark)' }}>
+                    <p style={{ color: 'var(--brand-title)' }}>
                       Riduce l'impatto ambientale del 70% rispetto a diete omnivore.
                     </p>
                   </div>
@@ -396,7 +405,7 @@ export default function Home() {
                   <div className="text-2xl">❤️</div>
                   <div>
                     <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Benessere Animale</h3>
-                    <p style={{ color: 'var(--color-main-dark)' }}>
+                    <p style={{ color: 'var(--brand-title)' }}>
                       Una scelta etica che rispetta la vita di tutti gli esseri senzienti.
                     </p>
                   </div>
@@ -430,7 +439,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>Cosa Dicono i Miei Pazienti</h2>
-            <p className="text-xl" style={{ color: 'var(--color-main-dark)' }}>
+            <p className="text-xl" style={{ color: 'var(--brand-title)' }}>
               Le loro storie di trasformazione parlano più di mille parole.
             </p>
           </div>
@@ -471,7 +480,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>Domande Frequenti</h2>
-            <p className="text-xl" style={{ color: 'var(--color-main-dark)' }}>
+            <p className="text-xl" style={{ color: 'var(--brand-title)' }}>
               Le risposte alle domande più comuni sulla nutrizione vegana
             </p>
           </div>
@@ -481,7 +490,7 @@ export default function Home() {
               <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>
                 🌱 È davvero possibile ottenere tutti i nutrienti da una dieta vegana?
               </h3>
-              <p style={{ color: 'var(--color-main-dark)' }}>
+              <p style={{ color: 'var(--brand-title)' }}>
                 Assolutamente sì! Una dieta vegana ben pianificata fornisce tutti i nutrienti essenziali. 
                 Ti guiderò nella scelta degli alimenti giusti e, quando necessario, degli integratori appropriati 
                 per garantire il massimo benessere.
@@ -492,7 +501,7 @@ export default function Home() {
               <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>
                 ⏰ Quanto tempo ci vuole per vedere i primi risultati?
               </h3>
-              <p style={{ color: 'var(--color-main-dark)' }}>
+              <p style={{ color: 'var(--brand-title)' }}>
                 I primi benefici si notano già nelle prime 2-3 settimane: più energia, 
                 migliore digestione e senso di leggerezza. I risultati più significativi 
                 su peso e parametri ematici si vedono generalmente entro 2-3 mesi.
@@ -503,7 +512,7 @@ export default function Home() {
               <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>
                 💰 Quanto costa seguire una dieta vegana?
               </h3>
-              <p style={{ color: 'var(--color-main-dark)' }}>
+              <p style={{ color: 'var(--brand-title)' }}>
                 Contrariamente a quanto si pensa, l'alimentazione vegana può essere più economica! 
                 Legumi, cereali, verdure e frutta sono spesso meno costosi della carne. 
                 Ti insegnerò a fare la spesa in modo intelligente e conveniente.
@@ -514,7 +523,7 @@ export default function Home() {
               <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>
                 👨‍👩‍👧‍👦 È adatta anche per bambini e anziani?
               </h3>
-              <p style={{ color: 'var(--color-main-dark)' }}>
+              <p style={{ color: 'var(--brand-title)' }}>
                 Sì, l'alimentazione vegana è adatta a tutte le età quando ben pianificata. 
                 Creo piani specifici per bambini, adolescenti, gravidanza, allattamento e terza età, 
                 sempre con il supporto del pediatra o medico curante.
@@ -525,7 +534,7 @@ export default function Home() {
               <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>
                 🏃‍♀️ Posso fare sport con l'alimentazione vegana?
               </h3>
-              <p style={{ color: 'var(--color-main-dark)' }}>
+              <p style={{ color: 'var(--brand-title)' }}>
                 Certamente! Molti atleti professionisti seguono diete vegane con ottimi risultati. 
                 Ti aiuterò a ottimizzare l'alimentazione per le tue attività sportive, 
                 garantendo energia e recupero ottimali.
@@ -536,7 +545,7 @@ export default function Home() {
               <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--foreground)' }}>
                 📱 Come funzionano le consulenze online?
               </h3>
-              <p style={{ color: 'var(--color-main-dark)' }}>
+              <p style={{ color: 'var(--foreground)' }}>
                 Le consulenze si svolgono tramite videochiamate su piattaforme sicure. 
                 Riceverai questionari preliminari, piani alimentari personalizzati via email 
                 e supporto continuo via WhatsApp per domande urgenti.
@@ -549,19 +558,20 @@ export default function Home() {
       {/* Fine decorazioni */}
 
       {/* Call to Action Finale */}
-      <section className="py-24" style={{ background: 'var(--accent)', color: 'var(--foreground)' }}>
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center rounded-3xl shadow-2xl bg-white/20 backdrop-blur-md py-16 border-2 border-white/20" style={{ boxShadow: '0 8px 40px 0 rgba(39, 89, 67, 0.18)' }}>
-          <h2 className="text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight" style={{ color: 'white', textShadow: '0 2px 16px rgba(39,89,67,0.18)' }}>
+      <section className="py-24" style={{ background: 'var(--brand-title)', color: 'var(--foreground)' }}>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center rounded-3xl shadow-2xl bg-white/20 backdrop-blur-md py-16 border-2 border-white/20" style={{ boxShadow: '0 8px 40px 0 rgba(37, 105, 67, 0.25)' }}>
+          <h2 className="text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight" style={{ color: 'white', textShadow: '0 2px 16px rgba(0,0,0,0.2)' }}>
             Pronto a Iniziare il Tuo Percorso di Benessere?
           </h2>
-          <p className="text-2xl mb-10 font-medium" style={{ color: 'white', textShadow: '0 1px 8px rgba(39,89,67,0.10)' }}>
+          <p className="text-2xl mb-10 font-medium" style={{ color: 'white', textShadow: '0 1px 8px rgba(0,0,0,0.15)' }}>
             Prenota una consulenza gratuita di 30 minuti per scoprire come <br />
             l'alimentazione vegana può trasformare la tua vita.
           </p>
           <Button 
             href="/contatti" 
-            variant="primary" 
+            variant="outline"
             size="lg"
+            className="!bg-white !text-[var(--brand-title)] !border-white hover:!bg-white/90"
           >
             Prenota Consulenza Gratuita
           </Button>
@@ -569,12 +579,12 @@ export default function Home() {
       </section>
 
       {/* Social Media Section */}
-      <section className="py-20" style={{ background: 'var(--background-pastel)' }}>
+      <section className="py-20" style={{ background: 'var(--background-pastel)', paddingBottom: '0px' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold mb-6" style={{ color: 'var(--foreground)' }}>
             Seguimi sui Social
           </h2>
-          <p className="text-xl mb-12" style={{ color: 'var(--color-main-dark)' }}>
+          <p className="text-xl mb-12" style={{ color: 'var(--brand-title)' }}>
             Ricette, consigli e ispirazione quotidiana per il tuo percorso vegano
           </p>
           
@@ -590,7 +600,7 @@ export default function Home() {
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                 </svg>
               </div>
-              <span className="font-semibold" style={{ color: 'var(--color-main-dark)' }}>WhatsApp</span>
+              <span className="font-semibold" style={{ color: 'var(--brand-title)' }}>WhatsApp</span>
             </a>
 
             <a 
@@ -604,7 +614,7 @@ export default function Home() {
                   <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
                 </svg>
               </div>
-              <span className="font-semibold" style={{ color: 'var(--color-main-dark)' }}>Telegram</span>
+              <span className="font-semibold" style={{ color: 'var(--brand-title)' }}>Telegram</span>
             </a>
             
             <a 
@@ -618,7 +628,7 @@ export default function Home() {
                   <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                 </svg>
               </div>
-              <span className="font-semibold" style={{ color: 'var(--color-main-dark)' }}>Instagram</span>
+              <span className="font-semibold" style={{ color: 'var(--brand-title)' }}>Instagram</span>
             </a>
             
             <a 
@@ -632,7 +642,7 @@ export default function Home() {
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
               </div>
-              <span className="font-semibold" style={{ color: 'var(--color-main-dark)' }}>Facebook</span>
+              <span className="font-semibold" style={{ color: 'var(--brand-title)' }}>Facebook</span>
             </a>
           </div>
 

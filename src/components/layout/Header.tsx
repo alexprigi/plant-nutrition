@@ -15,7 +15,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="shadow-sm sticky top-0 z-50" style={{ background: 'var(--bg-hero)' }}>
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
@@ -23,8 +23,8 @@ const Header = () => {
             <Link href="/" className="flex items-center space-x-2">
               <span className="text-2xl">🌱</span>
               <div className="flex flex-col">
-                <span className="text-xl font-bold" style={{ color: 'var(--accent)' }}>Pura Essenza</span>
-                <span className="text-sm font-medium" style={{ color: 'var(--color-main-dark)' }}>Vegetale</span>
+                <span className="text-xl font-bold" style={{ color: 'var(--brand-title)' }}>Pura Essenza</span>
+                <span className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>Vegetale</span>
               </div>
             </Link>
           </div>
@@ -36,9 +36,9 @@ const Header = () => {
                 key={item.name}
                 href={item.href}
                 className="font-semibold text-lg tracking-wide transition-colors duration-200 menu-lift"
-                style={{ color: 'var(--accent)', letterSpacing: '0.02em' }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-main-dark)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'var(--accent)')}
+                style={{ color: 'var(--brand-title)', letterSpacing: '0.02em' }}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--brand-title)')}
               >
                 {item.name}
               </Link>
@@ -50,9 +50,9 @@ const Header = () => {
             <Link
               href="/prenota"
               className="px-6 py-2 rounded-full font-medium transition-colors duration-200 btn-lift"
-              style={{ background: 'var(--button-bg)', color: 'var(--foreground)' }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'var(--button-hover)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'var(--button-bg)')}
+              style={{ background: 'var(--brand-title)', color: 'white' }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'var(--text-dark-green)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'var(--brand-title)')}
             >
               Prenota Consulenza
             </Link>
@@ -63,9 +63,9 @@ const Header = () => {
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className=""
-              style={{ color: 'var(--foreground)' }}
+              style={{ color: 'var(--brand-title)' }}
               onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
-              onMouseLeave={e => (e.currentTarget.style.color = 'var(--foreground)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'var(--brand-title)')}
             >
               <span className="sr-only">Apri menu</span>
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -85,7 +85,7 @@ const Header = () => {
                   href={item.href}
                   className="font-semibold text-lg py-2 tracking-wide menu-lift"
                   style={{ color: 'var(--accent)', letterSpacing: '0.02em' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-main-dark)')}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
                   onMouseLeave={e => (e.currentTarget.style.color = 'var(--accent)')}
                   onClick={() => setIsMenuOpen(false)}
                 >

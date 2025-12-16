@@ -17,7 +17,7 @@ export default function ChiSono() {
               <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
                 Ciao, sono la Dott.ssa Arianna Ciervo
               </h1>
-              <p className="text-xl mb-6" style={{ color: 'var(--color-main-dark)' }}>
+              <p className="text-xl mb-6" style={{ color: 'var(--brand-title)' }}>
                 Biologa Nutrizionista, fondatrice di Pura Essenza Vegetale, 
                 con oltre 10 anni di esperienza nel guidare le persone verso 
                 uno stile di vita più sano e sostenibile.
@@ -47,7 +47,7 @@ export default function ChiSono() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold mb-8 text-center" style={{ color: 'var(--brand-title)' }}>La Mia Storia</h2>
           <div className="prose prose-lg max-w-none">
-            <p className="text-lg mb-6" style={{ color: 'var(--color-main-dark)' }}>
+            <p className="text-lg mb-6" style={{ color: 'var(--brand-title)' }}>
               Il mio percorso verso la nutrizione vegana è iniziato più di 15 anni fa, 
               quando ho deciso di abbracciare uno stile di vita più consapevole e sostenibile. 
               Quello che è iniziato come una scelta personale si è trasformato nella mia passione professionale.
@@ -216,19 +216,20 @@ export default function ChiSono() {
       <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-hero) 100%)' }} />
 
       {/* Call to Action */}
-      <section className="py-24" style={{ background: 'var(--accent)', color: 'var(--foreground)' }}>
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center rounded-3xl shadow-2xl bg-white/20 backdrop-blur-md py-16 border-2 border-white/20" style={{ boxShadow: '0 8px 40px 0 rgba(39, 89, 67, 0.18)' }}>
-          <h2 className="text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight" style={{ color: 'white', textShadow: '0 2px 16px rgba(39,89,67,0.18)' }}>
+      <section className="py-24" style={{ background: 'var(--brand-title)', color: 'var(--foreground)' }}>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center rounded-3xl shadow-2xl bg-white/20 backdrop-blur-md py-16 border-2 border-white/20" style={{ boxShadow: '0 8px 40px 0 rgba(37, 105, 67, 0.25)' }}>
+          <h2 className="text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight" style={{ color: 'white', textShadow: '0 2px 16px rgba(0,0,0,0.2)' }}>
             Vuoi Saperne di Più sul Mio Approccio?
           </h2>
-          <p className="text-2xl mb-10 font-medium" style={{ color: 'white', textShadow: '0 1px 8px rgba(39,89,67,0.10)' }}>
+          <p className="text-2xl mb-10 font-medium" style={{ color: 'white', textShadow: '0 1px 8px rgba(0,0,0,0.15)' }}>
             Prenota una consulenza gratuita per scoprire come posso aiutarti <br />
             a raggiungere i tuoi obiettivi di salute e benessere.
           </p>
           <Button 
             href="/contatti" 
-            variant="primary" 
+            variant="outline"
             size="lg"
+            className="!bg-white !text-[var(--brand-title)] !border-white hover:!bg-white/90"
           >
             Prenota Consulenza Gratuita
           </Button>
