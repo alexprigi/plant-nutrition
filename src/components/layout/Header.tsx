@@ -37,7 +37,7 @@ const Header = () => {
                 href={item.href}
                 className="font-semibold text-lg tracking-wide transition-colors duration-200 menu-lift"
                 style={{ color: 'var(--brand-title)', letterSpacing: '0.02em' }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-main)')}
                 onMouseLeave={e => (e.currentTarget.style.color = 'var(--brand-title)')}
               >
                 {item.name}
@@ -64,7 +64,7 @@ const Header = () => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className=""
               style={{ color: 'var(--brand-title)' }}
-              onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-main)')}
               onMouseLeave={e => (e.currentTarget.style.color = 'var(--brand-title)')}
             >
               <span className="sr-only">Apri menu</span>
@@ -84,9 +84,9 @@ const Header = () => {
                   key={item.name}
                   href={item.href}
                   className="font-semibold text-lg py-2 tracking-wide menu-lift"
-                  style={{ color: 'var(--accent)', letterSpacing: '0.02em' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--accent)')}
+                  style={{ color: 'var(--brand-title)', letterSpacing: '0.02em' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-main)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--brand-title)')}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}

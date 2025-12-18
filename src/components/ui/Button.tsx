@@ -32,7 +32,7 @@ const Button = ({
     primary: "text-[var(--foreground)] bg-[var(--button-bg)] hover:bg-[var(--button-hover)]",
     secondary: "text-[var(--brand-title)] bg-[var(--color-main-light)] hover:bg-[var(--color-main)] hover:text-white",
     outline: "border-4 border-[var(--color-main-dark)] text-[var(--color-main-dark)] bg-transparent font-semibold hover:bg-[var(--bg-section-light)] hover:text-[var(--color-main-dark)] hover:border-[var(--color-main-dark)] hover:shadow-lg",
-    sage: "text-white bg-[var(--accent)] hover:opacity-90",
+    sage: "text-white bg-[var(--color-main)] hover:opacity-90",
     accent: "text-white hover:opacity-90"
   };
   

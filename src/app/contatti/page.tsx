@@ -75,7 +75,7 @@ export default function Contatti() {
                 Prenota una Consulenza Gratuita
               </h2>
               
-              <Card className="p-8">
+              <Card className="p-8" style={{ background: 'var(--bg-section-warm)' }}>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <label htmlFor="nome" className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>
@@ -89,9 +89,9 @@ export default function Contatti() {
                       value={formData.nome}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
-                      style={{ borderColor: 'var(--color-main)', color: 'var(--foreground)' }}
-                      onFocus={e => e.currentTarget.style.boxShadow = '0 0 0 2px var(--color-main)'}
-                      onBlur={e => e.currentTarget.style.boxShadow = 'none'}
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)', '::placeholder': { color: 'var(--color-main)' } }}
+                      onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
+                      onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
                       placeholder="Il tuo nome completo"
                     />
                   </div>
@@ -108,9 +108,9 @@ export default function Contatti() {
                       value={formData.email}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
-                      style={{ borderColor: 'var(--color-main)', color: 'var(--foreground)' }}
-                      onFocus={e => e.currentTarget.style.boxShadow = '0 0 0 2px var(--color-main)'}
-                      onBlur={e => e.currentTarget.style.boxShadow = 'none'}
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)', '::placeholder': { color: 'var(--color-main)' } }}
+                      onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
+                      onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
                       placeholder="la-tua-email@esempio.com"
                     />
                   </div>
@@ -126,9 +126,9 @@ export default function Contatti() {
                       value={formData.telefono}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
-                      style={{ borderColor: 'var(--color-main)', color: 'var(--foreground)' }}
-                      onFocus={e => e.currentTarget.style.boxShadow = '0 0 0 2px var(--color-main)'}
-                      onBlur={e => e.currentTarget.style.boxShadow = 'none'}
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)', '::placeholder': { color: 'var(--color-main)' } }}
+                      onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
+                      onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
                       placeholder="+39 123 456 789"
                     />
                   </div>
@@ -144,9 +144,9 @@ export default function Contatti() {
                       value={formData.servizio}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
-                      style={{ borderColor: 'var(--color-main)', color: 'var(--foreground)' }}
-                      onFocus={e => e.currentTarget.style.boxShadow = '0 0 0 2px var(--color-main)'}
-                      onBlur={e => e.currentTarget.style.boxShadow = 'none'}
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)', '::placeholder': { color: 'var(--color-main)' } }}
+                      onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
+                      onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
                     >
                       <option value="">Seleziona un servizio</option>
                       <option value="consulenza-nutrizionale">Consulenza Nutrizionale</option>
@@ -171,9 +171,9 @@ export default function Contatti() {
                       value={formData.messaggio}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
-                      style={{ borderColor: 'var(--color-main)', color: 'var(--foreground)' }}
-                      onFocus={e => e.currentTarget.style.boxShadow = '0 0 0 2px var(--color-main)'}
-                      onBlur={e => e.currentTarget.style.boxShadow = 'none'}
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)', '::placeholder': { color: 'var(--color-main)' } }}
+                      onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
+                      onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
                       placeholder="Raccontami i tuoi obiettivi e le tue esigenze..."
                     />
                   </div>
@@ -186,7 +186,7 @@ export default function Contatti() {
                     {isSubmitting ? 'Invio in corso...' : 'Invia Messaggio'}
                   </Button>
 
-                  <p className="text-sm text-center" style={{ color: 'var(--color-main)' }}>
+                  <p className="text-sm text-center" style={{ color: 'var(--brand-title)' }}>
                     * Campi obbligatori. Ti risponderò entro 24 ore.
                   </p>
                 </form>
@@ -200,32 +200,32 @@ export default function Contatti() {
               </h2>
 
               <div className="space-y-6 mb-8">
-                <Card className="p-6">
+                <Card className="p-6" style={{ background: 'var(--bg-section-warm)' }}>
                   <div className="flex items-center space-x-4">
-                    <div className="text-2xl">📧</div>
+                    <div className="text-2xl lg:text-3xl" style={{ color: 'var(--brand-title)' }}>📧</div>
                     <div>
-                      <h3 className="font-semibold">Email</h3>
-                      <p style={{ color: 'var(--color-main)' }}>info@puraessenzavegetale.it</p>
+                      <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>Email</h3>
+                      <p style={{ color: 'var(--text-darker)' }}>info@puraessenzavegetale.it</p>
                     </div>
                   </div>
                 </Card>
 
-                <Card className="p-6">
+                <Card className="p-6" style={{ background: 'var(--bg-section-warm)' }}>
                   <div className="flex items-center space-x-4">
-                    <div className="text-2xl">📞</div>
+                    <div className="text-2xl lg:text-3xl" style={{ color: 'var(--brand-title)' }}>📞</div>
                     <div>
-                      <h3 className="font-semibold">Telefono</h3>
-                      <p style={{ color: 'var(--color-main)' }}>+39 349 123 4567</p>
+                      <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>Telefono</h3>
+                      <p style={{ color: 'var(--text-darker)' }}>+39 349 123 4567</p>
                     </div>
                   </div>
                 </Card>
 
-                <Card className="p-6">
+                <Card className="p-6" style={{ background: 'var(--bg-section-warm)' }}>
                   <div className="flex items-center space-x-4">
-                    <div className="text-2xl">📍</div>
+                    <div className="text-2xl lg:text-3xl" style={{ color: 'var(--brand-title)' }}>📍</div>
                     <div>
-                      <h3 className="font-semibold">Studio</h3>
-                      <p style={{ color: 'var(--color-main)' }}>
+                      <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>Studio</h3>
+                      <p style={{ color: 'var(--text-darker)' }}>
                         Via Roma 123<br />
                         20121 Milano (MI)
                       </p>
@@ -233,12 +233,12 @@ export default function Contatti() {
                   </div>
                 </Card>
 
-                <Card className="p-6">
+                <Card className="p-6" style={{ background: 'var(--bg-section-warm)' }}>
                   <div className="flex items-center space-x-4">
-                    <div className="text-2xl">🕒</div>
+                    <div className="text-2xl lg:text-3xl" style={{ color: 'var(--brand-title)' }}>🕒</div>
                     <div>
-                      <h3 className="font-semibold">Orari</h3>
-                      <div style={{ color: 'var(--color-main)' }}>
+                      <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>Orari</h3>
+                      <div style={{ color: 'var(--text-darker)' }}>
                         <p>Lun - Ven: 9:00 - 18:00</p>
                         <p>Sab: 9:00 - 13:00</p>
                         <p>Dom: Chiuso</p>
@@ -249,7 +249,7 @@ export default function Contatti() {
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold mb-4">Seguimi sui Social</h3>
+                <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--brand-title)' }}>Seguimi sui Social</h3>
                 <div className="flex space-x-4">
                   <a 
                     href="https://wa.me/393491234567" 

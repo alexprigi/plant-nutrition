@@ -92,10 +92,10 @@ export default function Blog() {
             {categorie.map((categoria) => (
               <button
                 key={categoria}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  categoria === "Tutti" 
-                    ? "bg-[var(--color-main)] text-[var(--brand-title)] hover:bg-[var(--brand-title)] hover:text-white" 
-                    : "bg-[var(--background)] text-[var(--brand-title)] hover:bg-[var(--color-main)] hover:text-white"
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border-2 ${
+                  categoria === "Tutti"
+                    ? "bg-[var(--brand-title)] text-white border-[var(--brand-title)] hover:bg-[var(--text-dark-green)] hover:border-[var(--text-dark-green)]"
+                    : "bg-transparent text-[var(--brand-title)] border-[var(--brand-title)] hover:bg-[var(--brand-title)] hover:text-white"
                 }`}
               >
                 {categoria}
@@ -116,10 +116,10 @@ export default function Blog() {
           </h2>
           <Card hover className="overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="p-12 flex items-center justify-center" style={{ background: 'var(--color-main-light)' }}>
+              <div className="p-12 flex items-center justify-center" style={{ background: 'var(--bg-section-light)' }}>
                 <span className="text-8xl">{articoli[0].immagine}</span>
               </div>
-              <div className="p-8">
+              <div className="p-8" style={{ background: 'var(--bg-section-warm)' }}>
                 <div className="flex items-center space-x-4 mb-4">
                   <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ background: 'var(--color-main-light)', color: 'var(--brand-title)' }}>
                     {articoli[0].categoria}
@@ -133,7 +133,7 @@ export default function Blog() {
                 <p className="text-lg mb-6" style={{ color: 'var(--text-darker)' }}>
                   {articoli[0].descrizione}
                 </p>
-                <Button>
+                <Button style={{ background: 'var(--brand-title)', color: 'white' }}>
                   Leggi Articolo
                 </Button>
               </div>
@@ -154,10 +154,10 @@ export default function Blog() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {articoli.slice(1).map((articolo) => (
               <Card key={articolo.id} hover className="overflow-hidden">
-                <div className="p-8 text-center" style={{ background: 'var(--color-main-light)' }}>
+                <div className="p-8 text-center" style={{ background: 'var(--bg-section-light)' }}>
                   <span className="text-4xl">{articolo.immagine}</span>
                 </div>
-                <div className="p-6">
+                <div className="p-6" style={{ background: 'var(--bg-section-warm)' }}>
                   <div className="flex items-center justify-between mb-3">
                     <span className="px-2 py-1 rounded text-xs font-medium" style={{ background: 'var(--color-main-light)', color: 'var(--brand-title)' }}>
                       {articolo.categoria}
@@ -172,7 +172,7 @@ export default function Blog() {
                   </p>
                   <div className="flex items-center justify-between">
                     <span className="text-xs" style={{ color: 'var(--text-darker)' }}>{articolo.data}</span>
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" style={{ background: 'var(--brand-title)', color: 'white' }}>
                       Leggi
                     </Button>
                   </div>
@@ -184,10 +184,10 @@ export default function Blog() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--accent) 100%)' }} />
+      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--color-main) 100%)' }} />
 
       {/* Newsletter */}
-      <section className="py-20" style={{ background: 'var(--accent)' }}>
+      <section className="py-20" style={{ background: 'var(--color-main)' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-6" style={{ color: 'white' }}>
             Iscriviti alla Newsletter
@@ -206,7 +206,7 @@ export default function Blog() {
               />
               <Button 
                 variant="secondary" 
-                className="bg-white text-[var(--accent)] hover:bg-[var(--color-main-light)] hover:text-[var(--brand-title)]"
+                className="bg-white text-[var(--color-main)] hover:bg-[var(--color-main-light)] hover:text-[var(--brand-title)]"
               >
                 Iscriviti
               </Button>
@@ -219,7 +219,7 @@ export default function Blog() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--accent) 0%, var(--bg-section-warm) 100%)' }} />
+      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--color-main) 0%, var(--bg-section-warm) 100%)' }} />
 
       {/* Risorse Gratuite */}
       <section className="py-20" style={{ background: 'var(--bg-section-warm)' }}>
