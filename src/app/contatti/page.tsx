@@ -54,7 +54,7 @@ export default function Contatti() {
       <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
-            Contattaci
+            Contattami
           </h1>
           <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--brand-title)' }}>
             Siamo qui per rispondere alle tue domande e aiutarti a iniziare 
@@ -321,7 +321,7 @@ export default function Contatti() {
                 La prima consulenza è davvero gratuita?
               </h3>
               <p style={{ color: 'var(--foreground)' }}>
-                Sì! Offro sempre una consulenza gratuita di 30 minuti per conoscerci 
+                Sì! Offro sempre una consulenza gratuita di 15 minuti per conoscerci 
                 e capire se posso aiutarti a raggiungere i tuoi obiettivi.
               </p>
             </Card>
@@ -342,17 +342,17 @@ export default function Contatti() {
               </h3>
               <p style={{ color: 'var(--foreground)' }}>
                 Sì, le consulenze online sono molto efficaci e mi permettono 
-                di seguire pazienti da tutta Italia.
+                di seguire clienti in tutto il mondo.
               </p>
             </Card>
 
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-3">
-                Cosa devo portare alla prima visita?
+                Cosa mi serve per la prima consulenza?
               </h3>
               <p style={{ color: 'var(--foreground)' }}>
                 Eventuali esami del sangue recenti e una lista dei farmaci/integratori 
-                che assumi. Ti invierò un questionario preliminare.
+                che assumi. Ti invierò un questionario preliminare da compilare.
               </p>
             </Card>
           </div>
@@ -360,10 +360,10 @@ export default function Contatti() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-hero) 100%)' }} />
+      {/* <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-hero) 100%)' }} /> */}
 
       {/* Mappa (placeholder) */}
-      <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
+      {/* <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold mb-8 text-center" style={{ color: 'var(--brand-title)' }}>
             Come Raggiungermi
@@ -381,7 +381,7 @@ export default function Contatti() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }

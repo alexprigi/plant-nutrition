@@ -20,7 +20,7 @@ export default function Home() {
             {/* Immagine hero della nutrizionista */}
             <img 
               src="/images/nutritionist-hero.jpg" 
-              alt="Dott.ssa Arianna Ciervo" 
+              alt="Arianna Ciervo" 
               className="w-full h-full object-cover" 
             />
           </div>
@@ -38,7 +38,7 @@ export default function Home() {
               </h1>
               <p className="text-xl lg:text-2xl mb-8 text-white" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.8), -1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8)' }}>
                 Benvenuto in Pura Essenza Vegetale, il centro specializzato in nutrizione vegana. <br />
-                <span style={{ color: 'var(--brand-title)', textShadow: '2px 2px 4px rgba(255,255,255,0.95), 1px 1px 0 rgba(255,255,255,0.9), -1px -1px 0 rgba(255,255,255,0.9), 1px -1px 0 rgba(255,255,255,0.9), -1px 1px 0 rgba(255,255,255,0.9)' }}>Sono la Dott.ssa Arianna Ciervo e ti accompagno verso uno stile di vita sano, equilibrato e sostenibile.</span>
+                <span style={{ color: 'var(--brand-title)', textShadow: '2px 2px 4px rgba(255,255,255,0.95), 1px 1px 0 rgba(255,255,255,0.9), -1px -1px 0 rgba(255,255,255,0.9), 1px -1px 0 rgba(255,255,255,0.9), -1px 1px 0 rgba(255,255,255,0.9)' }}>Sono Arianna e ti accompagno verso uno stile di vita sano, equilibrato e sostenibile.</span>
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
@@ -183,7 +183,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1">
               <h2 className="text-3xl lg:text-4xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
-                Ciao, sono la Dott.ssa Arianna Ciervo
+                Ciao, sono Arianna
               </h2>
               <p className="text-lg mb-6" style={{ color: 'var(--brand-title)' }}>
                 Biologa Nutrizionista e fondatrice di Pura Essenza Vegetale. <br />
@@ -447,7 +447,7 @@ export default function Home() {
             <Card className="p-6" style={{ background: 'var(--bg-section-warm)', color: 'var(--brand-title)' }}>
               <div className="text-yellow-400 text-xl mb-4">⭐⭐⭐⭐⭐</div>
               <p className="mb-4" style={{ color: 'var(--brand-title)' }}>
-                "Grazie alla Dottoressa ho scoperto un mondo di sapori e energia che non sapevo esistesse. 
+                "Grazie ad Arianna ho scoperto un mondo di sapori e energia che non sapevo esistesse. 
                 La mia vita è cambiata in meglio!"
               </p>
               <div className="font-semibold">- Maria, 34 anni</div>
