@@ -11,11 +11,12 @@ interface CardProps {
 
 
 const Card = ({ children, className = '', hover = false, style }: CardProps) => {
-  const baseClasses = "rounded-lg shadow-md";
+  const baseClasses = "shadow-md";
   const hoverClasses = hover ? "hover:shadow-lg transition-shadow duration-300" : "";
   const defaultStyle: React.CSSProperties = {
     background: 'var(--card-bg)',
     color: 'var(--foreground)',
+    borderRadius: '0.5rem',
     ...style,
   };
   return (

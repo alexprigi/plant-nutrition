@@ -51,8 +51,19 @@ export default function Contatti() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
+        {/* Decorative circles */}
+        <div className="absolute top-0 right-0 w-80 h-80 rounded-full opacity-12" 
+          style={{ background: 'var(--color-main)', transform: 'translate(40%, -40%)' }}
+        />
+        <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full opacity-10" 
+          style={{ background: 'var(--brand-title)', transform: 'translate(-40%, 40%)' }}
+        />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="inline-block mb-4">
+            <span className="text-5xl">💌</span>
+          </div>
           <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
             Contattami
           </h1>
@@ -66,8 +77,16 @@ export default function Contatti() {
       {/* Transizione sfumata */}
       <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
 
-      <section className="py-20" style={{ background: 'var(--bg-section-light)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
+        {/* Decorative circles */}
+        <div className="absolute top-1/4 left-0 w-96 h-96 rounded-full opacity-8" 
+          style={{ background: 'linear-gradient(135deg, var(--bg-hero) 0%, #F4E5C2 100%)', transform: 'translate(-50%, 0)' }}
+        />
+        <div className="absolute bottom-1/4 right-0 w-80 h-80 rounded-full opacity-10" 
+          style={{ background: 'var(--color-main)', transform: 'translate(50%, 0)' }}
+        />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Form di Contatto */}
             <div>

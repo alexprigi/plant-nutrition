@@ -53,7 +53,7 @@ const PrenotaPage = () => {
     surname: '',
     email: '',
     phone: '',
-    consultationType: 'prima-visita',
+    consultationType: 'consulenza-standard',
     selectedDate: '',
     selectedTime: '',
     notes: '',
@@ -245,7 +245,7 @@ Riceverai una conferma via email entro 24 ore.`);
         surname: '',
         email: '',
         phone: '',
-        consultationType: 'prima-visita',
+        consultationType: 'consulenza-standard',
         selectedDate: '',
         selectedTime: '',
         notes: '',
@@ -267,17 +267,28 @@ Riceverai una conferma via email entro 24 ore.`);
   };
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--bg-section-light)' }}>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
+      {/* Decorative circles */}
+      <div className="absolute top-20 right-0 w-80 h-80 rounded-full opacity-10" 
+        style={{ background: 'var(--color-main)', transform: 'translate(40%, -20%)' }}
+      />
+      <div className="absolute bottom-20 left-0 w-72 h-72 rounded-full opacity-8" 
+        style={{ background: 'linear-gradient(135deg, var(--bg-hero) 0%, #F4E5C2 100%)', transform: 'translate(-40%, 20%)' }}
+      />
+      
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-12 pt-20">
+          <div className="inline-block mb-4">
+            <span className="text-5xl">📅</span>
+          </div>
           <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>
             Prenota la tua Consulenza
           </h1>
           <p className="text-xl mb-4" style={{ color: 'var(--color-main)' }}>
             Scegli il giorno e l'orario più comodo per te
           </p>
-          <div className="rounded-lg p-4 max-w-2xl mx-auto" style={{ background: 'var(--color-main-light)', color: 'var(--brand-title)', border: '1px solid var(--color-main)' }}>
+          <div className="rounded-lg p-4 max-w-2xl mx-auto" style={{ background: 'var(--bg-section-warm)', color: 'var(--brand-title)', border: '1px solid var(--color-main)' }}>
             <p className="text-sm">
               ℹ️ <strong>Nota:</strong> Tutte le prenotazioni sono soggette a conferma.
               Riceverai una risposta entro 24 ore per confermare l'appuntamento.
@@ -328,28 +339,36 @@ Riceverai una conferma via email entro 24 ore.`);
             <div className="space-y-4">
               {[
                 {
-                  value: 'prima-visita',
-                  title: 'Prima Visita',
-                  duration: '60 minuti',
-                  price: '€80',
-                  description: 'Consulenza completa con anamnesi dettagliata, valutazione nutrizionale e piano alimentare personalizzato.',
+                  value: 'consulenza-breve',
+                  title: 'Consulenza Breve',
+                  duration: '30 minuti',
+                  price: '40-45€',
+                  description: 'Check rapido per valori del sangue, supplementazione o analisi acidi grassi.',
                   icon: '🔍',
                 },
                 {
-                  value: 'controllo',
-                  title: 'Controllo',
-                  duration: '30 minuti',
-                  price: '€50',
-                  description: 'Revisione del piano alimentare, monitoraggio dei progressi e aggiustamenti necessari.',
+                  value: 'consulenza-standard',
+                  title: 'Consulenza Standard',
+                  duration: '60 minuti',
+                  price: '85€',
+                  description: 'Sessione completa con analisi nutrizionale dettagliata, feedback via E-Mail e PDF riassuntivo.',
                   icon: '📊',
                 },
                 {
-                  value: 'consulenza-online',
-                  title: 'Consulenza Online',
-                  duration: '45 minuti',
-                  price: '€60',
-                  description: 'Consulenza completa via videochiamata, ideale per follow-up o per chi è distante.',
+                  value: 'pacchetto-doppio',
+                  title: 'Pacchetto Doppio',
+                  duration: '2 x 60 minuti',
+                  price: '149€',
+                  description: 'Due sessioni complete con analisi nutrizionale, supporto integrazione e analisi valori personalizzata.',
                   icon: '💻',
+                },
+                {
+                  value: 'percorso-completo',
+                  title: 'Percorso Completo 3 Mesi',
+                  duration: '6 consulenze + supporto',
+                  price: '499€',
+                  description: 'Accompagnamento completo con 6 consulenze, supporto WhatsApp per 3 mesi, piani alimentari e materiali esclusivi. Risparmia il 40%!',
+                  icon: '🌟',
                 },
               ].map(consultation => (
                 <button
@@ -357,28 +376,53 @@ Riceverai una conferma via email entro 24 ore.`);
                   onClick={() => {
                     setBookingData(prev => ({ ...prev, consultationType: consultation.value }));
                   }}
-                  className={`w-full p-6 rounded-lg border-2 transition-colors duration-200 text-left cursor-pointer hover:shadow-md ${bookingData.consultationType === consultation.value
-                      ? 'border-[var(--brand-title)] bg-[var(--color-main-light)]'
-                      : 'border-[var(--color-main-light)] hover:border-[var(--color-main)]'
-                    }`}
+                  className={`w-full p-6 rounded-lg border-2 transition-all duration-200 text-left cursor-pointer hover:shadow-lg ${
+                    bookingData.consultationType === consultation.value
+                      ? 'border-[var(--brand-title)] shadow-md scale-[1.02]'
+                      : 'border-transparent hover:border-[var(--color-main)]'
+                  }`}
+                  style={{
+                    background: consultation.value === 'consulenza-standard' 
+                      ? 'var(--bg-section-warm)' 
+                      : 'var(--brand-title)',
+                    color: consultation.value === 'consulenza-standard' 
+                      ? 'var(--brand-title)' 
+                      : 'white'
+                  }}
                 >
                   <div className="flex items-start space-x-4">
                     <div className="text-3xl">{consultation.icon}</div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-lg font-semibold" style={{ color: 'var(--brand-title)' }}>
+                        <h3 className="text-lg font-semibold" style={{ 
+                          color: consultation.value === 'consulenza-standard' 
+                            ? 'var(--brand-title)' 
+                            : 'white' 
+                        }}>
                           {consultation.title}
                         </h3>
                         <div className="text-right">
-                          <div className="text-lg font-bold" style={{ color: 'var(--brand-title)' }}>
+                          <div className="text-xl font-bold" style={{ 
+                            color: consultation.value === 'consulenza-standard' 
+                              ? 'var(--brand-title)' 
+                              : 'var(--bg-hero)' 
+                          }}>
                             {consultation.price}
                           </div>
-                          <div className="text-sm" style={{ color: 'var(--color-main)' }}>
+                          <div className="text-sm" style={{ 
+                            color: consultation.value === 'consulenza-standard' 
+                              ? 'var(--color-main)' 
+                              : 'rgba(255,255,255,0.8)' 
+                          }}>
                             {consultation.duration}
                           </div>
                         </div>
                       </div>
-                      <p className="text-sm" style={{ color: 'var(--foreground)' }}>
+                      <p className="text-sm" style={{ 
+                        color: consultation.value === 'consulenza-standard' 
+                          ? 'var(--text-darker)' 
+                          : 'rgba(255,255,255,0.9)' 
+                      }}>
                         {consultation.description}
                       </p>
                     </div>
@@ -390,9 +434,10 @@ Riceverai una conferma via email entro 24 ore.`);
               <div className="mt-8 text-center">
                 <p className="text-lg mb-4" style={{ color: 'var(--brand-title)' }}>
                   Tipo selezionato: <strong>
-                    {bookingData.consultationType === 'prima-visita' ? 'Prima Visita (60 min) - €80' :
-                      bookingData.consultationType === 'controllo' ? 'Controllo (30 min) - €50' :
-                        'Consulenza Online (45 min) - €60'}
+                    {bookingData.consultationType === 'consulenza-breve' ? 'Consulenza Breve (30 min) - 40-45€' :
+                      bookingData.consultationType === 'consulenza-standard' ? 'Consulenza Standard (60 min) - 85€' :
+                      bookingData.consultationType === 'pacchetto-doppio' ? 'Pacchetto Doppio (2x60 min) - 149€' :
+                        'Percorso Completo 3 Mesi (6 consulenze) - 499€'}
                   </strong>
                 </p>
                 <Button
@@ -421,12 +466,13 @@ Riceverai una conferma via email entro 24 ore.`);
                 ← Cambia tipo consulenza
               </button>
             </div>
-            <div className="rounded-lg p-4 mb-8" style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}>
+            <div className="rounded-lg p-4 mb-8" style={{ background: 'var(--bg-section-warm)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}>
               <p>
                 📋 <strong>Tipo selezionato:</strong> {
-                  bookingData.consultationType === 'prima-visita' ? 'Prima Visita (60 min) - €80' :
-                    bookingData.consultationType === 'controllo' ? 'Controllo (30 min) - €50' :
-                      'Consulenza Online (45 min) - €60'
+                  bookingData.consultationType === 'consulenza-breve' ? 'Consulenza Breve (30 min) - 40-45€' :
+                    bookingData.consultationType === 'consulenza-standard' ? 'Consulenza Standard (60 min) - 85€' :
+                      bookingData.consultationType === 'pacchetto-doppio' ? 'Pacchetto Doppio (2x60 min) - 149€' :
+                        'Percorso Completo 3 Mesi (6 consulenze) - 499€'
                 }
               </p>
             </div>
@@ -446,7 +492,7 @@ Riceverai una conferma via email entro 24 ore.`);
                   }}
                   disabled={availableMonths.findIndex(m => m.key === selectedMonth) === 0}
                   className="flex items-center justify-center w-10 h-10 rounded-full font-bold text-lg cursor-pointer"
-                  style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}
+                  style={{ background: 'var(--bg-section-warm)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}
                 >
                   ‹
                 </button>
@@ -463,7 +509,7 @@ Riceverai una conferma via email entro 24 ore.`);
                   }}
                   disabled={availableMonths.findIndex(m => m.key === selectedMonth) === availableMonths.length - 1}
                   className="flex items-center justify-center w-10 h-10 rounded-full font-bold text-lg cursor-pointer"
-                  style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}
+                  style={{ background: 'var(--bg-section-warm)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}
                 >
                   ›
                 </button>
@@ -553,7 +599,7 @@ Riceverai una conferma via email entro 24 ore.`);
                 ← Cambia data
               </button>
             </div>
-            <div className="rounded-lg p-4 mb-8" style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}>
+            <div className="rounded-lg p-4 mb-8" style={{ background: 'var(--bg-section-warm)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}>
               <p>
                 📅 <strong>Data selezionata:</strong> {formatDate(selectedDate)}<br />
                 📋 <strong>Consulenza:</strong> {
@@ -587,7 +633,7 @@ Riceverai una conferma via email entro 24 ore.`);
 
             {selectedTime && (
               <div className="text-center">
-                <div className="rounded-lg p-4 mb-6" style={{ background: 'var(--color-main-light)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}>
+                <div className="rounded-lg p-4 mb-6" style={{ background: 'var(--bg-section-warm)', border: '1px solid var(--color-main)', color: 'var(--brand-title)' }}>
                   <p>
                     📅 <strong>Riepilogo:</strong> {formatDate(selectedDate)} alle {selectedTime}<br />
                     📋 <strong>Consulenza:</strong> {
@@ -623,7 +669,7 @@ Riceverai una conferma via email entro 24 ore.`);
             </div>
 
             {/* Summary */}
-            <div className="p-4 rounded-lg mb-8" style={{ background: 'var(--color-main-light)' }}>
+            <div className="p-4 rounded-lg mb-8" style={{ background: 'var(--bg-section-warm)' }}>
               <h3 className="font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Riepilogo Appuntamento</h3>
               <p style={{ color: 'var(--color-main)' }}>
                 📅 {formatDate(selectedDate)} alle {selectedTime}<br />

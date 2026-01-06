@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import ParallaxEffect from '@/components/ParallaxEffect';
+import Testimonials from '@/components/Testimonials';
 
 export default function Home() {
   return (
@@ -178,8 +179,16 @@ export default function Home() {
         </div>
       
       {/* Sezione Presentazione Personale */}
-      <section className="py-20" style={{ background: 'var(--bg-section-light)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
+        {/* Decorative circles */}
+        <div className="absolute top-1/4 left-0 w-96 h-96 rounded-full opacity-8" 
+          style={{ background: 'linear-gradient(135deg, var(--bg-hero) 0%, #F4E5C2 100%)', transform: 'translate(-50%, 0)' }}
+        />
+        <div className="absolute bottom-1/3 right-0 w-80 h-80 rounded-full opacity-10" 
+          style={{ background: 'var(--color-main)', transform: 'translate(50%, 0)' }}
+        />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1">
               <h2 className="text-3xl lg:text-4xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
@@ -286,9 +295,20 @@ export default function Home() {
       {/* Transizione sfumata accentuata tra Presentazione Personale e Servizi Principali */}
       <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }} />
       {/* Servizi Principali */}
-      <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
+        {/* Decorative circles */}
+        <div className="absolute top-10 right-0 w-72 h-72 rounded-full opacity-12" 
+          style={{ background: 'var(--color-main)', transform: 'translate(40%, -20%)' }}
+        />
+        <div className="absolute bottom-10 left-0 w-64 h-64 rounded-full opacity-12" 
+          style={{ background: 'var(--brand-title)', transform: 'translate(-40%, 20%)' }}
+        />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
+            <div className="inline-block mb-4">
+              <span className="text-5xl">🌿</span>
+            </div>
             <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>I Miei Servizi</h2>
             <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--brand-title)' }}>
               Ogni percorso è personalizzato per le tue esigenze specifiche, 
@@ -372,10 +392,21 @@ export default function Home() {
       {/* Transizione sfumata accentuata tra Servizi Principali e Perché Scegliere l'Alimentazione Vegana */}
       <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
       {/* Perché Scegliere l'Alimentazione Vegana */}
-      <section className="py-20" style={{ background: 'var(--bg-section-light)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
+        {/* Decorative circles */}
+        <div className="absolute top-20 left-0 w-80 h-80 rounded-full opacity-10" 
+          style={{ background: 'radial-gradient(circle, var(--color-main) 0%, transparent 70%)', transform: 'translate(-40%, 0)' }}
+        />
+        <div className="absolute bottom-20 right-0 w-96 h-96 rounded-full opacity-8" 
+          style={{ background: 'linear-gradient(135deg, #F4E5C2 0%, var(--bg-hero) 100%)', transform: 'translate(50%, 0)' }}
+        />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
+              <div className="inline-block mb-4">
+                <span className="text-5xl">🌍</span>
+              </div>
               <h2 className="text-4xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
                 Nutri il tuo corpo, rispetta il pianeta
               </h2>
@@ -435,50 +466,26 @@ export default function Home() {
       </section>
 
       {/* Testimonianze */}
-      <section className="py-20" style={{ background: 'var(--bg-section-light)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>Cosa Dicono i Miei Pazienti</h2>
-            <p className="text-xl" style={{ color: 'var(--brand-title)' }}>
-              Le loro storie di trasformazione parlano più di mille parole.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="p-6" style={{ background: 'var(--bg-section-warm)', color: 'var(--brand-title)' }}>
-              <div className="text-yellow-400 text-xl mb-4">⭐⭐⭐⭐⭐</div>
-              <p className="mb-4" style={{ color: 'var(--brand-title)' }}>
-                "Grazie ad Arianna ho scoperto un mondo di sapori e energia che non sapevo esistesse. 
-                La mia vita è cambiata in meglio!"
-              </p>
-              <div className="font-semibold">- Maria, 34 anni</div>
-            </Card>
-            <Card className="p-6" style={{ background: 'var(--bg-section-warm)', color: 'var(--brand-title)' }}>
-              <div className="text-yellow-400 text-xl mb-4">⭐⭐⭐⭐⭐</div>
-              <p className="mb-4" style={{ color: 'var(--brand-title)' }}>
-                "Professionale, empatica e sempre disponibile. I miei valori del sangue 
-                sono migliorati incredibilmente in soli 3 mesi."
-              </p>
-              <div className="font-semibold">- Giuseppe, 45 anni</div>
-            </Card>
-            <Card className="p-6" style={{ background: 'var(--bg-section-warm)', color: 'var(--brand-title)' }}>
-              <div className="text-yellow-400 text-xl mb-4">⭐⭐⭐⭐⭐</div>
-              <p className="mb-4" style={{ color: 'var(--brand-title)' }}>
-                "Ho perso 15 kg senza rinunce, anzi mangiando di più! 
-                Non tornerò mai indietro alla mia alimentazione precedente."
-              </p>
-              <div className="font-semibold">- Alessandra, 28 anni</div>
-            </Card>
-          </div>
-        </div>
+      <Testimonials />
 
-      </section>
       {/* Transizione sfumata accentuata tra Testimonianze e FAQ */}
       <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }} />
 
       {/* FAQ Section */}
-      <section className="py-20" style={{ background: 'var(--bg-section-warm)' }}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-section-warm)' }}>
+        {/* Decorative circles */}
+        <div className="absolute top-1/4 right-0 w-72 h-72 rounded-full opacity-12" 
+          style={{ background: 'var(--brand-title)', transform: 'translate(45%, 0)' }}
+        />
+        <div className="absolute bottom-1/4 left-0 w-64 h-64 rounded-full opacity-10" 
+          style={{ background: 'var(--color-main)', transform: 'translate(-45%, 0)' }}
+        />
+        
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
+            <div className="inline-block mb-4">
+              <span className="text-5xl">❓</span>
+            </div>
             <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>Domande Frequenti</h2>
             <p className="text-xl" style={{ color: 'var(--brand-title)' }}>
               Le risposte alle domande più comuni sulla nutrizione vegana
@@ -542,10 +549,10 @@ export default function Home() {
             </div>
 
             <div className="rounded-lg shadow-md p-6" style={{ background: 'var(--bg-card-dark)' }}>
-              <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--foreground)' }}>
+              <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>
                 📱 Come funzionano le consulenze online?
               </h3>
-              <p style={{ color: 'var(--foreground)' }}>
+              <p style={{ color: 'var(--brand-title)' }}>
                 Le consulenze si svolgono tramite videochiamate su piattaforme sicure. 
                 Riceverai questionari preliminari, piani alimentari personalizzati via email 
                 e supporto continuo via WhatsApp per domande urgenti.
@@ -558,8 +565,19 @@ export default function Home() {
       {/* Fine decorazioni */}
 
       {/* Call to Action Finale */}
-      <section className="py-24" style={{ background: 'var(--brand-title)', color: 'var(--foreground)' }}>
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center rounded-3xl shadow-2xl bg-white/20 backdrop-blur-md py-16 border-2 border-white/20" style={{ boxShadow: '0 8px 40px 0 rgba(37, 105, 67, 0.25)' }}>
+      <section className="py-24 relative overflow-hidden" style={{ background: 'var(--brand-title)', color: 'var(--foreground)' }}>
+        {/* Decorative circles */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full opacity-8" 
+          style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)', transform: 'translate(-50%, -50%)' }}
+        />
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full opacity-10" 
+          style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.25) 0%, transparent 70%)', transform: 'translate(50%, 50%)' }}
+        />
+        
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center rounded-3xl shadow-2xl bg-white/20 backdrop-blur-md py-16 border-2 border-white/20 relative z-10" style={{ boxShadow: '0 8px 40px 0 rgba(37, 105, 67, 0.25)' }}>
+          <div className="inline-block mb-4">
+            <span className="text-5xl">✨</span>
+          </div>
           <h2 className="text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight" style={{ color: 'white', textShadow: '0 2px 16px rgba(0,0,0,0.2)' }}>
             Pronto a Iniziare il Tuo Percorso di Benessere?
           </h2>
@@ -579,8 +597,19 @@ export default function Home() {
       </section>
 
       {/* Social Media Section */}
-      <section className="py-20" style={{ background: 'var(--background-pastel)', paddingBottom: '0px' }}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="py-20 relative overflow-hidden" style={{ background: 'var(--background-pastel)', paddingBottom: '0px' }}>
+        {/* Decorative circles */}
+        <div className="absolute top-10 right-10 w-64 h-64 rounded-full opacity-10" 
+          style={{ background: 'var(--brand-title)', transform: 'translate(30%, -30%)' }}
+        />
+        <div className="absolute bottom-10 left-10 w-56 h-56 rounded-full opacity-8" 
+          style={{ background: 'var(--color-main)', transform: 'translate(-30%, 30%)' }}
+        />
+        
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="inline-block mb-4">
+            <span className="text-5xl">📱</span>
+          </div>
           <h2 className="text-4xl font-bold mb-6" style={{ color: 'var(--foreground)' }}>
             Seguimi sui Social
           </h2>

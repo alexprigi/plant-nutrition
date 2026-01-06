@@ -75,9 +75,9 @@ const Footer = () => {
         <div style={{ borderTop: '1px solid var(--color-main)', marginTop: '2rem', paddingTop: '2rem', textAlign: 'center', color: 'var(--color-main)' }}>
           <p>&copy; {currentYear} Pura Essenza Vegetale - Centro di Nutrizione Vegana. Tutti i diritti riservati.</p>
           <p style={{ marginTop: '0.5rem' }}>
-            <Link href="/privacy" style={{ color: 'var(--color-main)' }}>Privacy Policy</Link>
+            <Link href="/privacy-policy" style={{ color: 'var(--color-main)' }}>Privacy Policy</Link>
             {' | '}
-            <Link href="/cookie" style={{ color: 'var(--color-main)' }}>Cookie Policy</Link>
+            <Link href="/cookie-policy" style={{ color: 'var(--color-main)' }}>Cookie Policy</Link>
           </p>
         </div>
       </div>

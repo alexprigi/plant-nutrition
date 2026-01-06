@@ -10,8 +10,19 @@ export default function Servizi() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
+        {/* Decorative circles */}
+        <div className="absolute top-10 right-10 w-64 h-64 rounded-full opacity-10" 
+          style={{ background: 'var(--color-main)', transform: 'translate(30%, -30%)' }}
+        />
+        <div className="absolute bottom-10 left-10 w-48 h-48 rounded-full opacity-15" 
+          style={{ background: 'var(--brand-title)', transform: 'translate(-30%, 30%)' }}
+        />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="inline-block mb-4">
+            <span className="text-5xl">🌟</span>
+          </div>
           <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
             I Nostri Servizi
           </h1>
@@ -25,123 +36,315 @@ export default function Servizi() {
       {/* Transizione sfumata */}
       <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
 
-      {/* Servizi Principali */}
-      <section className="py-20" style={{ background: 'var(--bg-section-light)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
-            {/* Consulenza Nutrizionale */}
-            <Card className="p-8">
-              <div className="text-4xl mb-4">🌿</div>
-              <h2 className="text-3xl font-bold mb-4">Consulenza Nutrizionale</h2>
-              <p className="text-lg mb-6" style={{ color: 'var(--foreground)' }}>
-                Un percorso completamente personalizzato per raggiungere i tuoi obiettivi di salute 
-                attraverso un'alimentazione vegana bilanciata e gustosa.
-              </p>
-              
-              <div className="mb-6">
-                <h3 className="text-xl font-semibold mb-3">Cosa Include:</h3>
-                <ul className="space-y-2" style={{ color: 'var(--foreground)' }}>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Analisi completa dello stato nutrizionale</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Piano alimentare personalizzato</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Lista della spesa e ricette</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Monitoraggio costante dei progressi</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Supporto WhatsApp per 30 giorni</li>
-                </ul>
-              </div>
-              
-              <div className="p-4 rounded-lg mb-6" style={{ background: 'rgba(157, 207, 205, 0.1)', border: '2px solid var(--brand-title)' }}>
-                <div className="text-2xl font-bold" style={{ color: 'white' }}>€120</div>
-                <div style={{ color: 'var(--foreground)' }}>Prima consulenza (90 minuti)</div>
-                <div className="text-sm mt-1" style={{ color: 'var(--foreground)' }}>Controlli successivi €60 (45 minuti)</div>
-              </div>
-              
-              <Button href="/contatti" variant="outline" className="w-full !bg-white !text-[var(--brand-title)] !border-[var(--brand-title)]">
-                Prenota Consulenza
-              </Button>
-            </Card>
-
-            {/* Piano Transizione Graduale */}
-            <Card className="p-8">
-              <div className="text-4xl mb-4">🌱</div>
-              <h2 className="text-3xl font-bold mb-4">Piano Transizione Graduale</h2>
-              <p className="text-lg mb-6" style={{ color: 'var(--foreground)' }}>
-                Un percorso di 3 mesi per passare gradualmente ad un'alimentazione vegana, 
-                senza stress e con il pieno controllo dei nutrienti.
-              </p>
-              
-              <div className="mb-6">
-                <h3 className="text-xl font-semibold mb-3">Il Percorso:</h3>
-                <ul className="space-y-2" style={{ color: 'var(--foreground)' }}>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Mese 1: Eliminazione carni rosse</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Mese 2: Eliminazione carni bianche e pesce</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Mese 3: Eliminazione latticini e uova</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> 3 consulenze di follow-up</li>
-                  <li className="flex items-center"><span className="mr-2" style={{ color: 'var(--brand-title)' }}>✓</span> Ricettario personalizzato</li>
-                </ul>
-              </div>
-              
-              <div className="p-4 rounded-lg mb-6" style={{ background: 'rgba(157, 207, 205, 0.1)', border: '2px solid var(--brand-title)' }}>
-                <div className="text-2xl font-bold" style={{ color: 'white' }}>€300</div>
-                <div style={{ color: 'var(--foreground)' }}>Pacchetto completo 3 mesi</div>
-                <div className="text-sm mt-1" style={{ color: 'var(--foreground)' }}>Risparmi €60 rispetto alle singole consulenze</div>
-              </div>
-              
-              <Button href="/contatti" variant="outline" className="w-full !bg-transparent !text-white !border-white hover:!bg-white hover:!text-[var(--brand-title)]">
-                Scopri di Più
-              </Button>
-            </Card>
+      {/* Servizi e Prezzi - allineato con Home */}
+      <section className="pt-12 pb-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
+        {/* Decorative circles */}
+        <div className="absolute top-1/4 right-0 w-80 h-80 rounded-full opacity-8" 
+          style={{ background: 'linear-gradient(135deg, var(--color-main-light) 0%, var(--color-main) 100%)', transform: 'translate(40%, 0)' }}
+        />
+        <div className="absolute bottom-1/4 left-0 w-64 h-64 rounded-full opacity-8" 
+          style={{ background: 'linear-gradient(135deg, var(--bg-hero) 0%, #F4E5C2 100%)', transform: 'translate(-40%, 0)' }}
+        />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-10">
+            <div className="inline-block mb-3">
+              <span className="text-5xl">💚</span>
+            </div>
+            <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>Pacchetti e Prezzi</h2>
+            <p className="text-lg max-w-3xl mx-auto" style={{ color: 'var(--brand-title)' }}>
+              Scegli il percorso più adatto alle tue esigenze. Ogni consulenza è personalizzata 
+              e basata su evidenze scientifiche per supportarti nel tuo viaggio verso il benessere.
+            </p>
           </div>
 
-          {/* Altri Servizi */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+          {/* Call to Action - Consulenza Gratuita 15 min */}
+          <div className="mb-12 max-w-4xl mx-auto">
+            <div className="relative rounded-2xl p-8 text-center shadow-xl transform hover:scale-105 transition-all duration-300" style={{ background: 'linear-gradient(135deg, #F9EED5 0%, #F2E4C1 100%)', border: '3px solid var(--brand-title)' }}>
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-6 py-2 rounded-full text-sm font-bold text-white shadow-lg animate-pulse" style={{ background: 'var(--brand-title)' }}>
+                🎁 GRATUITO
+              </div>
+              <h3 className="text-3xl font-extrabold mb-3 mt-2" style={{ color: 'var(--brand-title)' }}>
+                Consulenza Conoscitiva Gratuita
+              </h3>
+              <p className="text-lg mb-6" style={{ color: 'var(--text-dark-green)' }}>
+                <strong>15 minuti</strong> per conoscerci, parlare dei tuoi obiettivi e capire insieme quale percorso è più adatto a te. Senza impegno!
+              </p>
+              <Button 
+                href="/prenota" 
+                size="lg"
+                className="font-bold text-lg shadow-lg"
+                style={{ background: 'var(--brand-title)', color: 'white' }}
+              >
+                Prenota i Tuoi 15 Minuti Gratuiti
+              </Button>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+            
+            {/* Consulenza Singola - Check rapido */}
+            <Card className="relative hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f0f5f0 50%, #e8f0e8 100%)', borderRadius: '1.5rem', border: '2px solid var(--brand-title)', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', overflow: 'visible' }}>
+              {/* Badge NUOVO */}
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-3 py-1 rounded-lg text-xs font-bold text-white shadow-lg" style={{ background: 'var(--brand-title)', zIndex: 10 }}>
+                ✨ NUOVO
+              </div>
+              
+              <div className="p-6 text-center border-b-4 pt-8" style={{ borderColor: 'var(--brand-title)', background: 'linear-gradient(180deg, #e8f0e8 0%, #f0f5f0 50%, white 100%)', borderRadius: '1.5rem 1.5rem 0 0' }}>
+                <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-title)' }}>Consulenza Breve</h3>
+                <p className="text-sm mb-4" style={{ color: 'var(--text-dark-green)' }}>Check rapido 30 minuti</p>
+                <div className="text-5xl font-extrabold mb-1" style={{ color: 'var(--brand-title)' }}>40-45€</div>
+                <p className="text-sm font-medium" style={{ color: 'var(--color-main)' }}>1 x 30 Min.</p>
+              </div>
+              
+              <div className="p-6">
+                <ul className="space-y-3 mb-6 text-left">
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">👥</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>1x consulenza individuale 1:1</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">📋</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>Breve check per valori del sangue, supplementazione o analisi acidi grassi</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">💻</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>Online per Zoom-Videocall o Telefonata</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">❓</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>Risposta alle tue domande personali in 30 min</span>
+                  </li>
+                </ul>
+                
+                <Button 
+                  href="/prenota" 
+                  className="w-full"
+                  style={{ background: 'var(--brand-title)', color: 'white' }}
+                >
+                  Prenota Appuntamento
+                </Button>
+              </div>
+            </Card>
+
+            {/* Consulenza Singola Standard */}
+            <Card className="relative hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" style={{ background: 'linear-gradient(135deg, #e8f0d8 0%, #f5f9ec 50%, #ffffff 100%)', borderRadius: '1.5rem', border: '3px solid var(--brand-title)', boxShadow: '0 8px 30px rgba(37, 105, 67, 0.15)', overflow: 'visible' }}>
+              {/* Badge POPOLARE */}
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold text-white shadow-lg" style={{ background: 'var(--brand-title)', zIndex: 10 }}>
+                ⭐ PIÙ SCELTO
+              </div>
+              
+              <div className="p-6 text-center border-b-4 pt-8" style={{ borderColor: 'var(--brand-title)', background: 'linear-gradient(180deg, #d8e8c4 0%, #e8f0d8 50%, white 100%)', borderRadius: '1.5rem 1.5rem 0 0' }}>
+                <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-title)' }}>Consulenza Standard</h3>
+                <p className="text-sm mb-4" style={{ color: 'var(--text-dark-green)' }}>Sessione completa di consulenza</p>
+                <div className="text-5xl font-extrabold mb-1" style={{ color: 'var(--brand-title)' }}>85€</div>
+                <p className="text-sm font-medium" style={{ color: 'var(--color-main)' }}>1 x 60 Min.</p>
+              </div>
+              
+              <div className="p-6">
+                <ul className="space-y-3 mb-6 text-left">
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">👥</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>1x consulenza individuale 1:1</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">🍎</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>Analisi nutrizionale completa con feedback via E-Mail</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">💻</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>Online per Zoom-Videocall (con presentazione) o Telefonata</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">❓</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>Risposta alle tue domande in 60 min</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">📄</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>PDF riassuntivo dei temi trattati con consigli pratici</span>
+                  </li>
+                </ul>
+                
+                <Button 
+                  href="/prenota" 
+                  className="w-full"
+                  style={{ background: 'var(--brand-title)', color: 'white' }}
+                >
+                  Prenota Appuntamento
+                </Button>
+              </div>
+            </Card>
+
+            {/* Pacchetto Doppia Sessione */}
+            <Card className="relative hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #eef5e8 50%, #e8f0e0 100%)', borderRadius: '1.5rem', border: '2px solid var(--brand-title)', boxShadow: '0 4px 20px rgba(123, 160, 91, 0.12)', overflow: 'visible' }}>
+              <div className="p-6 text-center border-b-4" style={{ borderColor: 'var(--brand-title)', background: 'linear-gradient(180deg, #cbe0f7 0%, #e8f0e8 50%, #f0f5f0 100%)', borderRadius: '1.5rem 1.5rem 0 0' }}>
+                <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-title)' }}>Pacchetto Doppio</h3>
+                <p className="text-sm mb-4" style={{ color: 'var(--text-dark-green)' }}>Doppia sessione al prezzo vantaggioso</p>
+                <div className="text-5xl font-extrabold mb-1" style={{ color: 'var(--brand-title)' }}>149€</div>
+                <p className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>2 x 60 Min.</p>
+              </div>
+              
+              <div className="p-6">
+                <ul className="space-y-3 mb-6 text-left">
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">👥</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>2x consulenza individuale 1:1</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">🍎</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>Analisi nutrizionale completa con feedback via E-Mail</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">💻</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>Online per Zoom-Videocall o Telefonata</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">❓</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>Risposta alle tue domande in 2x60 min</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">📄</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>PDF riassuntivo con consigli mirati</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">🩺</span>
+                    <span className="text-sm" style={{ color: 'var(--text-dark-green)' }}>Su richiesta: supporto integrazione (1° appuntamento) e analisi valori (2° appuntamento)</span>
+                  </li>
+                </ul>
+                
+                <Button 
+                  href="/prenota" 
+                  className="w-full"
+                  style={{ background: 'var(--brand-title)', color: 'white' }}
+                >
+                  Prenota Appuntamento
+                </Button>
+              </div>
+            </Card>
+
+            {/* Pacchetto Premium 3 Mesi */}
+            <Card className="relative transform scale-105 hover:scale-110 transition-all duration-300 hover:-translate-y-1" style={{ background: 'linear-gradient(135deg, #F9EED5 0%, #F2E4C1 50%, #EBD9AD 100%)', borderRadius: '1.5rem', border: '4px solid var(--brand-title)', boxShadow: '0 12px 40px rgba(37, 105, 67, 0.25)', overflow: 'visible' }}>
+              {/* Badge RISPARMIO */}
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold text-white shadow-lg whitespace-nowrap" style={{ background: 'var(--brand-title)', zIndex: 10 }}>
+                💎 RISPARMIA 40%
+              </div>
+              
+              <div className="p-6 text-center border-b-4 pt-8" style={{ borderColor: 'var(--brand-title)', background: 'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(249,238,213,0.7) 50%, rgba(242,228,193,0.5) 100%)', borderRadius: '1.5rem 1.5rem 0 0' }}>
+                <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-title)' }}>Percorso Completo</h3>
+                <p className="text-sm mb-4 font-medium" style={{ color: 'var(--text-dark-green)' }}>Il tuo programma personalizzato</p>
+                <div className="flex items-center justify-center gap-3 mb-1">
+                  <span className="text-xl line-through opacity-70 font-semibold" style={{ color: 'var(--text-dark-green)' }}>836€</span>
+                  <span className="text-5xl font-extrabold" style={{ color: 'var(--brand-title)' }}>499€</span>
+                </div>
+                <p className="text-sm font-bold" style={{ color: 'var(--brand-title)' }}>⏱️ Accompagnamento 3 Mesi</p>
+              </div>
+              
+              <div className="p-6">
+                <ul className="space-y-3 mb-6 text-left">
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-600 mt-1">👥</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>6x consulenza individuale 1:1 (Valore 510€)</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-600 mt-1">🍎</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>Analisi nutrizionale dettagliata con feedback completo</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-600 mt-1">💻</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>Online per Zoom-Videocall o Telefonata</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-600 mt-1">❓</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>Risposta a tutte le tue domande personali</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-600 mt-1">💬</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>3 mesi di supporto Chat (WhatsApp) (Valore 199€)</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-600 mt-1">📋</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>Checklist pratiche e tabelle con consigli (Valore 69€)</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-600 mt-1">🍽️</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>Piani alimentari personalizzati e consigli per l'applicazione quotidiana (Valore 39€)</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-600 mt-1">💊</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>Raccomandazioni personalizzate per integrazione nutrizionale (Valore 19€)</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-600 mt-1">🩸</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>Supporto per prelievo ematico e successiva analisi valori</span>
+                  </li>
+                </ul>
+                
+                <Button 
+                  href="/prenota" 
+                  className="w-full font-bold text-lg"
+                  style={{ background: 'var(--brand-title)', color: 'white' }}
+                >
+                  Inizia il Percorso
+                </Button>
+                
+                <p className="text-center text-xs mt-3 italic" style={{ color: 'var(--text-dark-green)' }}>
+                  Pagamento rateale su richiesta
+                </p>
+              </div>
+            </Card>
+
+          </div>
+
+          {/* Nota informativa */}
+          <div className="text-center max-w-3xl mx-auto p-6 rounded-lg mb-12" style={{ background: 'rgba(255,255,255,0.7)' }}>
+            <p className="text-sm" style={{ color: 'var(--text-dark-green)' }}>
+              💚 <strong>Tutte le consulenze includono:</strong> Materiale personalizzato, supporto via email e un approccio 
+              empatico e scientifico al tuo benessere. <strong>Prima consulenza gratuita di 15 minuti</strong> per conoscerci!
+            </p>
+          </div>
+
+          {/* Altri Servizi Specialistici */}
+          <div className="mt-20">
+            <h3 className="text-2xl font-bold mb-8 text-center" style={{ color: 'var(--brand-title)' }}>Servizi Specialistici</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
             <Card hover className="p-6 flex flex-col">
               <div className="text-3xl mb-4">💚</div>
               <h3 className="text-xl font-semibold mb-4">Gestione Patologie</h3>
-              <p className="mb-6 flex-grow" style={{ color: 'var(--foreground)' }}>
+              <p className="mb-6 flex-grow text-sm" style={{ color: 'var(--text-dark-green)' }}>
                 Supporto nutrizionale per la gestione di patologie croniche come diabete, 
                 ipertensione e problemi cardiovascolari attraverso l'alimentazione vegana.
               </p>
-              <div className="mt-auto">
-                <div className="text-lg font-bold mb-4" style={{ color: 'white' }}>€150</div>
-                <Button href="/contatti" variant="outline" size="sm" className="w-full !bg-transparent !text-white !border-white hover:!bg-white hover:!text-[var(--brand-title)]">
-                  Informazioni
-                </Button>
-              </div>
+              <Button href="/prenota" variant="outline" className="w-full !bg-white !text-[var(--brand-title)] !border-[var(--brand-title)]">
+                Prenota
+              </Button>
             </Card>
-
 
             <Card hover className="p-6 flex flex-col">
               <div className="text-3xl mb-4">🤰</div>
               <h3 className="text-xl font-semibold mb-4">Nutrizione in Gravidanza</h3>
-              <p className="mb-6 flex-grow" style={{ color: 'var(--foreground)' }}>
+              <p className="mb-6 flex-grow text-sm" style={{ color: 'var(--text-dark-green)' }}>
                 Supporto nutrizionale specializzato per mamme vegane, 
                 dalla pre-gravidanza all'allattamento.
               </p>
-              <div className="mt-auto">
-                <div className="text-lg font-bold mb-4" style={{ color: 'white' }}>€140</div>
-                <Button href="/contatti" variant="outline" size="sm" className="w-full !bg-transparent !text-white !border-white hover:!bg-white hover:!text-[var(--brand-title)]">
-                  Informazioni
-                </Button>
-              </div>
+              <Button href="/prenota" variant="outline" className="w-full !bg-white !text-[var(--brand-title)] !border-[var(--brand-title)]">
+                Prenota
+              </Button>
             </Card>
-
 
             <Card hover className="p-6 flex flex-col">
               <div className="text-3xl mb-4">🏃‍♀️</div>
               <h3 className="text-xl font-semibold mb-4">Nutrizione Sportiva</h3>
-              <p className="mb-6 flex-grow" style={{ color: 'var(--foreground)' }}>
+              <p className="mb-6 flex-grow text-sm" style={{ color: 'var(--text-dark-green)' }}>
                 Piani alimentari vegani per atleti e sportivi, 
                 per massimizzare performance e recupero.
               </p>
-              <div className="mt-auto">
-                <div className="text-lg font-bold mb-4" style={{ color: 'white' }}>€130</div>
-                <Button href="/contatti" variant="outline" size="sm" className="w-full !bg-transparent !text-white !border-white hover:!bg-white hover:!text-[var(--brand-title)]">
-                  Informazioni
-                </Button>
-              </div>
+              <Button href="/prenota" variant="outline" className="w-full !bg-white !text-[var(--brand-title)] !border-[var(--brand-title)]">
+                Prenota
+              </Button>
             </Card>
           </div>
+        </div>
         </div>
       </section>
 
@@ -230,7 +433,7 @@ export default function Servizi() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-main-light)' }}>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--bg-section-warm)' }}>
                 <span className="text-2xl" style={{ color: 'var(--brand-title)' }}>1️⃣</span>
               </div>
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Consulenza Iniziale</h3>
@@ -240,7 +443,7 @@ export default function Servizi() {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-main-light)' }}>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--bg-section-warm)' }}>
                 <span className="text-2xl" style={{ color: 'var(--brand-title)' }}>2️⃣</span>
               </div>
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Piano Personalizzato</h3>
@@ -250,7 +453,7 @@ export default function Servizi() {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-main-light)' }}>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--bg-section-warm)' }}>
                 <span className="text-2xl" style={{ color: 'var(--brand-title)' }}>3️⃣</span>
               </div>
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Supporto Costante</h3>
@@ -260,7 +463,7 @@ export default function Servizi() {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-main-light)' }}>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--bg-section-warm)' }}>
                 <span className="text-2xl" style={{ color: 'var(--brand-title)' }}>4️⃣</span>
               </div>
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Risultati Duraturi</h3>

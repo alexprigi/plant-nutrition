@@ -37,10 +37,21 @@ export default function ChiSono() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
+        {/* Decorative circles */}
+        <div className="absolute top-10 right-0 w-80 h-80 rounded-full opacity-12" 
+          style={{ background: 'var(--color-main)', transform: 'translate(40%, -20%)' }}
+        />
+        <div className="absolute bottom-10 left-0 w-72 h-72 rounded-full opacity-10" 
+          style={{ background: 'var(--brand-title)', transform: 'translate(-40%, 20%)' }}
+        />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
+              <div className="inline-block mb-4">
+                <span className="text-5xl">💚</span>
+              </div>
               <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
                 Ciao, sono Arianna
               </h1>
@@ -68,8 +79,19 @@ export default function ChiSono() {
       <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
 
       {/* La Mia Storia */}
-      <section className="py-20" style={{ background: 'var(--bg-section-light)' }}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
+        {/* Decorative circles */}
+        <div className="absolute top-20 left-0 w-96 h-96 rounded-full opacity-8" 
+          style={{ background: 'linear-gradient(135deg, var(--bg-hero) 0%, #F4E5C2 100%)', transform: 'translate(-50%, 0)' }}
+        />
+        <div className="absolute bottom-20 right-0 w-80 h-80 rounded-full opacity-10" 
+          style={{ background: 'var(--color-main)', transform: 'translate(50%, 0)' }}
+        />
+        
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-8">
+            <span className="text-5xl inline-block mb-4">📖</span>
+          </div>
           <h2 className="text-3xl font-bold mb-8 text-center" style={{ color: 'var(--brand-title)' }}>La Mia Storia</h2>
           <div className="prose prose-lg max-w-none">
             <p className="text-lg mb-6" style={{ color: 'var(--brand-title)' }}>
