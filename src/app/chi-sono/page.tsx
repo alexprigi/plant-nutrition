@@ -3,19 +3,20 @@
 import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import Icon, { IconName } from '@/components/icons/Icon';
 
 export default function ChiSono() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const allQualifications = [
-    { icon: '🌱', title: 'Nutrizionista Certificata', org: 'Ecodemy', year: '2024 - Generale' },
-    { icon: '👶', title: 'Nutrizione Materno-Infantile', org: 'Ecodemy', year: '2024 - Gravidanza, Allattamento, Svezzamento, Alimentazione Infantile' },
-    { icon: '🌿 cambia icona', title: 'Nutrizione Vegetale', org: 'Accademia della Nutrizione', year: '2025' },
-    { icon: '🌿', title: 'Vegana da oltre 10 anni', org: 'Esperienza personale e pratica quotidiana', year: 'Scelta etica e di vita' },
-    { icon: '👩‍👧', title: 'Mamma vegana', org: 'Crescita di un figlio vegano dalla gravidanza', year: 'Esperienza diretta in nutrizione materno-infantile' },
-    { icon: '🎓', title: 'Laurea in Lingue', org: 'Università di Torino', year: '2017' },
-    { icon: '👩‍🏫', title: 'Educatrice', org: '(Eventuale Ente/Scuola)', year: 'Dal 2020 in Germania' },
-    { icon: '📚', title: 'Formazione Continua', org: 'Aggiornamento costante su nutrizione e benessere', year: 'Partecipazione a congressi e corsi specialistici' },
+  const allQualifications: Array<{ icon: IconName; title: string; org: string; year: string; variant: 'mint' | 'blue' | 'peach' | 'pink' | 'lavender' | 'lemon' }> = [
+    { icon: 'certificate', title: 'Nutrizionista Certificata', org: 'Ecodemy', year: '2024 - Generale', variant: 'mint' },
+    { icon: 'pregnant', title: 'Nutrizione Materno-Infantile', org: 'Ecodemy', year: '2024 - Gravidanza, Allattamento, Svezzamento', variant: 'pink' },
+    { icon: 'carrot', title: 'Nutrizione Vegetale', org: 'Accademia della Nutrizione', year: '2025', variant: 'peach' },
+    { icon: 'medal', title: 'Vegana da oltre 10 anni', org: 'Esperienza personale e pratica quotidiana', year: 'Scelta etica e di vita', variant: 'lemon' },
+    { icon: 'heartMom', title: 'Mamma vegana', org: 'Crescita di un figlio vegano dalla gravidanza', year: 'Esperienza diretta', variant: 'pink' },
+    { icon: 'speech', title: 'Laurea in Lingue', org: 'Università di Torino', year: '2017', variant: 'blue' },
+    { icon: 'gradCap', title: 'Formazione Continua', org: 'Aggiornamento costante su nutrizione', year: 'Partecipazione a congressi', variant: 'lemon' },
+    { icon: 'puzzle', title: 'Educatrice', org: '(Eventuale Ente/Scuola)', year: 'Dal 2020 in Germania', variant: 'lavender' },
   ];
 
   const itemsPerSlide = 4;
@@ -50,7 +51,7 @@ export default function ChiSono() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="inline-block mb-4">
-                <span className="text-5xl">💚</span>
+                <Icon name="heart" size={64} variant="mint" animated={true} />
               </div>
               <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
                 Ciao, sono Arianna
@@ -68,7 +69,7 @@ export default function ChiSono() {
             </div>
             <div className="relative">
               <div className="rounded-full p-8 mx-auto w-80 h-80 flex items-center justify-center" style={{ background: 'var(--color-main)' }}>
-                <span className="text-6xl">👩‍⚕️</span>
+                <Icon name="heart" size={96} style={{ color: 'white' }} />
               </div>
             </div>
           </div>
@@ -90,7 +91,7 @@ export default function ChiSono() {
         
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-8">
-            <span className="text-5xl inline-block mb-4">📖</span>
+            <Icon name="book" size={64} style={{ color: 'var(--brand-title)' }} />
           </div>
           <h2 className="text-3xl font-bold mb-8 text-center" style={{ color: 'var(--brand-title)' }}>La Mia Storia</h2>
           <div className="prose prose-lg max-w-none">
@@ -174,8 +175,8 @@ export default function ChiSono() {
                     animation: 'fadeIn 0.5s ease-in-out'
                   }}
                 >
-                  <div className="text-4xl mb-4">{qual.icon}</div>
-                  <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--brand-title)' }}>{qual.title}</h3>
+                  <Icon name={qual.icon} size={48} variant={qual.variant} />
+                  <h3 className="text-xl font-semibold mb-4 mt-4" style={{ color: 'var(--brand-title)' }}>{qual.title}</h3>
                   <p className="mb-2" style={{ color: 'var(--text-dark-green)' }}>{qual.org}</p>
                   <p className="text-sm" style={{ color: 'var(--text-dark-green)' }}>{qual.year}</p>
                 </Card>
@@ -214,7 +215,7 @@ export default function ChiSono() {
               <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>Il Mio Approccio</h2>
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="text-2xl">🔬</div>
+                  <Icon name="activity" size={32} />
                   <div>
                     <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Basato sulla Scienza</h3>
                     <p style={{ color: 'var(--text-darker)' }}>
@@ -224,7 +225,7 @@ export default function ChiSono() {
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
-                  <div className="text-2xl">👤</div>
+                  <Icon name="users" size={32} style={{ color: 'var(--brand-title)' }} />
                   <div>
                     <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Personalizzato</h3>
                     <p style={{ color: 'var(--text-darker)' }}>
@@ -234,7 +235,7 @@ export default function ChiSono() {
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
-                  <div className="text-2xl">🤗</div>
+                  <Icon name="heart" size={32} style={{ color: 'var(--brand-title)' }} />
                   <div>
                     <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Empatico e Supportivo</h3>
                     <p style={{ color: 'var(--text-darker)' }}>
@@ -244,7 +245,7 @@ export default function ChiSono() {
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
-                  <div className="text-2xl">🌍</div>
+                  <Icon name="leaf" size={32} style={{ color: 'var(--brand-title)' }} />
                   <div>
                     <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Sostenibile</h3>
                     <p style={{ color: 'var(--text-darker)' }}>

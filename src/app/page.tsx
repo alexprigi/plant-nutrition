@@ -442,7 +442,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="flex items-start space-x-4">
-                    <Icon name="heart" size={32} animated={true} variant="peach" />
+                    <Icon name="pawHeart" size={32} animated={true} variant="peach" />
                     <div>
                       <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Benessere Animale</h3>
                       <p style={{ color: 'var(--brand-title)' }}>
