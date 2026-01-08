@@ -1,0 +1,110 @@
+/* --- Icon Animations & Styles (Versione Definitiva) --- */
+
+/* Animazione morbida "Galleggiamento" */
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.icon-animated {
+  animation: float-soft 4s ease-in-out infinite;
+}
+
+/* --- Contenitore Base (Stile "Marshmallow") --- */
+.icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px; /* Squircle morbido (default) */
+  padding: 16px;
+  
+  /* Bordo sottilissimo semi-trasparente per effetto 3D */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  
+  /* Transizione fluida per l'hover */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  vertical-align: middle;
+}
+
+/* Hover: Si solleva leggermente */
+.icon-container:hover {
+  transform: translateY(-3px) scale(1.03);
+}
+
+/* Variante Cerchio Perfetto (es. per il box "95%") */
+.icon-circle {
+  border-radius: 50% !important;
+  padding: 18px;
+}
+
+/* --- Stile SVG Interno --- */
+.icon-container svg {
+  stroke: white !important; /* Icone sempre bianche */
+  stroke-width: 2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none !important;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.05)); /* Leggera ombra interna */
+}
+
+/* --- PALETTE COLORI (Gradienti + Ombre Colorate) --- */
+
+/* 1. MENTA (Natura, Salute, Sostenibilità) */
+.icon-bg-mint {
+  background: linear-gradient(145deg, #87efc7 0%, #5cd6a8 100%);
+  box-shadow: 
+    inset 2px 2px 5px rgba(255, 255, 255, 0.7), 
+    inset -2px -2px 10px rgba(0, 100, 80, 0.05), 
+    0 10px 20px -5px rgba(92, 214, 168, 0.4); 
+}
+.icon-bg-mint:hover { box-shadow: 0 15px 25px -5px rgba(92, 214, 168, 0.6), inset 2px 2px 5px rgba(255,255,255,0.8); }
+
+/* 2. AZZURRO (Tech, Info, Educazione, FAQ) */
+.icon-bg-blue {
+  background: linear-gradient(145deg, #aaddff 0%, #7ebaf5 100%);
+  box-shadow: 
+    inset 2px 2px 5px rgba(255, 255, 255, 0.7), 
+    inset -2px -2px 10px rgba(0, 50, 100, 0.05), 
+    0 10px 20px -5px rgba(126, 186, 245, 0.45);
+}
+.icon-bg-blue:hover { box-shadow: 0 15px 25px -5px rgba(126, 186, 245, 0.6), inset 2px 2px 5px rgba(255,255,255,0.8); }
+
+/* 3. PESCA (Transizione, Etica, Cuore) */
+.icon-bg-peach {
+  background: linear-gradient(145deg, #ffd8b5 0%, #ffb380 100%);
+  box-shadow: 
+    inset 2px 2px 5px rgba(255, 255, 255, 0.7), 
+    inset -2px -2px 10px rgba(100, 50, 0, 0.05), 
+    0 10px 20px -5px rgba(255, 179, 128, 0.45);
+}
+.icon-bg-peach:hover { box-shadow: 0 15px 25px -5px rgba(255, 179, 128, 0.6), inset 2px 2px 5px rgba(255,255,255,0.8); }
+
+/* 4. ROSA (Emozione, Tempo/Attesa) */
+.icon-bg-pink {
+  background: linear-gradient(145deg, #ffd1d1 0%, #ff9e9e 100%);
+  box-shadow: 
+    inset 2px 2px 5px rgba(255, 255, 255, 0.7), 
+    inset -2px -2px 10px rgba(100, 0, 0, 0.05), 
+    0 10px 20px -5px rgba(255, 158, 158, 0.4);
+}
+.icon-bg-pink:hover { box-shadow: 0 15px 25px -5px rgba(255, 158, 158, 0.6), inset 2px 2px 5px rgba(255,255,255,0.8); }
+
+/* 5. LAVANDA (Attività, Scienza, Magia) */
+.icon-bg-lavender {
+  background: linear-gradient(145deg, #dcd6ff 0%, #b5a8ff 100%);
+  box-shadow: 
+    inset 2px 2px 5px rgba(255, 255, 255, 0.7), 
+    inset -2px -2px 10px rgba(50, 0, 100, 0.05), 
+    0 10px 20px -5px rgba(181, 168, 255, 0.4);
+}
+.icon-bg-lavender:hover { box-shadow: 0 15px 25px -5px rgba(181, 168, 255, 0.6), inset 2px 2px 5px rgba(255,255,255,0.8); }
+
+/* 6. LEMON (Costo, Successo, Stelle) */
+.icon-bg-lemon {
+  background: linear-gradient(145deg, #fff5c2 0%, #ffe082 100%);
+  box-shadow: 
+    inset 2px 2px 5px rgba(255, 255, 255, 0.7), 
+    inset -2px -2px 10px rgba(100, 80, 0, 0.05), 
+    0 10px 20px -5px rgba(255, 224, 130, 0.4);
+}
+.icon-bg-lemon:hover { box-shadow: 0 15px 25px -5px rgba(255, 224, 130, 0.6), inset 2px 2px 5px rgba(255,255,255,0.8); }

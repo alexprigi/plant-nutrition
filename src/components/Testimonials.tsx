@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Card from './ui/Card';
+import Icon from './icons/Icon';
 
 interface Testimonial {
   id: number;
@@ -122,7 +123,7 @@ export default function Testimonials() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-12">
           <div className="inline-block mb-4">
-            <span className="text-5xl">💚</span>
+            <Icon name="heart" size={64} animated={true} />
           </div>
           <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>
             Storie di Successo
@@ -257,8 +258,9 @@ export default function Testimonials() {
           }}
         >
           <div className="relative z-10">
-            <p className="text-2xl font-semibold mb-6" style={{ color: 'var(--brand-title)' }}>
-              Vuoi essere anche tu una storia di successo? 🌟
+            <p className="text-2xl font-semibold mb-6 flex items-center justify-center gap-2" style={{ color: 'var(--brand-title)' }}>
+              <span>Vuoi essere anche tu una storia di successo?</span>
+              {/* <Icon name="sparkles" size={28} animated={true} /> */}
             </p>
             <a
               href="/prenota"
