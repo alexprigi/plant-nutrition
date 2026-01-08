@@ -215,7 +215,7 @@ export default function ChiSono() {
               <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>Il Mio Approccio</h2>
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <Icon name="activity" size={32} />
+                  <Icon name="dna" size={32} />
                   <div>
                     <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Basato sulla Scienza</h3>
                     <p style={{ color: 'var(--text-darker)' }}>
@@ -225,7 +225,7 @@ export default function ChiSono() {
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
-                  <Icon name="users" size={32} style={{ color: 'var(--brand-title)' }} />
+                  <Icon name="userSingle" size={32} />
                   <div>
                     <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Personalizzato</h3>
                     <p style={{ color: 'var(--text-darker)' }}>
@@ -235,7 +235,7 @@ export default function ChiSono() {
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
-                  <Icon name="heart" size={32} style={{ color: 'var(--brand-title)' }} />
+                  <Icon name="heart" size={32} />
                   <div>
                     <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Empatico e Supportivo</h3>
                     <p style={{ color: 'var(--text-darker)' }}>
@@ -245,7 +245,7 @@ export default function ChiSono() {
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
-                  <Icon name="leaf" size={32} style={{ color: 'var(--brand-title)' }} />
+                  <Icon name="leaf" size={32} />
                   <div>
                     <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Sostenibile</h3>
                     <p style={{ color: 'var(--text-darker)' }}>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import Icon from '@/components/icons/Icon';
 
 export default function Contatti() {
   const [formData, setFormData] = useState({
@@ -35,13 +36,17 @@ export default function Contatti() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="max-w-md mx-auto text-center">
-          <div className="text-6xl mb-6">✅</div>
-          <h1 className="text-3xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>Messaggio Inviato!</h1>
-          <p className="mb-8" style={{ color: 'var(--color-main)' }}>
-            Grazie per aver contattato Pura Essenza Vegetale. Ti risponderemo entro 24 ore.
-          </p>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-section-light)' }}>
+        <div className="max-w-md mx-auto text-center p-8">
+          <div className="mb-6">
+            <Icon name="check" size={64} animated={true} variant='mint' />
+          </div>
+          <h1 className="text-3xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>Messaggio Inviato!</h1>
+          <div className="mb-8 p-6 rounded-xl" style={{ background: 'white', boxShadow: '0 4px 20px rgba(37, 105, 67, 0.15)' }}>
+            <p className="text-xl font-semibold" style={{ color: 'var(--brand-title)' }}>
+              Grazie per aver contattato Pura Essenza Vegetale. Ti risponderemo entro 24 ore.
+            </p>
+          </div>
           <Button href="/">Torna alla Home</Button>
         </div>
       </div>
@@ -62,7 +67,7 @@ export default function Contatti() {
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="inline-block mb-4">
-            <span className="text-5xl">💌</span>
+            <Icon name="chat" size={52} animated={true} variant='mint' />
           </div>
           <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
             Contattami
@@ -221,7 +226,7 @@ export default function Contatti() {
               <div className="space-y-6 mb-8">
                 <Card className="p-6" style={{ background: 'var(--bg-section-warm)' }}>
                   <div className="flex items-center space-x-4">
-                    <div className="text-2xl lg:text-3xl" style={{ color: 'var(--brand-title)' }}>📧</div>
+                    <Icon name="mail" size={32} variant='mint'/>
                     <div>
                       <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>Email</h3>
                       <p style={{ color: 'var(--text-darker)' }}>info@puraessenzavegetale.it</p>
@@ -231,7 +236,7 @@ export default function Contatti() {
 
                 <Card className="p-6" style={{ background: 'var(--bg-section-warm)' }}>
                   <div className="flex items-center space-x-4">
-                    <div className="text-2xl lg:text-3xl" style={{ color: 'var(--brand-title)' }}>📞</div>
+                    <Icon name="phone" size={32} variant='blue' />
                     <div>
                       <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>Telefono</h3>
                       <p style={{ color: 'var(--text-darker)' }}>+39 349 123 4567</p>
@@ -241,7 +246,7 @@ export default function Contatti() {
 
                 <Card className="p-6" style={{ background: 'var(--bg-section-warm)' }}>
                   <div className="flex items-center space-x-4">
-                    <div className="text-2xl lg:text-3xl" style={{ color: 'var(--brand-title)' }}>📍</div>
+                    <Icon name="mapPin" size={32} variant='lavender' />
                     <div>
                       <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>Studio</h3>
                       <p style={{ color: 'var(--text-darker)' }}>
@@ -254,7 +259,7 @@ export default function Contatti() {
 
                 <Card className="p-6" style={{ background: 'var(--bg-section-warm)' }}>
                   <div className="flex items-center space-x-4">
-                    <div className="text-2xl lg:text-3xl" style={{ color: 'var(--brand-title)' }}>🕒</div>
+                    <Icon name="clock" size={32} variant='pink' />
                     <div>
                       <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>Orari</h3>
                       <div style={{ color: 'var(--text-darker)' }}>
@@ -389,7 +394,9 @@ export default function Contatti() {
           </h2>
           <div style={{ background: 'var(--color-main-light)', height: '24rem', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div className="text-center">
-              <div className="text-4xl mb-4">🗺️</div>
+              <div className="mb-4">
+                <Icon name="mapPin" size={48} animated={true} />
+              </div>
               <p style={{ color: 'var(--foreground)' }}>
                 Mappa interattiva dello studio<br />
                 Via Roma 123, Milano

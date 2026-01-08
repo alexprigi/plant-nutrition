@@ -3,14 +3,15 @@
 import React from 'react';
 import './icon-animations.css';
 
-// 1. Aggiungiamo 'pawHeart' alla lista dei tipi
+// Aggiunto 'check' alla lista finale
 export type IconName =
   | 'heart' | 'sparkles' | 'leaf' | 'laptop' | 'apple' | 'book' | 'route'
   | 'heartNature' | 'gift' | 'sprout' | 'helpCircle' | 'coin' | 'users'
   | 'activity' | 'calendar' | 'chart' | 'document' | 'star'
   | 'appleWorld' | 'bodyWorld' | 'clock' | 'alert' | 'share' | 'lotus'
   | 'heartMom' | 'certificate' | 'baby' | 'carrot' | 'medal' | 'speech' | 'puzzle' | 'gradCap'
-  | 'pregnant' | 'pawHeart';
+  | 'pregnant' | 'pawHeart' | 'userSingle' | 'dna'
+  | 'mail' | 'phone' | 'mapPin' | 'chat' | 'check'; // <--- AGGIUNTO CHECK
 
 interface IconProps {
   name: IconName;
@@ -24,39 +25,35 @@ interface IconProps {
 
 const getDefaultTheme = (name: IconName): string => {
   switch (name) {
-    // --- VERDE MENTA ---
+    // --- VERDE MENTA (Successo, Natura, Contatti) ---
     case 'leaf': case 'sprout': case 'apple': case 'appleWorld':
     case 'heartNature': case 'alert': case 'share':
     case 'certificate': case 'medal':
+    case 'mail': case 'mapPin': case 'chat':
+    case 'check':    // <--- Successo -> Menta
       return 'icon-bg-mint';
 
     // --- AZZURRO ---
     case 'laptop': case 'chart': case 'document': case 'book':
     case 'calendar': case 'helpCircle': case 'users': case 'bodyWorld':
-    case 'speech':
+    case 'speech': case 'userSingle': case 'phone':
       return 'icon-bg-blue';
 
     // --- PESCA (Arancione) ---
-    case 'route':
-    case 'carrot':
-    case 'pawHeart': // 2. Assegniamo il colore Pesca qui
+    case 'route': case 'carrot': case 'pawHeart':
       return 'icon-bg-peach';
 
     // --- ROSA ---
     case 'heart': case 'gift': case 'clock': case 'lotus':
-    case 'baby':
-    case 'pregnant':
-    case 'heartMom':
+    case 'baby': case 'pregnant': case 'heartMom':
       return 'icon-bg-pink';
 
-    // --- LAVANDA ---
-    case 'activity':
-    case 'puzzle':
+    // --- LAVANDA (Viola) ---
+    case 'activity': case 'puzzle': case 'dna':
       return 'icon-bg-lavender';
 
     // --- LEMON ---
-    case 'star': case 'sparkles': case 'coin':
-    case 'gradCap':
+    case 'star': case 'sparkles': case 'coin': case 'gradCap':
       return 'icon-bg-lemon';
 
     default: return 'icon-bg-mint';
@@ -73,7 +70,6 @@ const Icon: React.FC<IconProps> = ({
   const animClass = animated ? 'icon-animated' : '';
   const containerClass = `icon-container ${themeClass} ${shapeClass} ${animClass} ${className}`;
 
-  // Impostazioni standard SVG
   const svgProps = {
     width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" as const, strokeLinejoin: "round" as const
   };
@@ -81,36 +77,19 @@ const Icon: React.FC<IconProps> = ({
   const renderSvgPath = () => {
     switch (name) {
 
-      // --- NUOVA ICONA: ZAMPA PULITA E NITIDA ---
-      case 'pawHeart':
-        return (
-          <>
-            {/* Cuscinetti dita (3 cerchi) con bordo e riempimento leggero */}
-            <circle cx="7" cy="9" r="2.5" fill="currentColor" fillOpacity="0.2" stroke="currentColor" />
-            <circle cx="17" cy="9" r="2.5" fill="currentColor" fillOpacity="0.2" stroke="currentColor" />
-            <circle cx="12" cy="6" r="2.5" fill="currentColor" fillOpacity="0.2" stroke="currentColor" />
+      // --- ICONA SUCCESS (Spunta) ---
+      case 'check':
+        return <polyline points="20 6 9 17 4 12" />;
 
-            {/* Cuscinetto centrale grande con bordo e riempimento leggero */}
-            <path
-              d="M12 12c-3.5 0-6 2.5-6 5.5 0 2.5 2 4.5 6 4.5s6-2 6-4.5c0-3-2.5-5.5-6-5.5z"
-              fill="currentColor"
-              fillOpacity="0.2"
-              stroke="currentColor"
-            />
-          </>
-        );
-
-      // --- ICONA PREGNANT ---
-      case 'pregnant':
-        return (
-          <>
-            <circle cx="10" cy="5" r="3" />
-            <path d="M10 8 L10 22" />
-            <path d="M10 10 Q 18 14 15 21" />
-            <path d="M10 12 Q 15 15 14 19" />
-          </>
-        );
-
+      // --- ICONE PRECEDENTI ---
+      case 'chat': return <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />;
+      case 'mail': return <><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></>;
+      case 'phone': return <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />;
+      case 'mapPin': return <><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></>;
+      case 'userSingle': return <><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></>;
+      case 'dna': return <><path d="M2 15c6.667-6 13.333 0 20-6" /><path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993" /><path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993" /><path d="M17 12a19 19 0 0 0-10 0" /></>;
+      case 'pawHeart': return <><circle cx="7" cy="9" r="2" /><circle cx="17" cy="9" r="2" /><circle cx="12" cy="6" r="2" /><path d="M12 12c-3 0-5 2-5 4.5S9 21 12 21s5-2 5-4.5-2-4.5-5-4.5z" /></>;
+      case 'pregnant': return <><circle cx="10" cy="5" r="3" /><path d="M10 8 L10 22" /><path d="M10 10 Q 18 14 15 21" /><path d="M10 12 Q 15 15 14 19" /></>;
       case 'heartMom': return <><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /><path d="M15 11a2.5 2.5 0 0 0-4 0l-.5.5-.5-.5a2.5 2.5 0 0 0-4 0l.5.5 4 4 4-4 .5-.5z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" /></>;
       case 'baby': return <><circle cx="12" cy="9" r="5" /><path d="M12 14v7" /><path d="M8 17h8" /><path d="M10 9h.01" /><path d="M14 9h.01" /><path d="M12 11a1 1 0 0 0 0 .5" /></>;
       case 'certificate': return <><rect x="3" y="2" width="18" height="20" rx="2" /><path d="M7 6h10" /><path d="M7 10h10" /><path d="M7 14h6" /><circle cx="16" cy="17" r="3" /><path d="M16 17l1.5 1.5-1.5 1.5-1.5-1.5z" fill="currentColor" fillOpacity="0.2" stroke="none" /></>;
