@@ -3,7 +3,7 @@
 import React from 'react';
 import './icon-animations.css';
 
-// Aggiunto 'check' alla lista finale
+// Aggiunto 'tag' alla lista
 export type IconName =
   | 'heart' | 'sparkles' | 'leaf' | 'laptop' | 'apple' | 'book' | 'route'
   | 'heartNature' | 'gift' | 'sprout' | 'helpCircle' | 'coin' | 'users'
@@ -11,7 +11,7 @@ export type IconName =
   | 'appleWorld' | 'bodyWorld' | 'clock' | 'alert' | 'share' | 'lotus'
   | 'heartMom' | 'certificate' | 'baby' | 'carrot' | 'medal' | 'speech' | 'puzzle' | 'gradCap'
   | 'pregnant' | 'pawHeart' | 'userSingle' | 'dna'
-  | 'mail' | 'phone' | 'mapPin' | 'chat' | 'check'; // <--- AGGIUNTO CHECK
+  | 'mail' | 'phone' | 'mapPin' | 'chat' | 'check' | 'tag'; // <--- NUOVA: TAG (Prezzi)
 
 interface IconProps {
   name: IconName;
@@ -25,12 +25,11 @@ interface IconProps {
 
 const getDefaultTheme = (name: IconName): string => {
   switch (name) {
-    // --- VERDE MENTA (Successo, Natura, Contatti) ---
+    // --- VERDE MENTA ---
     case 'leaf': case 'sprout': case 'apple': case 'appleWorld':
     case 'heartNature': case 'alert': case 'share':
     case 'certificate': case 'medal':
-    case 'mail': case 'mapPin': case 'chat':
-    case 'check':    // <--- Successo -> Menta
+    case 'mail': case 'mapPin': case 'chat': case 'check':
       return 'icon-bg-mint';
 
     // --- AZZURRO ---
@@ -46,13 +45,14 @@ const getDefaultTheme = (name: IconName): string => {
     // --- ROSA ---
     case 'heart': case 'gift': case 'clock': case 'lotus':
     case 'baby': case 'pregnant': case 'heartMom':
+    case 'tag':      // <--- Prezzi (Tag) -> Rosa (come nella tua foto)
       return 'icon-bg-pink';
 
     // --- LAVANDA (Viola) ---
     case 'activity': case 'puzzle': case 'dna':
       return 'icon-bg-lavender';
 
-    // --- LEMON ---
+    // --- LEMON (Giallo) ---
     case 'star': case 'sparkles': case 'coin': case 'gradCap':
       return 'icon-bg-lemon';
 
@@ -77,11 +77,12 @@ const Icon: React.FC<IconProps> = ({
   const renderSvgPath = () => {
     switch (name) {
 
-      // --- ICONA SUCCESS (Spunta) ---
-      case 'check':
-        return <polyline points="20 6 9 17 4 12" />;
+      // --- NUOVA ICONA PREZZI (Tag) ---
+      case 'tag':
+        return <><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></>;
 
-      // --- ICONE PRECEDENTI ---
+      // --- ICONE ESISTENTI ---
+      case 'check': return <polyline points="20 6 9 17 4 12" />;
       case 'chat': return <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />;
       case 'mail': return <><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></>;
       case 'phone': return <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />;
