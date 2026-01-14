@@ -21,7 +21,7 @@ export default function Home() {
           }}>
             {/* Immagine hero della nutrizionista */}
             <img
-              src="/images/nutritionist-hero.jpg"
+              src="/images/nutritionist-hero.png"
               alt="Arianna Ciervo"
               className="w-full h-full object-cover"
             />
@@ -206,7 +206,7 @@ export default function Home() {
 
                 <div className="p-6 rounded-lg mb-8" style={{ background: 'var(--bg-section-warm)', color: 'var(--brand-title)' }}>
                   <h3 className="text-lg font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--brand-title)' }}>
-                    <Icon name="lotus" size={24} />
+                    <Icon name="lotus" size={48} />
                     <span>La Mia Filosofia</span>
                   </h3>
                   <p style={{ color: 'var(--brand-title)' }}>
@@ -598,7 +598,7 @@ export default function Home() {
             Pronto a Iniziare il Tuo Percorso di Benessere?
           </h2>
           <p className="text-2xl mb-10 font-medium" style={{ color: 'white', textShadow: '0 1px 8px rgba(0,0,0,0.15)' }}>
-            Prenota una consulenza gratuita di 30 minuti per scoprire come <br />
+            Prenota una consulenza gratuita di 15 minuti per scoprire come <br />
             l'alimentazione vegana può trasformare la tua vita.
           </p>
           <Button

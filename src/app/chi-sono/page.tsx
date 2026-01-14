@@ -69,7 +69,7 @@ export default function ChiSono() {
             </div>
             <div className="relative">
               <div className="rounded-full p-8 mx-auto w-80 h-80 flex items-center justify-center" style={{ background: 'var(--color-main)' }}>
-                <Icon name="heart" size={96} style={{ color: 'white' }} />
+                <Icon name="heart" size={96} />
               </div>
             </div>
           </div>
@@ -91,7 +91,7 @@ export default function ChiSono() {
         
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-8">
-            <Icon name="book" size={64} style={{ color: 'var(--brand-title)' }} />
+            <Icon name="book" size={64} />
           </div>
           <h2 className="text-3xl font-bold mb-8 text-center" style={{ color: 'var(--brand-title)' }}>La Mia Storia</h2>
           <div className="prose prose-lg max-w-none">

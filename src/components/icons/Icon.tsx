@@ -3,7 +3,6 @@
 import React from 'react';
 import './icon-animations.css';
 
-// Aggiunto 'tag' alla lista
 export type IconName =
   | 'heart' | 'sparkles' | 'leaf' | 'laptop' | 'apple' | 'book' | 'route'
   | 'heartNature' | 'gift' | 'sprout' | 'helpCircle' | 'coin' | 'users'
@@ -11,11 +10,13 @@ export type IconName =
   | 'appleWorld' | 'bodyWorld' | 'clock' | 'alert' | 'share' | 'lotus'
   | 'heartMom' | 'certificate' | 'baby' | 'carrot' | 'medal' | 'speech' | 'puzzle' | 'gradCap'
   | 'pregnant' | 'pawHeart' | 'userSingle' | 'dna'
-  | 'mail' | 'phone' | 'mapPin' | 'chat' | 'check' | 'tag'; // <--- NUOVA: TAG (Prezzi)
+  | 'mail' | 'phone' | 'mapPin' | 'chat' | 'check' | 'tag'
+  | 'numberOne' | 'numberTwo' | 'numberThree' | 'numberFour';
 
 interface IconProps {
   name: IconName;
   size?: number;
+  boxSize?: number;
   animated?: boolean;
   style?: React.CSSProperties;
   className?: string;
@@ -30,29 +31,32 @@ const getDefaultTheme = (name: IconName): string => {
     case 'heartNature': case 'alert': case 'share':
     case 'certificate': case 'medal':
     case 'mail': case 'mapPin': case 'chat': case 'check':
+    case 'numberOne':
       return 'icon-bg-mint';
 
     // --- AZZURRO ---
     case 'laptop': case 'chart': case 'document': case 'book':
     case 'calendar': case 'helpCircle': case 'users': case 'bodyWorld':
     case 'speech': case 'userSingle': case 'phone':
+    case 'numberTwo':
       return 'icon-bg-blue';
 
-    // --- PESCA (Arancione) ---
+    // --- PESCA ---
     case 'route': case 'carrot': case 'pawHeart':
+    case 'numberThree':
       return 'icon-bg-peach';
 
     // --- ROSA ---
     case 'heart': case 'gift': case 'clock': case 'lotus':
-    case 'baby': case 'pregnant': case 'heartMom':
-    case 'tag':      // <--- Prezzi (Tag) -> Rosa (come nella tua foto)
+    case 'baby': case 'pregnant': case 'heartMom': case 'tag':
       return 'icon-bg-pink';
 
-    // --- LAVANDA (Viola) ---
+    // --- LAVANDA ---
     case 'activity': case 'puzzle': case 'dna':
+    case 'numberFour':
       return 'icon-bg-lavender';
 
-    // --- LEMON (Giallo) ---
+    // --- LEMON ---
     case 'star': case 'sparkles': case 'coin': case 'gradCap':
       return 'icon-bg-lemon';
 
@@ -61,7 +65,7 @@ const getDefaultTheme = (name: IconName): string => {
 };
 
 const Icon: React.FC<IconProps> = ({
-  name, size = 28, animated = false, style = {}, className = '', shape = 'square', variant
+  name, size = 28, boxSize, animated = false, style = {}, className = '', shape = 'square', variant
 }) => {
   let themeClass = getDefaultTheme(name);
   if (variant) themeClass = `icon-bg-${variant}`;
@@ -70,18 +74,93 @@ const Icon: React.FC<IconProps> = ({
   const animClass = animated ? 'icon-animated' : '';
   const containerClass = `icon-container ${themeClass} ${shapeClass} ${animClass} ${className}`;
 
+  // 1. CALCOLO DIMENSIONE SCATOLA
+  const multiplier = size >= 32 ? 1.4 : 1.6;
+  const finalBoxSize = boxSize || Math.round(size * multiplier);
+
+  // 2. ARROTONDATURA DINAMICA
+  const dynamicRadius = shape === 'circle' ? '50%' : `${Math.round(finalBoxSize * 0.22)}px`;
+
+  const containerStyle: React.CSSProperties = {
+    width: `${finalBoxSize}px`,
+    height: `${finalBoxSize}px`,
+    minWidth: `${finalBoxSize}px`,
+    minHeight: `${finalBoxSize}px`,
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 0,
+    borderRadius: dynamicRadius,
+    flexShrink: 0,
+    ...style
+  };
+
   const svgProps = {
-    width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" as const, strokeLinejoin: "round" as const
+    width: size,
+    height: size,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2",
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const
   };
 
   const renderSvgPath = () => {
     switch (name) {
 
-      // --- NUOVA ICONA PREZZI (Tag) ---
-      case 'tag':
-        return <><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></>;
+      // --- NUMERI RIDISEGNATI (Stile Arrotondato e Uniforme) ---
 
-      // --- ICONE ESISTENTI ---
+      case 'numberOne':
+        return (
+          <g strokeWidth="2.5">
+            <path d="M12 5v14" />
+            <path d="M8 9l4-4" /> {/* Serif classica diagonale */}
+          </g>
+        );
+
+      case 'numberTwo':
+        return (
+          <g strokeWidth="2.5">
+            {/* Base allargata e arco superiore più alto per compensare la dimensione visiva */}
+            <path d="M7 20h10" />
+            <path d="M17 20c0-1.67-1.3-3.6-2.5-5L8 7a4 4 0 0 1 8 0" opacity="0" /> {/* Guida invisibile */}
+            <path d="M7 8.5c0-3 2.5-4.5 5-4.5s5 1.5 5 4.5c0 3-8 9-10 11.5" />
+          </g>
+        );
+      // CORREZIONE NUMERO 2 per renderlo più semplice e grande:
+      case 'numberTwo':
+        return (
+          <g strokeWidth="2.5">
+            <path d="M8 7c0-2.5 2-3 5-3s5 1 5 3.5c0 2.5-9 8.5-9 11.5h10" />
+          </g>
+        );
+
+      case 'numberThree':
+        return (
+          // Stile a "due curve" (B rovesciata), molto classico e leggibile
+          <g strokeWidth="2.5">
+            <path d="M8 6.5c0-2 2-2.5 4-2.5s4 1 4 3c0 2-2 2.5-3 2.5" />
+            <path d="M13 9.5c1.5 0 4 1 4 4s-2.5 4.5-5 4.5c-2.5 0-4-1.5-4.5-2.5" />
+          </g>
+        );
+
+      case 'numberFour':
+        return (
+          <g strokeWidth="2.5">
+            <path d="M16 5v14" /> {/* Asta verticale lunga */}
+            <path d="M14 5L6 14h11" /> {/* Diagonale + Traversa */}
+          </g>
+        );
+
+      // --- ALTRE ICONE ---
+      case 'tag':
+        return (
+          <g strokeWidth="2.5">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+            <line x1="7" y1="7" x2="7.01" y2="7" />
+          </g>
+        );
       case 'check': return <polyline points="20 6 9 17 4 12" />;
       case 'chat': return <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />;
       case 'mail': return <><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></>;
@@ -129,7 +208,7 @@ const Icon: React.FC<IconProps> = ({
   };
 
   return (
-    <span className={containerClass} style={style}>
+    <span className={containerClass} style={containerStyle}>
       <svg {...svgProps}>
         {renderSvgPath()}
       </svg>

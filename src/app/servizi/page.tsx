@@ -364,10 +364,10 @@ export default function Servizi() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }} />
+      {/* <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }} /> */}
 
       {/* Corsi e Workshop */}
-      <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
+      {/* <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold mb-12 text-center" style={{ color: 'var(--brand-title)' }}>
             Corsi e Workshop
@@ -439,10 +439,10 @@ export default function Servizi() {
             </Card>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+      {/* <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} /> */}
 
       {/* Processo */}
       <section className="py-20" style={{ background: 'var(--bg-section-light)' }}>
@@ -453,7 +453,7 @@ export default function Servizi() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--bg-section-warm)' }}>
-                <Icon name="numberOne" size={32} style={{ color: 'var(--brand-title)' }} />
+                <Icon name="numberOne" size={48} shape='circle' />
               </div>
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Consulenza Iniziale</h3>
               <p style={{ color: 'var(--text-darker)' }}>
@@ -463,7 +463,7 @@ export default function Servizi() {
             </div>
             <div className="text-center">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--bg-section-warm)' }}>
-                <Icon name="numberTwo" size={32} style={{ color: 'var(--brand-title)' }} />
+                <Icon name="numberTwo" size={48} shape='circle' />
               </div>
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Piano Personalizzato</h3>
               <p style={{ color: 'var(--text-darker)' }}>
@@ -473,7 +473,7 @@ export default function Servizi() {
             </div>
             <div className="text-center">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--bg-section-warm)' }}>
-                <Icon name="numberThree" size={32} style={{ color: 'var(--brand-title)' }} />
+                <Icon name="numberThree" size={48} shape='circle' />
               </div>
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Supporto Costante</h3>
               <p style={{ color: 'var(--text-darker)' }}>
@@ -483,7 +483,7 @@ export default function Servizi() {
             </div>
             <div className="text-center">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--bg-section-warm)' }}>
-                <Icon name="numberFour" size={32} style={{ color: 'var(--brand-title)' }} />
+                <Icon name="numberFour" size={48} shape='circle' />
               </div>
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>Risultati Duraturi</h3>
               <p style={{ color: 'var(--text-darker)' }}>

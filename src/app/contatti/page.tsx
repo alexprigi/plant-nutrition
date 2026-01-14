@@ -67,7 +67,7 @@ export default function Contatti() {
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="inline-block mb-4">
-            <Icon name="chat" size={52} animated={true} variant='mint' />
+            <Icon name="chat" size={64} animated={true} variant='mint' />
           </div>
           <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
             Contattami
