@@ -100,7 +100,7 @@ body {
   outline-offset: 2px;
 }
 
-/* Loading spinner */
+/* Loading spinner (Base) */
 .spinner {
   border: 2px solid var(--bg-section-light);
   border-top: 2px solid var(--color-main);
@@ -237,4 +237,54 @@ body {
   }
 }
 
+/* =========================================
+   AGGIUNTE SPECIFICHE PER PAGINA PRENOTAZIONI
+   ========================================= */
 
+/* Animazione fluida comparsa Step */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Override per lo spinner dentro i bottoni */
+/* Rende lo spinner bianco quando è dentro un pulsante (per contrasto con sfondo verde) */
+button .spinner {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  border-top-color: white !important;
+  width: 20px !important;
+  height: 20px !important;
+  margin: 0 !important;
+}
+
+/* Override per Card Bianca Pura (Fix Calendario Verde) */
+/* Questa classe forza la card a essere bianca e il testo scuro, ignorando il tema globale */
+.card-pure-white {
+  background-color: #ffffff !important;
+  color: #111827 !important;            
+  border: 1px solid #f3f4f6 !important; 
+}
+
+/* Assicura che i testi interni non ereditino colori sbagliati */
+.card-pure-white h2, 
+.card-pure-white h3, 
+.card-pure-white p, 
+.card-pure-white span, 
+.card-pure-white label,
+.card-pure-white div {
+  color: inherit; 
+}

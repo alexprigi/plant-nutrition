@@ -11,7 +11,9 @@ export type IconName =
   | 'heartMom' | 'certificate' | 'baby' | 'carrot' | 'medal' | 'speech' | 'puzzle' | 'gradCap'
   | 'pregnant' | 'pawHeart' | 'userSingle' | 'dna'
   | 'mail' | 'phone' | 'mapPin' | 'chat' | 'check' | 'tag'
-  | 'numberOne' | 'numberTwo' | 'numberThree' | 'numberFour';
+  | 'numberOne' | 'numberTwo' | 'numberThree' | 'numberFour'
+  | 'shield' | 'lightning' | 'molecule' | 'drop'
+  | 'chevronLeft' | 'chevronRight'; // <--- AGGIUNTE FRECCE
 
 interface IconProps {
   name: IconName;
@@ -32,6 +34,8 @@ const getDefaultTheme = (name: IconName): string => {
     case 'certificate': case 'medal':
     case 'mail': case 'mapPin': case 'chat': case 'check':
     case 'numberOne':
+    case 'shield': case 'lightning':
+    case 'molecule':
       return 'icon-bg-mint';
 
     // --- AZZURRO ---
@@ -39,6 +43,8 @@ const getDefaultTheme = (name: IconName): string => {
     case 'calendar': case 'helpCircle': case 'users': case 'bodyWorld':
     case 'speech': case 'userSingle': case 'phone':
     case 'numberTwo':
+    case 'drop':
+    case 'chevronLeft': case 'chevronRight': // <--- Frecce = Azzurro
       return 'icon-bg-blue';
 
     // --- PESCA ---
@@ -74,11 +80,8 @@ const Icon: React.FC<IconProps> = ({
   const animClass = animated ? 'icon-animated' : '';
   const containerClass = `icon-container ${themeClass} ${shapeClass} ${animClass} ${className}`;
 
-  // 1. CALCOLO DIMENSIONE SCATOLA
   const multiplier = size >= 32 ? 1.4 : 1.6;
   const finalBoxSize = boxSize || Math.round(size * multiplier);
-
-  // 2. ARROTONDATURA DINAMICA
   const dynamicRadius = shape === 'circle' ? '50%' : `${Math.round(finalBoxSize * 0.22)}px`;
 
   const containerStyle: React.CSSProperties = {
@@ -109,58 +112,36 @@ const Icon: React.FC<IconProps> = ({
   const renderSvgPath = () => {
     switch (name) {
 
-      // --- NUMERI RIDISEGNATI (Stile Arrotondato e Uniforme) ---
+      // --- FRECCE DI NAVIGAZIONE ---
+      case 'chevronLeft':
+        return <path d="M15 18l-6-6 6-6" strokeWidth="2.5" />;
 
-      case 'numberOne':
-        return (
-          <g strokeWidth="2.5">
-            <path d="M12 5v14" />
-            <path d="M8 9l4-4" /> {/* Serif classica diagonale */}
-          </g>
-        );
+      case 'chevronRight':
+        return <path d="M9 18l6-6-6-6" strokeWidth="2.5" />;
 
-      case 'numberTwo':
+      // --- ICONE RECENTI ---
+      case 'molecule':
         return (
-          <g strokeWidth="2.5">
-            {/* Base allargata e arco superiore più alto per compensare la dimensione visiva */}
-            <path d="M7 20h10" />
-            <path d="M17 20c0-1.67-1.3-3.6-2.5-5L8 7a4 4 0 0 1 8 0" opacity="0" /> {/* Guida invisibile */}
-            <path d="M7 8.5c0-3 2.5-4.5 5-4.5s5 1.5 5 4.5c0 3-8 9-10 11.5" />
-          </g>
+          <>
+            <circle cx="12" cy="12" r="3" />
+            <circle cx="19" cy="5" r="2" />
+            <circle cx="5" cy="19" r="2" />
+            <path d="M14.5 9.5L17 7" />
+            <path d="M9.5 14.5L7 17" />
+          </>
         );
-      // CORREZIONE NUMERO 2 per renderlo più semplice e grande:
-      case 'numberTwo':
-        return (
-          <g strokeWidth="2.5">
-            <path d="M8 7c0-2.5 2-3 5-3s5 1 5 3.5c0 2.5-9 8.5-9 11.5h10" />
-          </g>
-        );
+      case 'drop': return <path d="M12 21.5c-4.5 0-8-3.5-8-8 0-4.5 8-13 8-13s8 8.5 8 13c0 4.5-3.5 8-8 8z" />;
+      case 'lightning': return <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />;
+      case 'shield': return <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />;
 
-      case 'numberThree':
-        return (
-          // Stile a "due curve" (B rovesciata), molto classico e leggibile
-          <g strokeWidth="2.5">
-            <path d="M8 6.5c0-2 2-2.5 4-2.5s4 1 4 3c0 2-2 2.5-3 2.5" />
-            <path d="M13 9.5c1.5 0 4 1 4 4s-2.5 4.5-5 4.5c-2.5 0-4-1.5-4.5-2.5" />
-          </g>
-        );
+      // --- NUMERI ---
+      case 'numberOne': return <g strokeWidth="2.5"><path d="M12 6v12" /><path d="M9 9l3-3" /></g>;
+      case 'numberTwo': return <g strokeWidth="2.5"><path d="M8 8c0-2.5 2.5-3 4-3s4 1 4 3c0 2.5-8 8-8 8h8" /></g>;
+      case 'numberThree': return <g strokeWidth="2.5"><path d="M8 7h8l-3 5c3 0 5 1.5 5 4s-2.5 4.5-5.5 4.5c-2 0-4-1-4.5-2" /></g>;
+      case 'numberFour': return <g strokeWidth="2.5"><path d="M16 6v12" /><path d="M6 13h10" /><path d="M14 6l-8 7" /></g>;
 
-      case 'numberFour':
-        return (
-          <g strokeWidth="2.5">
-            <path d="M16 5v14" /> {/* Asta verticale lunga */}
-            <path d="M14 5L6 14h11" /> {/* Diagonale + Traversa */}
-          </g>
-        );
-
-      // --- ALTRE ICONE ---
-      case 'tag':
-        return (
-          <g strokeWidth="2.5">
-            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-            <line x1="7" y1="7" x2="7.01" y2="7" />
-          </g>
-        );
+      // --- ALTRE ---
+      case 'tag': return <g strokeWidth="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></g>;
       case 'check': return <polyline points="20 6 9 17 4 12" />;
       case 'chat': return <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />;
       case 'mail': return <><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></>;

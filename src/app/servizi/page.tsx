@@ -50,10 +50,21 @@ export default function Servizi() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-20">
-            <div className="text-center">
-              <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'var(--bg-section-warm)' }}>
-                <Icon name="numberOne" size={52} shape='circle' />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-20 relative">
+            <div className="text-center relative">
+              <div className="relative inline-block mb-6">
+                <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: 'var(--bg-section-warm)' }}>
+                  <Icon name="numberOne" size={52} shape='circle' />
+                </div>
+                {/* Freccia ondulata verso il prossimo step */}
+                <svg className="hidden lg:block absolute left-full top-1/2 w-[200%] xl:w-[240%] 2xl:w-[260%] h-16 pointer-events-none" viewBox="0 0 160 40" style={{ transform: 'translate(8%, -50%)' }}>
+                  <defs>
+                    <marker id="arrow1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                      <polygon points="0 0, 8 4, 0 8" fill="#6B8E7F" opacity="0.5" />
+                    </marker>
+                  </defs>
+                  <path d="M 5 20 Q 45 5, 85 20 Q 125 35, 155 20" stroke="#6B8E7F" strokeWidth="2" fill="none" opacity="0.5" markerEnd="url(#arrow1)" strokeLinecap="round" />
+                </svg>
               </div>
               <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>Conosciamoci</h3>
               <p style={{ color: 'var(--text-darker)' }}>
@@ -61,9 +72,20 @@ export default function Servizi() {
                 le tue esigenze e rispondere a tutte le tue domande.
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'var(--bg-section-warm)' }}>
-                <Icon name="numberTwo" size={52} shape='circle' />
+            <div className="text-center relative">
+              <div className="relative inline-block mb-6">
+                <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: 'var(--bg-section-warm)' }}>
+                  <Icon name="numberTwo" size={52} shape='circle' />
+                </div>
+                {/* Freccia ondulata verso il prossimo step */}
+                <svg className="hidden lg:block absolute left-full top-1/2 w-[200%] xl:w-[240%] 2xl:w-[260%] h-16 pointer-events-none" viewBox="0 0 160 40" style={{ transform: 'translate(8%, -50%)' }}>
+                  <defs>
+                    <marker id="arrow2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                      <polygon points="0 0, 8 4, 0 8" fill="#6B8E7F" opacity="0.5" />
+                    </marker>
+                  </defs>
+                  <path d="M 5 20 Q 45 35, 85 20 Q 125 5, 155 20" stroke="#6B8E7F" strokeWidth="2" fill="none" opacity="0.5" markerEnd="url(#arrow2)" strokeLinecap="round" />
+                </svg>
               </div>
               <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>Analisi Completa</h3>
               <p style={{ color: 'var(--text-darker)' }}>
@@ -71,9 +93,20 @@ export default function Servizi() {
                 stile di vita, eventuali analisi del sangue e preferenze personali.
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'var(--bg-section-warm)' }}>
-                <Icon name="numberThree" size={52} shape='circle' />
+            <div className="text-center relative">
+              <div className="relative inline-block mb-6">
+                <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: 'var(--bg-section-warm)' }}>
+                  <Icon name="numberThree" size={52} shape='circle' />
+                </div>
+                {/* Freccia ondulata verso il prossimo step */}
+                <svg className="hidden lg:block absolute left-full top-1/2 w-[200%] xl:w-[240%] 2xl:w-[260%] h-16 pointer-events-none" viewBox="0 0 160 40" style={{ transform: 'translate(8%, -50%)' }}>
+                  <defs>
+                    <marker id="arrow3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                      <polygon points="0 0, 8 4, 0 8" fill="#6B8E7F" opacity="0.5" />
+                    </marker>
+                  </defs>
+                  <path d="M 5 20 Q 45 5, 85 20 Q 125 35, 155 20" stroke="#6B8E7F" strokeWidth="2" fill="none" opacity="0.5" markerEnd="url(#arrow3)" strokeLinecap="round" />
+                </svg>
               </div>
               <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>Piano Su Misura</h3>
               <p style={{ color: 'var(--text-darker)' }}>
@@ -81,9 +114,11 @@ export default function Servizi() {
                 liste della spesa, consigli pratici e materiale educativo.
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'var(--bg-section-warm)' }}>
-                <Icon name="numberFour" size={52} shape='circle' />
+            <div className="text-center relative">
+              <div className="relative inline-block mb-6">
+                <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: 'var(--bg-section-warm)' }}>
+                  <Icon name="numberFour" size={52} shape='circle' />
+                </div>
               </div>
               <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--brand-title)' }}>Supporto Continuo</h3>
               <p style={{ color: 'var(--text-darker)' }}>
@@ -161,7 +196,7 @@ export default function Servizi() {
                 <div className="space-y-3 mb-6">
                   <div className="flex items-start gap-3">
                     <div className="mt-0.5">
-                      <Icon name="checkCircle" size={20} style={{ color: 'var(--brand-title)' }} />
+                      <Icon name="molecule" size={20} />
                     </div>
                     <div>
                       <h4 className="font-bold text-sm mb-0.5" style={{ color: 'var(--brand-title)' }}>Apporto Completo di Nutrienti</h4>
@@ -172,7 +207,7 @@ export default function Servizi() {
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="mt-0.5">
-                      <Icon name="checkCircle" size={20} style={{ color: 'var(--brand-title)' }} />
+                      <Icon name="drop" size={20} />
                     </div>
                     <div>
                       <h4 className="font-bold text-sm mb-0.5" style={{ color: 'var(--brand-title)' }}>Prevenzione Diabete Gestazionale</h4>
@@ -183,7 +218,7 @@ export default function Servizi() {
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="mt-0.5">
-                      <Icon name="checkCircle" size={20} style={{ color: 'var(--brand-title)' }} />
+                      <Icon name="baby" size={20} />
                     </div>
                     <div>
                       <h4 className="font-bold text-sm mb-0.5" style={{ color: 'var(--brand-title)' }}>Supporto Allattamento</h4>
@@ -194,7 +229,7 @@ export default function Servizi() {
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="mt-0.5">
-                      <Icon name="checkCircle" size={20} style={{ color: 'var(--brand-title)' }} />
+                        <Icon name="lightning" size={20} />
                     </div>
                     <div>
                       <h4 className="font-bold text-sm mb-0.5" style={{ color: 'var(--brand-title)' }}>Recupero Post-Parto</h4>
@@ -234,7 +269,7 @@ export default function Servizi() {
               style={{ borderRadius: '1.5rem', border: '2px solid rgba(37, 105, 67, 0.2)', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', background: '#ffffff' }}>
               <div className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
                 style={{ background: 'linear-gradient(135deg, #F9EED5 0%, #F2E4C1 100%)' }}>
-                <Icon name="baby" size={40} variant="peach" />
+                <Icon name="carrot" size={40} variant="peach" />
               </div>
               <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--brand-title)' }}>Svezzamento e Bambini</h3>
               <p className="text-sm leading-relaxed" style={{ color: '#2d5f3f' }}>
@@ -248,7 +283,7 @@ export default function Servizi() {
               style={{ borderRadius: '1.5rem', border: '2px solid rgba(37, 105, 67, 0.2)', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', background: '#ffffff' }}>
               <div className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
                 style={{ background: 'linear-gradient(135deg, #E0F5EE 0%, #D4F1E8 100%)' }}>
-                <Icon name="activity" size={40} variant="mint" />
+                <Icon name="activity" size={40} variant="lavender" />
               </div>
               <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--brand-title)' }}>Patologie e Allergie</h3>
               <p className="text-sm leading-relaxed" style={{ color: '#2d5f3f' }}>
@@ -263,7 +298,7 @@ export default function Servizi() {
               style={{ borderRadius: '1.5rem', border: '2px solid rgba(37, 105, 67, 0.2)', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', background: '#ffffff' }}>
               <div className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
                 style={{ background: 'linear-gradient(135deg, #e8f0d8 0%, #f5f9ec 100%)' }}>
-                <Icon name="users" size={40} variant="mint" />
+                <Icon name="users" size={40} variant="blue" />
               </div>
               <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--brand-title)' }}>Nutrizione per la Famiglia</h3>
               <p className="text-sm leading-relaxed" style={{ color: '#2d5f3f' }}>
@@ -305,7 +340,7 @@ export default function Servizi() {
               style={{ borderRadius: '1.5rem', border: '2px solid rgba(37, 105, 67, 0.2)', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', background: '#ffffff' }}>
               <div className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
                 style={{ background: 'linear-gradient(135deg, #F9F0F5 0%, #F5E6F0 100%)' }}>
-                <Icon name="flower" size={40} variant="lavender" />
+                <Icon name="lotus" size={40} variant="pink" />
               </div>
               <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--brand-title)' }}>Menopausa</h3>
               <p className="text-sm leading-relaxed" style={{ color: '#2d5f3f' }}>
@@ -318,7 +353,7 @@ export default function Servizi() {
               style={{ borderRadius: '1.5rem', border: '2px solid rgba(37, 105, 67, 0.2)', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', background: '#ffffff' }}>
               <div className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
                 style={{ background: 'linear-gradient(135deg, #E8E0F5 0%, #F0E8F8 100%)' }}>
-                <Icon name="lightning" size={40} variant="lavender" />
+                <Icon name="lightning" size={40} variant="lemon" />
               </div>
               <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--brand-title)' }}>Sport & Performance</h3>
               <p className="text-sm leading-relaxed" style={{ color: '#2d5f3f' }}>

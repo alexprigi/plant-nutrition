@@ -2,6 +2,7 @@
 
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import Icon from '@/components/icons/Icon';
 
 // Categorie ricette
 const categories = [
@@ -106,7 +107,7 @@ export default function Ricette() {
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="inline-block mb-4">
-            <span className="text-5xl">🍽️</span>
+            <Icon name="apple" size={64} animated={true} />
           </div>
           <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
             Ricette Vegane Bilanciate
@@ -179,15 +180,15 @@ export default function Ricette() {
                   {/* Info rapide */}
                   <div className="flex items-center gap-4 mb-4 text-sm" style={{ color: 'var(--text-dark-green)' }}>
                     <div className="flex items-center gap-1">
-                      <span>⏱️</span>
+                      <Icon name="clock" size={16} />
                       <span>{recipe.prepTime}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span>👥</span>
+                      <Icon name="users" size={16} />
                       <span>{recipe.servings} persone</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span>🔥</span>
+                      <Icon name="activity" size={16} />
                       <span>{recipe.calories} kcal</span>
                     </div>
                   </div>
@@ -195,18 +196,18 @@ export default function Ricette() {
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mb-4">
                     {recipe.tags.includes('pregnancy') && (
-                      <span className="text-xs px-2 py-1 rounded-full" style={{ background: '#F4E5C2', color: 'var(--brand-title)' }}>
-                        🤰 Gravidanza
+                      <span className="text-xs px-2 py-1 rounded-full flex items-center gap-1" style={{ background: '#F4E5C2', color: 'var(--brand-title)' }}>
+                        <Icon name="heart" size={12} /> Gravidanza
                       </span>
                     )}
                     {recipe.tags.includes('kids') && (
-                      <span className="text-xs px-2 py-1 rounded-full" style={{ background: '#E6EFCC', color: 'var(--brand-title)' }}>
-                        👶 Bambini
+                      <span className="text-xs px-2 py-1 rounded-full flex items-center gap-1" style={{ background: '#E6EFCC', color: 'var(--brand-title)' }}>
+                        <Icon name="users" size={12} /> Bambini
                       </span>
                     )}
                     {recipe.tags.includes('high-protein') && (
-                      <span className="text-xs px-2 py-1 rounded-full" style={{ background: 'var(--color-main-light)', color: 'var(--text-dark-green)' }}>
-                        💪 Proteico
+                      <span className="text-xs px-2 py-1 rounded-full flex items-center gap-1" style={{ background: 'var(--color-main-light)', color: 'var(--text-dark-green)' }}>
+                        <Icon name="gift" size={12} /> Proteico
                       </span>
                     )}
                   </div>
