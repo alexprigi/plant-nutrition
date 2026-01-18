@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Icon, { IconName } from '@/components/icons/Icon';
@@ -68,8 +69,20 @@ export default function ChiSono() {
               </Button>
             </div>
             <div className="relative">
-              <div className="rounded-full p-8 mx-auto w-80 h-80 flex items-center justify-center" style={{ background: 'var(--color-main)' }}>
-                <Icon name="heart" size={96} />
+              <div className="relative w-80 h-80 mx-auto rounded-full overflow-hidden shadow-2xl" 
+                style={{ 
+                  border: '8px solid var(--color-main)',
+                  boxShadow: '0 20px 60px rgba(0,0,0,0.15)'
+                }}
+              >
+                <Image
+                  src="/images/professional/arianna-portrait.png"
+                  alt="Arianna Ciervo - Nutrizionista Vegana"
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 320px"
+                />
               </div>
             </div>
           </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -8,31 +9,159 @@ import Testimonials from '@/components/Testimonials';
 import Icon from '@/components/icons/Icon';
 
 export default function Home() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  
+  const heroImages = [
+    {
+      src: '/images/hero/nutritionist-hero.png',
+      alt: 'Arianna Ciervo - Nutrizionista Vegana'
+    },
+    {
+      src: '/images/hero/vegan-food-colorful.png',
+      alt: 'Alimentazione Vegana Colorata e Nutriente'
+    },
+    {
+      src: '/images/hero/arianna-consultation.png',
+      alt: 'Consulenza Nutrizionale Personalizzata'
+    },
+    {
+      src: '/images/hero/plant-based-ingredients.png',
+      alt: 'Ingredienti Vegetali Freschi'
+    },
+    {
+      src: '/images/hero/arianna-pregnant.png',
+      alt: 'Nutrizione in Gravidanza'
+    }
+  ];
+
+  // Auto-play slider (si ferma quando hover)
+  useEffect(() => {
+    if (isHovered) return; // Pausa quando il mouse è sopra
+    
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+    }, 5000); // Cambia immagine ogni 5 secondi
+
+    return () => clearInterval(interval);
+  }, [heroImages.length, isHovered]);
+
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length);
+  };
+
   return (
     <div className="min-h-screen relative">
       <ParallaxEffect />
 
-      {/* Hero Section - Full Width */}
-      <section className="relative h-screen overflow-hidden" style={{ background: 'linear-gradient(135deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }}>
+      {/* Hero Section - Full Width con Slider */}
+      <section 
+        className="relative h-screen overflow-hidden" 
+        style={{ background: 'linear-gradient(135deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <div className="absolute inset-0 parallax-hero" id="heroImage">
-          {/* Box per la foto reale della nutrizionista */}
-          <div className="w-full h-full relative" style={{
-            background: 'linear-gradient(135deg, rgba(230, 239, 230, 0.8) 0%, rgba(209, 219, 201, 0.7) 100%)',
-          }}>
-            {/* Immagine hero della nutrizionista */}
-            <img
-              src="/images/nutritionist-hero.png"
-              alt="Arianna Ciervo"
-              className="w-full h-full object-cover"
-            />
+          {/* Slider Container */}
+          <div className="relative w-full h-full">
+            {heroImages.map((image, index) => (
+              <div
+                key={index}
+                className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+                style={{
+                  opacity: currentSlide === index ? 1 : 0,
+                  zIndex: currentSlide === index ? 1 : 0
+                }}
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Overlay gradient per leggibilità testo */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" style={{ zIndex: 2 }}></div>
+        
+        {/* Frecce di Navigazione */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+          style={{ 
+            background: 'rgba(255,255,255,0.9)', 
+            color: 'var(--brand-title)',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+            zIndex: 15,
+            opacity: isHovered ? 1 : 0,
+            pointerEvents: isHovered ? 'auto' : 'none'
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'white')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.9)')}
+          aria-label="Immagine precedente"
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
+
+        <button
+          onClick={nextSlide}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+          style={{ 
+            background: 'rgba(255,255,255,0.9)', 
+            color: 'var(--brand-title)',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+            zIndex: 15,
+            opacity: isHovered ? 1 : 0,
+            pointerEvents: isHovered ? 'auto' : 'none'
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'white')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.9)')}
+          aria-label="Immagine successiva"
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </button>
+        
+        {/* Slider Navigation Dots */}
+        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 flex gap-3 z-20">
+          {heroImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className="transition-all duration-300"
+              style={{
+                width: currentSlide === index ? '40px' : '12px',
+                height: '12px',
+                borderRadius: '6px',
+                background: currentSlide === index ? 'white' : 'rgba(255,255,255,0.5)',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+              }}
+              aria-label={`Vai all'immagine ${index + 1}`}
+            />
+          ))}
+        </div>
 
         {/* Content sovrapposto */}
-        <div className="relative z-10 h-full flex items-center">
+        <div className="relative h-full flex items-center" style={{ zIndex: 10 }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-2xl">
               <h1 className="text-5xl lg:text-7xl font-bold mb-6 text-white" style={{ textShadow: '2px 2px 0 rgba(0,0,0,0.8), -1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8)' }}>
@@ -61,7 +190,7 @@ export default function Home() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2" style={{ zIndex: 20 }}>
           <div className="flex flex-col items-center animate-bounce">
             <span className="text-white text-sm mb-2">Scorri</span>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
@@ -238,37 +367,14 @@ export default function Home() {
 
               <div className="order-1 lg:order-2 relative">
                 <div className="relative">
-                  {/* Box per foto reale dello studio/cucina */}
-                  <div className="image-box-hover w-full h-[500px] rounded-2xl shadow-xl relative overflow-hidden" style={{ background: 'linear-gradient(135deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }}>
-
-                    {/* Placeholder per foto reale - sostituisci con: */}
-                    {/* <img src="/images/studio-kitchen.jpg" alt="Studio con piante" className="w-full h-full object-cover" /> */}
-
-                    {/* Temporaneo: Indicatore posizione foto */}
-                    <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(230, 239, 230, 0.95) 0%, rgba(208, 227, 196, 0.95) 100%)' }}>
-                      <div className="text-center p-8 rounded-2xl" style={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(10px)', boxShadow: '0 8px 32px rgba(0,0,0,0.1)' }}>
-                        <div className="flex gap-4 justify-center mb-4">
-                          <Icon name="leaf" size={48} />
-                          <Icon name="laptop" size={48} />
-                          <Icon name="leaf" size={48} />
-                        </div>
-                        <p className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-title)' }}>Foto Studio/Cucina</p>
-                        <p className="text-lg" style={{ color: 'var(--brand-title)' }}>Con piante e setup professionale</p>
-                        <p className="text-sm mt-2" style={{ color: 'var(--color-main)' }}>Suggerito: 800x600px</p>
-                      </div>
-                    </div>
-
-                    {/* Pattern decorativo di sfondo (visibile solo senza foto) */}
-                    <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0, opacity: 0.08, pointerEvents: 'none' }}>
-                      <defs>
-                        <pattern id="studioPattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-                          <circle cx="30" cy="30" r="15" fill="var(--color-main)" />
-                          <path d="M60,40 Q70,30 60,20 Q50,30 60,40 Z" fill="var(--color-main)" />
-                          <rect x="10" y="60" width="20" height="30" rx="3" fill="var(--color-main-light)" />
-                        </pattern>
-                      </defs>
-                      <rect width="100%" height="100%" fill="url(#studioPattern)" />
-                    </svg>
+                  {/* Foto reale dello studio/cucina */}
+                  <div className="image-box-hover w-full h-[500px] rounded-2xl shadow-xl relative overflow-hidden">
+                    <img 
+                      src="/images/studio-arianna.png" 
+                      alt="Studio professionale di Arianna con piante e setup per consulenze online" 
+                      className="w-full h-full object-cover"
+                      style={{ objectPosition: '70% center' }}
+                    />
                   </div>
 
                   {/* Floating stats card con animazione */}
