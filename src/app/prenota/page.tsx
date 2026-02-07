@@ -121,10 +121,32 @@ const PrenotaPage = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [currentMonthDate, setCurrentMonthDate] = useState(new Date());
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [eligibilityError, setEligibilityError] = useState<string>('');
 
   const activeService = useMemo(() =>
     CONSULTATION_TYPES.find(t => t.value === selectedService),
     [selectedService]);
+
+  // Memoize available time slots based on selected date
+  const availableTimeSlots = useMemo(() => {
+    if (!selectedDate) return TIME_SLOTS;
+    
+    const isToday = selectedDate === new Date().toISOString().split('T')[0];
+    if (!isToday) return TIME_SLOTS;
+    
+    const now = new Date();
+    const fourHoursFromNow = new Date(now.getTime() + 4 * 60 * 60 * 1000);
+    
+    return TIME_SLOTS.map(slot => {
+      const [hours, minutes] = slot.split(':').map(Number);
+      const slotTime = new Date();
+      slotTime.setHours(hours, minutes, 0, 0);
+      return {
+        time: slot,
+        available: slotTime >= fourHoursFromNow
+      };
+    });
+  }, [selectedDate]);
 
   // --- DEV HELPER ---
   const fillRandomData = () => {
@@ -159,60 +181,48 @@ const PrenotaPage = () => {
     }
     // 2 -> 3
     else if (currentStep === 2) {
-      const newErrors: Record<string, string> = {};
-
-      // Validate required fields
-      if (!formData.name) newErrors.name = 'Il nome è obbligatorio';
-      if (!formData.surname) newErrors.surname = 'Il cognome è obbligatorio';
-      if (!formData.email) newErrors.email = 'L\'email è obbligatoria';
-      if (!phoneNumber) newErrors.phone = 'Il telefono è obbligatorio';
-      if (!formData.address) newErrors.address = 'L\'indirizzo è obbligatorio';
-      if (!formData.civicNumber) newErrors.civicNumber = 'Il numero civico è obbligatorio';
-      if (!formData.city) newErrors.city = 'La città è obbligatoria';
-      if (!formData.zipCode) newErrors.zipCode = 'Il codice postale è obbligatorio';
-      if (!formData.fiscalCode) newErrors.fiscalCode = 'Il codice fiscale è obbligatorio';
-
-      // Email validation
-      if (formData.email) {
-        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(formData.email)) {
-          newErrors.email = 'Inserisci un indirizzo email valido';
-        }
-      }
-
-      // Phone validation (almeno 6 cifre per flessibilità internazionale)
-      if (phoneNumber) {
-        const phoneDigits = phoneNumber.replace(/\D/g, '');
-        if (phoneDigits.length < 6) {
-          newErrors.phone = 'Il numero deve contenere almeno 6 cifre';
-        }
-      }
-
-      // ZIP code validation (almeno 4 caratteri)
-      if (formData.zipCode && formData.zipCode.length < 4) {
-        newErrors.zipCode = 'Il codice postale deve contenere almeno 4 caratteri';
-      }
-
-      // Fiscal Code validation (almeno 8 caratteri alfanumerici)
-      if (formData.fiscalCode && formData.fiscalCode.length < 8) {
-        newErrors.fiscalCode = 'Il codice fiscale deve contenere almeno 8 caratteri';
-      }
-
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        return;
-      }
-
-      setErrors({});
-
-      if (selectedService === 'free-consultation') {
+      setIsProcessing(true);
+      
+      // Check eligibility for free consultation BEFORE validation
+      if (selectedService === 'free-consultation' && formData.email) {
         const check = checkEligibility(formData.email);
         if (!check.eligible) {
-          alert("⚠️ Risulta che hai già usufruito del colloquio gratuito.\n\nPer proseguire il tuo percorso, ti invitiamo a prenotare una Visita di Controllo.");
+          setEligibilityError('Risulta che hai già usufruito del colloquio gratuito. Per proseguire il tuo percorso, ti invitiamo a prenotare una Visita di Controllo.');
+          setIsProcessing(false);
+          setStep(1); // Torna allo Step 1 per mostrare l'errore
           return;
         }
       }
-      setStep(3);
+      
+      try {
+        // Call backend validation API
+        const response = await fetch('/api/validate-booking', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        });
+
+        const result = await response.json();
+
+        if (!result.valid) {
+          setErrors(result.errors || {});
+          setIsProcessing(false);
+          return;
+        }
+
+        // Update form data with sanitized values from backend
+        if (result.sanitized) {
+          setFormData(prev => ({ ...prev, ...result.sanitized }));
+        }
+
+        setErrors({});
+        setIsProcessing(false);
+        setStep(3);
+      } catch (error) {
+        console.error('Validation error:', error);
+        setErrors({ general: 'Errore durante la validazione. Riprova.' });
+        setIsProcessing(false);
+      }
     }
     // 3 -> 4
     else if (currentStep === 3) {
@@ -227,6 +237,12 @@ const PrenotaPage = () => {
   const handleFinalBooking = () => {
     if (!selectedDate || !selectedTime) return;
     setIsProcessing(true);
+
+    // Sanitize notes (trim whitespace, remove HTML tags)
+    const sanitizedNotes = formData.notes
+      .trim()
+      .replace(/<[^>]*>/g, '')
+      .substring(0, 500);
 
     // Status Logic
     let finalStatus: AppointmentStatus = 'pending';
@@ -251,7 +267,7 @@ const PrenotaPage = () => {
       commercialType: selectedService as any,
       paymentMethod: activeService?.price! > 0 ? paymentMethod : 'none',
 
-      selectedDate, selectedTime, notes: formData.notes,
+      selectedDate, selectedTime, notes: sanitizedNotes,
 
       status: finalStatus,
       isPaid: finalIsPaid
@@ -362,11 +378,26 @@ const PrenotaPage = () => {
             <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">Come posso aiutarti?</h1>
             <p className="text-center text-gray-500 mb-8">Scegli il percorso più adatto alle tue esigenze.</p>
 
+            {eligibilityError && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
+                <div className="flex items-start gap-3">
+                  <Icon name="alert" size={20} className="text-red-600 mt-0.5" />
+                  <div>
+                    <h4 className="font-bold text-red-800 mb-1">Colloquio già utilizzato</h4>
+                    <p className="text-sm text-red-700">{eligibilityError}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {CONSULTATION_TYPES.map(type => (
                 <button
                   key={type.value}
-                  onClick={() => setSelectedService(type.value)}
+                  onClick={() => {
+                    setSelectedService(type.value);
+                    setEligibilityError('');
+                  }}
                   className={`
                     p-6 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col group
                     ${type.value === 'first-visit' ? 'md:col-span-2' : ''}
@@ -388,7 +419,7 @@ const PrenotaPage = () => {
                   </div>
                   <div className="mt-auto flex justify-between items-end w-full pt-3 border-t border-black/5">
                     <span className="text-xs font-bold text-gray-500 bg-white/50 px-2 py-1 rounded flex items-center gap-1">
-                      <Icon name="refreshCcw" size={12} /> {type.duration}
+                      <Icon name="clock" size={12} /> {type.duration}
                     </span>
                     <span className="text-xl font-bold text-gray-900">{type.labelPrice}</span>
                   </div>
@@ -396,7 +427,7 @@ const PrenotaPage = () => {
               ))}
             </div>
             <div className="mt-8 text-center pb-20">
-              <Button onClick={nextStep} disabled={!selectedService} className={`rounded-full px-12 py-3 ${!selectedService ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] hover:shadow-xl'} text-white`}>
+              <Button onClick={nextStep} disabled={!selectedService || !!eligibilityError} className={`rounded-full px-12 py-3 ${!selectedService || !!eligibilityError ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] hover:shadow-xl'} text-white`}>
                 Continua
               </Button>
             </div>
@@ -508,18 +539,31 @@ const PrenotaPage = () => {
                 <button onClick={() => setStep(1)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
                 <Button
                   onClick={nextStep}
-                  className="bg-[var(--brand-title)] text-white rounded-full px-8 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                  disabled={isProcessing}
+                  className={`rounded-full px-8 transition-all ${isProcessing ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'}`}
                 >
-                  Continua
+                  {isProcessing ? 'Validazione...' : 'Continua'}
                 </Button>
               </div>
+
+              {errors.general && (
+                <p className="text-red-500 text-sm text-center mt-4">{errors.general}</p>
+              )}
             </div>
           </div>
         )}
 
         {/* --- STEP 3: CONFIRMATION / PAYMENT (NO NOTES) --- */}
         {currentStep === 3 && (
-          <div className="animate-fade-in max-w-xl mx-auto w-full pb-20">
+          <div className="animate-fade-in max-w-xl mx-auto w-full pb-20 relative">
+            {isProcessing && (
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-3xl">
+                <div className="text-center">
+                  <div className="w-16 h-16 border-4 border-[var(--brand-title)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                  <p className="font-bold text-gray-700">Elaborazione in corso...</p>
+                </div>
+              </div>
+            )}
             <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
 
               {activeService?.price! > 0 ? (
@@ -586,7 +630,7 @@ const PrenotaPage = () => {
                         <span className="text-xs text-gray-500">L'ordine sarà confermato dopo la verifica</span>
                       </div>
                     </div>
-                    <Icon name="refreshCcw" size={20} className="text-gray-400" />
+                    <Icon name="clock" size={20} className="text-gray-400" />
                   </div>
                 </div>
               ) : (
@@ -612,7 +656,7 @@ const PrenotaPage = () => {
 
               {activeService?.price! > 0 && (
                 <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
-                  <Icon name="lock" size={12} /> Pagamenti crittografati SSL
+                  <Icon name="shield" size={12} /> Pagamenti crittografati SSL
                 </p>
               )}
             </div>
@@ -684,29 +728,24 @@ const PrenotaPage = () => {
               <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex flex-col">
                 <h3 className="font-bold text-gray-900 mb-4 text-center">Orari disponibili</h3>
                 <div className="grid grid-cols-3 gap-3 mb-auto max-h-80 overflow-y-auto pr-2 custom-scrollbar">
-                  {TIME_SLOTS.map(t => {
-                    const isToday = selectedDate === new Date().toISOString().split('T')[0];
-                    const now = new Date();
-                    const [hours, minutes] = t.split(':').map(Number);
-                    const slotTime = new Date();
-                    slotTime.setHours(hours, minutes, 0, 0);
-                    const fourHoursFromNow = new Date(now.getTime() + 4 * 60 * 60 * 1000);
-                    const isTooSoon = isToday && slotTime < fourHoursFromNow;
+                  {availableTimeSlots.map(slot => {
+                    const isAvailable = typeof slot === 'string' ? true : slot.available;
+                    const timeValue = typeof slot === 'string' ? slot : slot.time;
                     
                     return (
                       <button 
-                        key={t} 
-                        onClick={() => !isTooSoon && setSelectedTime(t)} 
-                        disabled={isTooSoon}
+                        key={timeValue} 
+                        onClick={() => isAvailable && setSelectedTime(timeValue)} 
+                        disabled={!isAvailable}
                         className={`
                           py-2 rounded-lg text-sm border transition-all font-medium
-                          ${isTooSoon
+                          ${!isAvailable
                             ? 'text-gray-300 border-gray-100 cursor-not-allowed bg-gray-50'
-                            : selectedTime === t
+                            : selectedTime === timeValue
                             ? 'bg-[var(--brand-title)] text-white border-[var(--brand-title)] shadow-md'
                             : 'text-gray-600 border-gray-200 hover:border-[var(--brand-title)] hover:text-[var(--brand-title)]'}
                         `}>
-                        {t}
+                        {timeValue}
                       </button>
                     );
                   })}
@@ -714,14 +753,20 @@ const PrenotaPage = () => {
 
                 {/* NOTE FIELD IN STEP 4 */}
                 <div className="mt-6 pt-4 border-t border-gray-100">
-                  <label className="text-xs font-bold text-gray-700 mb-2 block">
-                    Messaggio per Arianna (opzionale)
-                  </label>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-xs font-bold text-gray-700">
+                      Messaggio per Arianna (opzionale)
+                    </label>
+                    <span className={`text-xs ${formData.notes.length > 500 ? 'text-red-500 font-bold' : 'text-gray-400'}`}>
+                      {formData.notes.length}/500
+                    </span>
+                  </div>
                   <textarea
                     rows={2}
                     value={formData.notes}
                     onChange={e => setFormData({ ...formData, notes: e.target.value })}
-                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:border-[var(--brand-title)] resize-none"
+                    maxLength={500}
+                    className={`w-full p-3 bg-gray-50 border rounded-xl text-sm outline-none focus:border-[var(--brand-title)] resize-none ${formData.notes.length > 500 ? 'border-red-500' : 'border-gray-200'}`}
                     placeholder="Intolleranze, ritardi, domande..."
                   />
                 </div>
