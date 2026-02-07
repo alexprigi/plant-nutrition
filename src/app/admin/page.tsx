@@ -4,336 +4,248 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import { 
-  Booking, 
-  User, 
-  authenticateUser, 
-  getBookings, 
-  updateBookingStatus 
+import Icon from '@/components/icons/Icon';
+import {
+  authenticateUser,
+  User,
+  getAdminAppointments,
+  updateAppointmentStatus,
+  markSubscriptionAsPaid,
+  AdminAppointmentView
 } from '@/lib/bookingService';
 
 const AdminPage = () => {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [appointments, setAppointments] = useState<AdminAppointmentView[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Auth States
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authenticatedUser, setAuthenticatedUser] = useState<User | null>(null);
-  const [isClient, setIsClient] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
-    setIsClient(true);
+    // Check session on load (Optional enhancement)
+    const savedUser = sessionStorage.getItem('admin_user');
+    if (savedUser) {
+      setCurrentUser(JSON.parse(savedUser));
+      setIsAuthenticated(true);
+      loadData();
+    } else {
+      setIsLoading(false);
+    }
   }, []);
-
-  // Non renderizzare nulla fino a quando non siamo lato client
-  if (!isClient) {
-    return null;
-  }
 
   const handleLogin = () => {
     const user = authenticateUser(username, password);
     if (user) {
       setIsAuthenticated(true);
-      setAuthenticatedUser(user);
-      loadBookings();
+      setCurrentUser(user);
+      sessionStorage.setItem('admin_user', JSON.stringify(user));
+      loadData();
     } else {
-      alert('Nome utente o password non corretti');
+      alert('Credenziali non valide');
     }
   };
 
-  const loadBookings = async () => {
+  const handleLogout = () => {
+    sessionStorage.removeItem('admin_user');
+    setIsAuthenticated(false);
+    setCurrentUser(null);
+  };
+
+  const loadData = () => {
     setIsLoading(true);
-    try {
-      const bookingsData = getBookings();
-      setBookings(bookingsData);
-    } catch (error) {
-      console.error('Errore nel caricamento delle prenotazioni:', error);
-    } finally {
+    // Piccolo timeout per simulare caricamento ed evitare flash
+    setTimeout(() => {
+      const data = getAdminAppointments();
+      setAppointments(data);
       setIsLoading(false);
+    }, 300);
+  };
+
+  // --- ACTIONS ---
+
+  const handleStatusChange = (id: string, newStatus: any) => {
+    if (!confirm(`Vuoi cambiare lo stato in: ${newStatus}?`)) return;
+    const ok = updateAppointmentStatus(id, newStatus);
+    if (ok) loadData();
+  };
+
+  const handleMarkAsPaid = (id: string) => {
+    if (!confirm('Confermi che il bonifico/pagamento è stato ricevuto?')) return;
+    const ok = markSubscriptionAsPaid(id);
+    if (ok) {
+      alert('Pagamento registrato e appuntamento confermato!');
+      loadData();
     }
   };
 
-  // Formatta la data solo lato client per evitare hydration error
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('it-IT', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
+  // --- UI HELPERS ---
 
-  const formatDateTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString('it-IT');
-  };
+  const formatDate = (d: string) => new Date(d).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
 
-  const getStatusColor = (status: string) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'confirmed': return 'bg-green-100 text-green-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'confirmed': return <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-md">CONFERMATO</span>;
+      case 'pending': return <span className="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-bold rounded-md">IN ATTESA</span>;
+      case 'cancelled': return <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-md">CANCELLATO</span>;
+      case 'completed': return <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-md">SVOLTO</span>;
+      default: return status;
     }
   };
 
-  const getConsultationTypeLabel = (type: string) => {
-    const types = {
-      'prima-visita': 'Prima Visita (60 min) - €80',
-      'controllo': 'Controllo (30 min) - €50',
-      'consulenza-online': 'Consulenza Online (45 min) - €60'
-    };
-    return types[type as keyof typeof types] || type;
-  };
-
-  const handleConfirmBooking = async (bookingId: string) => {
-    if (confirm('Sei sicura di voler confermare questa prenotazione?')) {
-      const success = updateBookingStatus(bookingId, 'confirmed');
-      if (success) {
-        loadBookings(); // Ricarica la lista
-        alert('Prenotazione confermata con successo!');
-      } else {
-        alert('Errore nella conferma della prenotazione');
-      }
-    }
-  };
-
-  const handleCancelBooking = async (bookingId: string) => {
-    if (confirm('Sei sicura di voler annullare questa prenotazione?')) {
-      const success = updateBookingStatus(bookingId, 'cancelled');
-      if (success) {
-        loadBookings(); // Ricarica la lista
-        alert('Prenotazione annullata');
-      } else {
-        alert('Errore nell\'annullamento della prenotazione');
-      }
-    }
-  };
-
+  // --- LOGIN VIEW ---
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              Accesso Amministratore
-            </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
-              Pura Essenza Vegetale - Gestione Prenotazioni
-            </p>
-            <p className="mt-1 text-center text-xs text-gray-500">
-              Demo: utente "arianna", password "arianna2025"
-            </p>
-          </div>
-          <div className="mt-8 space-y-6">
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Nome Utente
-              </label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                placeholder="Inserisci il nome utente"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                placeholder="Inserisci la password"
-              />
-            </div>
-            <div>
-              <Button
-                onClick={handleLogin}
-                variant="sage"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white"
-              >
-                Accedi
-              </Button>
-            </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
+          <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">Area Riservata</h1>
+          <div className="space-y-4">
+            <input
+              type="text" placeholder="Username"
+              value={username} onChange={e => setUsername(e.target.value)}
+              className="w-full p-3 border rounded-xl"
+            />
+            <input
+              type="password" placeholder="Password"
+              value={password} onChange={e => setPassword(e.target.value)}
+              className="w-full p-3 border rounded-xl"
+            />
+            <Button onClick={handleLogin} className="w-full bg-[var(--brand-title)] text-white">Accedi</Button>
           </div>
         </div>
       </div>
     );
   }
 
+  // --- DASHBOARD VIEW ---
   return (
-    <div className="min-h-screen bg-gray-50 py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Gestione Prenotazioni
-          </h1>
-          <p className="text-xl text-gray-600">
-            Amministrazione Pura Essenza Vegetale
-          </p>
-          {authenticatedUser && (
-            <p className="text-sm text-gray-500 mt-2">
-              Benvenuta, {authenticatedUser.name}
-            </p>
-          )}
-          <button
-            onClick={() => {
-              setIsAuthenticated(false);
-              setAuthenticatedUser(null);
-              setUsername('');
-              setPassword('');
-            }}
-            className="mt-4 text-sm text-gray-500 hover:text-gray-700"
-          >
-            Esci
-          </button>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Agenda Appuntamenti</h1>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-500">Ciao, {currentUser?.name}</span>
+            <button onClick={handleLogout} className="text-sm text-red-500 font-medium hover:underline">Esci</button>
+          </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-yellow-600">
-              {bookings.filter(b => b.status === 'pending').length}
+        {/* STATS RAPIDE */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="text-gray-500 text-sm font-bold uppercase">Prossimi Appuntamenti</div>
+            <div className="text-3xl font-bold text-gray-900 mt-2">
+              {appointments.filter(a => a.status === 'confirmed' || a.status === 'pending').length}
             </div>
-            <div className="text-sm text-gray-600">In Attesa</div>
-          </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-green-600">
-              {bookings.filter(b => b.status === 'confirmed').length}
+          </div>
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="text-gray-500 text-sm font-bold uppercase text-yellow-600">Da Confermare (Pending)</div>
+            <div className="text-3xl font-bold text-yellow-600 mt-2">
+              {appointments.filter(a => a.status === 'pending').length}
             </div>
-            <div className="text-sm text-gray-600">Confermate</div>
-          </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-blue-600">
-              {bookings.length}
+          </div>
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="text-gray-500 text-sm font-bold uppercase text-red-600">Non Pagati</div>
+            <div className="text-3xl font-bold text-red-600 mt-2">
+              {appointments.filter(a => !a.isPaid && a.price > 0 && a.status !== 'cancelled').length}
             </div>
-            <div className="text-sm text-gray-600">Totale</div>
-          </Card>
+          </div>
         </div>
 
-        {/* Bookings List */}
-        <div className="space-y-6">
+        {/* LISTA APPUNTAMENTI */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-bold text-gray-800">Elenco Completo</h2>
+            <Button onClick={loadData} variant="outline" size="sm" className="text-xs">Aggiorna Dati</Button>
+          </div>
+
           {isLoading ? (
-            <div className="text-center py-12">
-              <div className="text-lg text-gray-600">Caricamento prenotazioni...</div>
-            </div>
-          ) : bookings.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-lg text-gray-600">Nessuna prenotazione trovata</div>
-            </div>
+            <div className="text-center py-10 text-gray-500">Caricamento in corso...</div>
+          ) : appointments.length === 0 ? (
+            <div className="bg-white p-10 rounded-2xl text-center text-gray-400">Nessun appuntamento trovato.</div>
           ) : (
-            bookings.map((booking) => (
-              <Card key={booking.id} className="p-6">
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-4 mb-4">
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        {booking.name} {booking.surname}
-                      </h3>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.status)}`}>
-                        {booking.status === 'pending' ? 'In Attesa' :
-                         booking.status === 'confirmed' ? 'Confermata' : 'Annullata'}
-                      </span>
+            appointments.map(appt => (
+              <Card key={appt.id} className="p-6 transition-all hover:shadow-md border-l-4 border-l-[var(--brand-title)]">
+                <div className="flex flex-col md:flex-row justify-between gap-6">
+
+                  {/* DATA E ORA */}
+                  <div className="flex flex-col items-center justify-center bg-gray-50 p-4 rounded-xl min-w-[100px]">
+                    <span className="text-sm font-bold text-gray-500 uppercase">{formatDate(appt.date).split(' ')[0]}</span>
+                    <span className="text-2xl font-bold text-gray-900">{appt.time}</span>
+                    <span className="text-xs text-gray-400">{formatDate(appt.date)}</span>
+                  </div>
+
+                  {/* INFO CLIENTE E SERVIZIO */}
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-bold text-gray-900">{appt.clientName}</h3>
+                      {getStatusBadge(appt.status)}
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-                      <div>
-                        <strong>Email:</strong> {booking.email}
-                      </div>
-                      <div>
-                        <strong>Telefono:</strong> {booking.phone}
-                      </div>
-                      <div>
-                        <strong>Data:</strong> {formatDate(booking.selectedDate)}
-                      </div>
-                      <div>
-                        <strong>Orario:</strong> {booking.selectedTime}
-                      </div>
-                      <div className="md:col-span-2">
-                        <strong>Tipo:</strong> {getConsultationTypeLabel(booking.consultationType)}
-                      </div>
-                      {booking.notes && (
-                        <div className="md:col-span-2">
-                          <strong>Note:</strong> {booking.notes}
-                        </div>
+
+                    <p className="text-gray-600 flex items-center gap-2">
+                      <span className="font-medium text-[var(--brand-title)]">{appt.serviceName}</span>
+                      {appt.price > 0 && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${appt.isPaid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                          {appt.isPaid ? 'PAGATO' : `DA PAGARE (${appt.price}€)`}
+                        </span>
                       )}
-                      <div className="md:col-span-2 text-xs text-gray-500">
-                        <strong>Richiesta:</strong> {formatDateTime(booking.timestamp)}
+                    </p>
+
+                    <div className="text-sm text-gray-500 grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                      <div className="flex items-center gap-1"><Icon name="mail" size={14} /> {appt.clientEmail}</div>
+                      <div className="flex items-center gap-1"><Icon name="phone" size={14} /> {appt.clientPhone}</div>
+                    </div>
+
+                    {appt.notes && (
+                      <div className="bg-yellow-50 p-2 rounded-lg text-sm text-yellow-800 mt-2">
+                        <strong>Note cliente:</strong> {appt.notes}
                       </div>
+                    )}
+                  </div>
+
+                  {/* AZIONI */}
+                  <div className="flex flex-col gap-2 justify-center border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6 min-w-[160px]">
+
+                    {/* Conferma Pagamento (Solo se pending e non pagato) */}
+                    {!appt.isPaid && appt.price > 0 && appt.status !== 'cancelled' && (
+                      <Button
+                        size="sm"
+                        className="bg-green-600 text-white w-full text-xs"
+                        onClick={() => handleMarkAsPaid(appt.id)}
+                      >
+                        Segna Pagato
+                      </Button>
+                    )}
+
+                    {/* Azioni di stato */}
+                    {appt.status === 'pending' && (
+                      <Button size="sm" onClick={() => handleStatusChange(appt.id, 'confirmed')} className="w-full text-xs bg-[var(--brand-title)] text-white">Conferma Ora</Button>
+                    )}
+
+                    {appt.status !== 'cancelled' && (
+                      <button
+                        onClick={() => handleStatusChange(appt.id, 'cancelled')}
+                        className="text-red-500 text-xs hover:underline mt-1"
+                      >
+                        Annulla Appuntamento
+                      </button>
+                    )}
+
+                    <div className="flex gap-2 justify-center mt-2">
+                      <a href={`tel:${appt.clientPhone}`} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 text-gray-600"><Icon name="phone" size={16} /></a>
+                      <a href={`mailto:${appt.clientEmail}`} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 text-gray-600"><Icon name="mail" size={16} /></a>
                     </div>
                   </div>
-                  
-                  <div className="mt-4 lg:mt-0 lg:ml-6 flex flex-col sm:flex-row lg:flex-col gap-2">
-                    {booking.status === 'pending' && (
-                      <>
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => handleConfirmBooking(booking.id)}
-                        >
-                          Conferma
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleCancelBooking(booking.id)}
-                        >
-                          Rifiuta
-                        </Button>
-                      </>
-                    )}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => { window.open(`mailto:${booking.email}?subject=Re: Prenotazione del ${formatDate(booking.selectedDate)}`); }}
-                    >
-                      Email
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => { window.open(`tel:${booking.phone}`); }}
-                    >
-                      Chiama
-                    </Button>
-                  </div>
+
                 </div>
               </Card>
             ))
           )}
-        </div>
-
-        {/* Refresh Button */}
-        <div className="text-center mt-8">
-          <Button
-            onClick={loadBookings}
-            variant="outline"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Caricamento...' : 'Aggiorna'}
-          </Button>
         </div>
       </div>
     </div>
   );
 };
 
-// Disabilita il Server-Side Rendering per questa pagina per evitare hydration errors
-export default dynamic(() => Promise.resolve(AdminPage), {
-  ssr: false,
-  loading: () => (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-lg text-gray-600">Caricamento...</div>
-    </div>
-  )
-});
+export default dynamic(() => Promise.resolve(AdminPage), { ssr: false });

@@ -1,157 +1,365 @@
-// Servizio per gestire le prenotazioni e utenti con localStorage
-// In produzione sostituire con chiamate API a database reale
+// src/lib/bookingService.ts
 
-export interface Booking {
+import { COUNTRIES, COUNTRY_PREFIXES } from "./constants";
+
+// --- 1. CORE TYPES & ENUMS ---
+
+export type PaymentMethod = "stripe" | "paypal" | "bank_transfer" | "none";
+
+export type SubscriptionType =
+  | "free-consultation"
+  | "single-session"
+  | "bundle-3-months"
+  | "bundle-6-months";
+
+export type AppointmentType = "free-consultation" | "first-visit" | "follow-up";
+
+// NOME CORRETTO: AppointmentStatus
+export type AppointmentStatus =
+  | "pending" // In attesa di conferma
+  | "confirmed" // Confermato a calendario
+  | "cancelled" // Cancellato
+  | "completed"; // Eseguito
+
+// --- 2. DATABASE ENTITIES ---
+
+export interface BaseEntity {
   id: string;
+  createdAt: string;
+  updatedAt: string;
+  isDeleted: boolean;
+}
+
+export interface Client extends BaseEntity {
+  email: string;
+  name: string;
+  surname: string;
+  phone: string;
+  address: string;
+  civicNumber: string;
+  city: string;
+  zipCode: string;
+  country: string;
+  fiscalCode: string;
+  role: "guest" | "registered";
+}
+
+export interface Subscription extends BaseEntity {
+  clientId: string;
+  type: SubscriptionType;
+  price: number;
+  isPaid: boolean;
+  paymentMethod: PaymentMethod;
+  totalSessions: number;
+  usedSessions: number;
+  status: "active" | "exhausted" | "cancelled";
+}
+
+export interface Appointment extends BaseEntity {
+  subscriptionId: string;
+  clientId: string;
+  type: AppointmentType;
+  date: string;
+  time: string;
+  status: AppointmentStatus; // Usa AppointmentStatus
+  notes: string;
+}
+
+export interface User extends BaseEntity {
+  username: string;
+  password: string;
+  name: string;
+  role: "admin";
+}
+
+export interface AdminAppointmentView {
+  id: string;
+  date: string;
+  time: string;
+  status: AppointmentStatus; // Usa AppointmentStatus
+  notes: string;
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  serviceName: string;
+  price: number;
+  isPaid: boolean;
+  paymentMethod: string;
+}
+
+// --- 3. STORAGE KEYS ---
+const KEY_CLIENTS = "plant-nutrition-clients";
+const KEY_SUBSCRIPTIONS = "plant-nutrition-subs";
+const KEY_APPOINTMENTS = "plant-nutrition-appts";
+const KEY_USERS = "plant-nutrition-users";
+
+// --- 4. HELPERS ---
+const getLs = <T>(key: string): T[] => {
+  if (typeof window === "undefined") return [];
+  const item = localStorage.getItem(key);
+  return item ? JSON.parse(item) : [];
+};
+
+const setLs = <T>(key: string, data: T[]) => {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(key, JSON.stringify(data));
+};
+
+const now = () => new Date().toISOString();
+
+const initializeData = () => {
+  if (typeof window === "undefined") return;
+  if (!localStorage.getItem(KEY_USERS)) {
+    const admin: User = {
+      id: "admin_1",
+      createdAt: now(),
+      updatedAt: now(),
+      isDeleted: false,
+      username: "arianna",
+      password: "arianna2025",
+      name: "Arianna Ciervo",
+      role: "admin",
+    };
+    setLs(KEY_USERS, [admin]);
+  }
+};
+
+export const getSubscriptionLabel = (type: SubscriptionType): string => {
+  switch (type) {
+    case "free-consultation":
+      return "Colloquio Gratuito";
+    case "single-session":
+      return "Visita Singola";
+    case "bundle-3-months":
+      return "Percorso Nutrizionale 3 Mesi";
+    case "bundle-6-months":
+      return "Percorso Nutrizionale 6 Mesi VIP";
+    default:
+      return "Servizio";
+  }
+};
+
+// --- 5. CREATE FULL BOOKING ---
+
+export interface CreateBookingDTO {
   name: string;
   surname: string;
   email: string;
   phone: string;
-  consultationType: string;
+  address: string;
+  civicNumber: string;
+  city: string;
+  zipCode: string;
+  country: string;
+  fiscalCode: string;
+  commercialType:
+    | "free-consultation"
+    | "follow-up"
+    | "first-visit"
+    | "plan-3-months"
+    | "plan-6-months";
+  paymentMethod: PaymentMethod;
   selectedDate: string;
   selectedTime: string;
   notes: string;
-  status: 'pending' | 'confirmed' | 'cancelled';
-  timestamp: string;
+  isPaid: boolean;
+  status: AppointmentStatus; // Usa AppointmentStatus
 }
 
-export interface User {
-  username: string;
-  password: string;
-  name: string;
-  role: 'admin';
-}
+export const createFullBooking = (dto: CreateBookingDTO) => {
+  initializeData();
+  const clients = getLs<Client>(KEY_CLIENTS);
+  const subs = getLs<Subscription>(KEY_SUBSCRIPTIONS);
+  const appts = getLs<Appointment>(KEY_APPOINTMENTS);
 
-const BOOKINGS_KEY = 'plant-nutrition-bookings';
-const USERS_KEY = 'plant-nutrition-users';
-
-// Inizializza i dati se non esistono
-const initializeData = () => {
-  // Inizializza utenti
-  if (!localStorage.getItem(USERS_KEY)) {
-    const defaultUsers: User[] = [
-      {
-        username: 'arianna',
-        password: 'arianna2025',
-        name: 'Dr. Arianna Ciervo',
-        role: 'admin'
-      }
-    ];
-    localStorage.setItem(USERS_KEY, JSON.stringify(defaultUsers));
+  // A. CLIENT
+  let client = clients.find(
+    (c) => c.email.toLowerCase() === dto.email.toLowerCase() && !c.isDeleted,
+  );
+  if (client) {
+    client.name = dto.name;
+    client.surname = dto.surname;
+    client.phone = dto.phone;
+    client.address = dto.address;
+    client.civicNumber = dto.civicNumber;
+    client.city = dto.city;
+    client.zipCode = dto.zipCode;
+    client.country = dto.country;
+    client.fiscalCode = dto.fiscalCode;
+    client.updatedAt = now();
+  } else {
+    client = {
+      id: `cli_${Date.now()}`,
+      createdAt: now(),
+      updatedAt: now(),
+      isDeleted: false,
+      email: dto.email,
+      role: "guest",
+      name: dto.name,
+      surname: dto.surname,
+      phone: dto.phone,
+      address: dto.address,
+      civicNumber: dto.civicNumber,
+      city: dto.city,
+      zipCode: dto.zipCode,
+      country: dto.country,
+      fiscalCode: dto.fiscalCode,
+    };
+    clients.push(client);
   }
 
-  // Inizializza prenotazioni di esempio
-  if (!localStorage.getItem(BOOKINGS_KEY)) {
-    const defaultBookings: Booking[] = [
-      {
-        id: 'booking_1699123456789',
-        name: 'Maria',
-        surname: 'Rossi',
-        email: 'maria.rossi@email.com',
-        phone: '+39 333 123 4567',
-        consultationType: 'prima-visita',
-        selectedDate: '2025-11-15',
-        selectedTime: '10:00',
-        notes: 'Interessata alla dieta vegana per problemi digestivi',
-        status: 'pending',
-        timestamp: '2025-11-09T10:30:00Z'
-      },
-      {
-        id: 'booking_1699123456790',
-        name: 'Luca',
-        surname: 'Bianchi',
-        email: 'luca.bianchi@email.com',
-        phone: '+39 334 567 8901',
-        consultationType: 'controllo',
-        selectedDate: '2025-11-16',
-        selectedTime: '14:30',
-        notes: '',
-        status: 'confirmed',
-        timestamp: '2025-11-09T11:15:00Z'
-      }
-    ];
-    localStorage.setItem(BOOKINGS_KEY, JSON.stringify(defaultBookings));
+  // B. SUBSCRIPTION
+  let subType: SubscriptionType = "single-session";
+  let apptType: AppointmentType = "first-visit";
+  let totalSessions = 1;
+  let price = 0;
+
+  switch (dto.commercialType) {
+    case "free-consultation":
+      subType = "free-consultation";
+      apptType = "free-consultation";
+      price = 0;
+      break;
+    case "follow-up":
+      subType = "single-session";
+      apptType = "follow-up";
+      price = 50;
+      break;
+    case "first-visit":
+      subType = "single-session";
+      apptType = "first-visit";
+      price = 85;
+      break;
+    case "plan-3-months":
+      subType = "bundle-3-months";
+      apptType = "first-visit";
+      price = 237;
+      totalSessions = 3;
+      break;
+    case "plan-6-months":
+      subType = "bundle-6-months";
+      apptType = "first-visit";
+      price = 450;
+      totalSessions = 6;
+      break;
   }
-};
 
-// Gestione utenti
-export const authenticateUser = (username: string, password: string): User | null => {
-  initializeData();
-  const users: User[] = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-  return users.find(user => user.username === username && user.password === password) || null;
-};
-
-export const getUsers = (): User[] => {
-  initializeData();
-  return JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-};
-
-export const createUser = (user: User): boolean => {
-  try {
-    const users = getUsers();
-    if (users.find(u => u.username === user.username)) {
-      return false; // Utente già esistente
-    }
-    users.push(user);
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    return true;
-  } catch (error) {
-    console.error('Errore nella creazione utente:', error);
-    return false;
-  }
-};
-
-// Gestione prenotazioni
-export const getBookings = (): Booking[] => {
-  initializeData();
-  return JSON.parse(localStorage.getItem(BOOKINGS_KEY) || '[]');
-};
-
-export const createBooking = (booking: Omit<Booking, 'id' | 'timestamp'>): Booking => {
-  const newBooking: Booking = {
-    ...booking,
-    id: `booking_${Date.now()}`,
-    timestamp: new Date().toISOString()
+  const newSub: Subscription = {
+    id: `sub_${Date.now()}`,
+    createdAt: now(),
+    updatedAt: now(),
+    isDeleted: false,
+    clientId: client.id,
+    type: subType,
+    price: price,
+    isPaid: dto.isPaid,
+    paymentMethod: dto.paymentMethod,
+    totalSessions: totalSessions,
+    usedSessions: 1,
+    status: "active",
   };
-  
-  const bookings = getBookings();
-  bookings.push(newBooking);
-  localStorage.setItem(BOOKINGS_KEY, JSON.stringify(bookings));
-  
-  return newBooking;
+  subs.push(newSub);
+
+  // C. APPOINTMENT
+  const newAppt: Appointment = {
+    id: `appt_${Date.now()}`,
+    createdAt: now(),
+    updatedAt: now(),
+    isDeleted: false,
+    subscriptionId: newSub.id,
+    clientId: client.id,
+    type: apptType,
+    date: dto.selectedDate,
+    time: dto.selectedTime,
+    status: dto.status,
+    notes: dto.notes,
+  };
+  appts.push(newAppt);
+
+  setLs(KEY_CLIENTS, clients);
+  setLs(KEY_SUBSCRIPTIONS, subs);
+  setLs(KEY_APPOINTMENTS, appts);
+
+  return { client, newSub, newAppt };
 };
 
-export const updateBookingStatus = (bookingId: string, status: Booking['status']): boolean => {
-  try {
-    const bookings = getBookings();
-    const bookingIndex = bookings.findIndex(b => b.id === bookingId);
-    
-    if (bookingIndex === -1) {
-      return false;
-    }
-    
-    bookings[bookingIndex].status = status;
-    localStorage.setItem(BOOKINGS_KEY, JSON.stringify(bookings));
-    return true;
-  } catch (error) {
-    console.error('Errore nell\'aggiornamento prenotazione:', error);
-    return false;
+// --- 6. READ OPERATIONS ---
+
+export const checkEligibility = (
+  email: string,
+): { eligible: boolean; reason?: string } => {
+  const clients = getLs<Client>(KEY_CLIENTS);
+  const exists = clients.some(
+    (c) => c.email.toLowerCase() === email.toLowerCase() && !c.isDeleted,
+  );
+  if (exists) return { eligible: false, reason: "already_customer" };
+  return { eligible: true };
+};
+
+export const authenticateUser = (u: string, p: string): User | null => {
+  initializeData();
+  const users = getLs<User>(KEY_USERS);
+  return (
+    users.find(
+      (user) => user.username === u && user.password === p && !user.isDeleted,
+    ) || null
+  );
+};
+
+export const getAdminAppointments = (): AdminAppointmentView[] => {
+  initializeData();
+  const appts = getLs<Appointment>(KEY_APPOINTMENTS);
+  const subs = getLs<Subscription>(KEY_SUBSCRIPTIONS);
+  const clients = getLs<Client>(KEY_CLIENTS);
+
+  return appts
+    .filter((a) => !a.isDeleted)
+    .map((appt) => {
+      const sub = subs.find((s) => s.id === appt.subscriptionId);
+      const client = clients.find((c) => c.id === appt.clientId);
+      return {
+        id: appt.id,
+        date: appt.date,
+        time: appt.time,
+        status: appt.status,
+        notes: appt.notes,
+        clientName: client ? `${client.name} ${client.surname}` : "?",
+        clientEmail: client?.email || "-",
+        clientPhone: client?.phone || "-",
+        serviceName: sub ? getSubscriptionLabel(sub.type) : "?",
+        price: sub?.price || 0,
+        isPaid: sub?.isPaid || false,
+        paymentMethod: sub?.paymentMethod || "none",
+      };
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+};
+
+export const updateAppointmentStatus = (
+  apptId: string,
+  status: AppointmentStatus,
+): boolean => {
+  const appts = getLs<Appointment>(KEY_APPOINTMENTS);
+  const idx = appts.findIndex((a) => a.id === apptId);
+  if (idx === -1) return false;
+  appts[idx].status = status;
+  appts[idx].updatedAt = now();
+  setLs(KEY_APPOINTMENTS, appts);
+  return true;
+};
+
+export const markSubscriptionAsPaid = (apptId: string): boolean => {
+  const appts = getLs<Appointment>(KEY_APPOINTMENTS);
+  const appt = appts.find((a) => a.id === apptId);
+  if (!appt) return false;
+  const subs = getLs<Subscription>(KEY_SUBSCRIPTIONS);
+  const subIdx = subs.findIndex((s) => s.id === appt.subscriptionId);
+  if (subIdx === -1) return false;
+  subs[subIdx].isPaid = true;
+  subs[subIdx].updatedAt = now();
+  if (appts.find((a) => a.id === apptId)?.status === "pending") {
+    updateAppointmentStatus(apptId, "confirmed");
   }
-};
-
-export const deleteBooking = (bookingId: string): boolean => {
-  try {
-    const bookings = getBookings();
-    const filteredBookings = bookings.filter(b => b.id !== bookingId);
-    localStorage.setItem(BOOKINGS_KEY, JSON.stringify(filteredBookings));
-    return true;
-  } catch (error) {
-    console.error('Errore nell\'eliminazione prenotazione:', error);
-    return false;
-  }
-};
-
-export const getBookingById = (bookingId: string): Booking | null => {
-  const bookings = getBookings();
-  return bookings.find(b => b.id === bookingId) || null;
+  setLs(KEY_SUBSCRIPTIONS, subs);
+  return true;
 };
