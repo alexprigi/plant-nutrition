@@ -58,7 +58,7 @@ export default function ChiSono() {
                 Ciao, sono Arianna
               </h1>
               <p className="text-xl mb-6" style={{ color: 'var(--brand-title)' }}>
-                Benvenuta/o nel mondo di Pura Essenza Vegetale! Sono Arianna, e sono entusiasta di accompagnarti nel tuo percorso verso una nutrizione vegana consapevole, sana e gioiosa.
+                Benvenuta/o nel mondo di Viva Plant Nutrition! Sono Arianna, e sono entusiasta di accompagnarti nel tuo percorso verso una nutrizione vegana consapevole, sana e gioiosa.
               </p>
               <p className="text-lg mb-8" style={{ color: 'var(--text-darker)' }}>
                 La mia missione è dimostrare che l'alimentazione vegetale non è solo 
@@ -109,7 +109,7 @@ export default function ChiSono() {
           <h2 className="text-3xl font-bold mb-8 text-center" style={{ color: 'var(--brand-title)' }}>La Mia Storia</h2>
           <div className="prose prose-lg max-w-none">
             <p className="text-lg mb-6" style={{ color: 'var(--brand-title)' }}>
-              Ciao! Sono Arianna, la mente e il cuore dietro Pura Essenza Vegetale.
+              Ciao! Sono Arianna, la mente e il cuore dietro Viva Plant Nutrition.
             </p>
             <p className="text-lg mb-6" style={{ color: 'var(--text-darker)' }}>
               La mia storia è un viaggio profondo, nato da una scelta etica che ha plasmato ogni passo. Vegana da oltre dieci anni, ho abbracciato questo stile di vita per amore e rispetto verso gli animali. Ricordo bene le difficoltà iniziali, la mancanza di informazioni e di una rete di supporto adeguata. Proprio da quelle sfide è nata la mia determinazione: volevo aiutare gli altri a navigare questo percorso con maggiore facilità e consapevolezza.

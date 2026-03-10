@@ -168,7 +168,7 @@ export default function Home() {
                 Ritrova energia e forma con <span style={{ color: 'var(--brand-title)', textShadow: '2px 2px 0 rgba(255,255,255,0.9), -1px -1px 0 rgba(255,255,255,0.9), 1px -1px 0 rgba(255,255,255,0.9), -1px 1px 0 rgba(255,255,255,0.9)' }}>la nutrizione vegetale</span>
               </h1>
               <p className="text-xl lg:text-2xl mb-8 text-white" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.8), -1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8)' }}>
-                Benvenuto in Pura Essenza Vegetale, il centro specializzato in nutrizione vegana. <br />
+                Benvenuto in Viva Plant Nutrition, il centro specializzato in nutrizione vegana. <br />
                 <span style={{ color: 'var(--brand-title)', textShadow: '2px 2px 4px rgba(255,255,255,0.95), 1px 1px 0 rgba(255,255,255,0.9), -1px -1px 0 rgba(255,255,255,0.9), 1px -1px 0 rgba(255,255,255,0.9), -1px 1px 0 rgba(255,255,255,0.9)' }}>Sono Arianna e ti accompagno verso uno stile di vita sano, equilibrato e sostenibile.</span>
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -325,7 +325,7 @@ export default function Home() {
                   Ciao, sono Arianna
                 </h2>
                 <p className="text-lg mb-6" style={{ color: 'var(--brand-title)' }}>
-                  Biologa Nutrizionista e fondatrice di Pura Essenza Vegetale. <br />
+                  Biologa Nutrizionista e fondatrice di Viva Plant Nutrition. <br />
                   La mia passione per la nutrizione vegana nasce dalla convinzione che il cibo sia la medicina più potente che abbiamo a disposizione.
                 </p>
                 <p className="text-lg mb-8" style={{ color: 'var(--text-darker)' }}>

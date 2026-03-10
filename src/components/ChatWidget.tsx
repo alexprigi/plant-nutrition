@@ -29,7 +29,7 @@ export default function ChatWidget() {
     if (isOpen && messages.length === 0) {
       setTimeout(() => {
         addBotMessage(
-          "Ciao! 👋 Sono l'assistente virtuale di Pura Essenza Vegetale. Come posso aiutarti oggi?\n\n" +
+          "Ciao! 👋 Sono l'assistente virtuale di Viva Plant Nutrition. Come posso aiutarti oggi?\n\n" +
           "Puoi chiedermi informazioni su:\n" +
           "• 🍎 Servizi e prezzi\n" +
           "• 📅 Prenotazioni\n" +

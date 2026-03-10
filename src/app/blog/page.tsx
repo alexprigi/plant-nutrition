@@ -2,8 +2,8 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 
 export const metadata = {
-  title: 'Blog - Pura Essenza Vegetale | Articoli e Consigli Nutrizione Vegana',
-  description: 'Scopri articoli, ricette e consigli pratici per un\'alimentazione vegana sana e bilanciata. Guide, suggerimenti e approfondimenti scientifici dal team di Pura Essenza Vegetale.',
+  title: 'Blog - Viva Plant Nutrition | Articoli e Consigli Nutrizione Vegana',
+  description: 'Scopri articoli, ricette e consigli pratici per un\'alimentazione vegana sana e bilanciata. Guide, suggerimenti e approfondimenti scientifici dal team di Viva Plant Nutrition.',
 };
 
 export default function Blog() {

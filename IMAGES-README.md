@@ -1,4 +1,4 @@
-# Images for Pura Essenza Vegetale
+# Images for Viva Plant Nutrition
 
 ## Required images for the website:
 

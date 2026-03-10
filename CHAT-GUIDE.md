@@ -14,7 +14,7 @@
 
 1. **Sign up at [https://www.tawk.to/](https://www.tawk.to/)**
    - Create a free account
-   - Enter site name: "Pura Essenza Vegetale"
+   - Enter site name: "Viva Plant Nutrition"
 
 2. **Get the Widget Code**
    - Dashboard → Administration → Property Settings

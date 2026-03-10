@@ -230,7 +230,7 @@ export default function Ricette() {
               Ricevi Nuove Ricette Ogni Settimana
             </h3>
             <p className="mb-6 max-w-2xl mx-auto" style={{ color: 'var(--text-dark-green)' }}>
-              Iscriviti alla newsletter di Pura Essenza Vegetale e ricevi ricette esclusive, 
+              Iscriviti alla newsletter di Viva Plant Nutrition e ricevi ricette esclusive, 
               consigli nutrizionali e idee per menu settimanali bilanciati.
             </p>
             <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">

@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Privacy Policy - Pura Essenza Vegetale',
-  description: 'Informativa sulla privacy e il trattamento dei dati personali di Pura Essenza Vegetale.',
+  title: 'Privacy Policy - Viva Plant Nutrition',
+  description: 'Informativa sulla privacy e il trattamento dei dati personali di Viva Plant Nutrition.',
 };
 
 export default function PrivacyPolicy() {
@@ -25,7 +25,7 @@ export default function PrivacyPolicy() {
             
             <h2 style={{ color: 'var(--brand-title)' }}>1. Titolare del Trattamento</h2>
             <p>
-              <strong>Pura Essenza Vegetale</strong><br />
+              <strong>Viva Plant Nutrition</strong><br />
               Dott.ssa Arianna Ciervo - Nutrizionista<br />
               Email: <a href="mailto:info@puraessenzavegetale.it">info@puraessenzavegetale.it</a>
             </p>

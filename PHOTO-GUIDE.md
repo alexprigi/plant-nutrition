@@ -1,4 +1,4 @@
-# Professional Photo Guide for Pura Essenza Vegetale
+# Professional Photo Guide for Viva Plant Nutrition
 
 ## 🎯 Goal
 

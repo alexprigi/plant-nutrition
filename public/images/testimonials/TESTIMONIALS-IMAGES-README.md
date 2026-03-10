@@ -13,7 +13,7 @@ Before publishing any photo:
 ```
 IMAGE PROCESSING CONSENT
 
-I, the undersigned __________________, born on _________, authorize Arianna Ciervo / Pura Essenza Vegetale to:
+I, the undersigned __________________, born on _________, authorize Arianna Ciervo / Viva Plant Nutrition to:
 
 ☐ Use my photographic image on the website
 ☐ Use my written testimonial

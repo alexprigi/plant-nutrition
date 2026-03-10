@@ -44,7 +44,7 @@ export default function Contatti() {
           <h1 className="text-3xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>Messaggio Inviato!</h1>
           <div className="mb-8 p-6 rounded-xl" style={{ background: 'white', boxShadow: '0 4px 20px rgba(37, 105, 67, 0.15)' }}>
             <p className="text-xl font-semibold" style={{ color: 'var(--brand-title)' }}>
-              Grazie per aver contattato Pura Essenza Vegetale. Ti risponderemo entro 24 ore.
+              Grazie per aver contattato Viva Plant Nutrition. Ti risponderemo entro 24 ore.
             </p>
           </div>
           <Button href="/">Torna alla Home</Button>
@@ -74,7 +74,7 @@ export default function Contatti() {
           </h1>
           <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--brand-title)' }}>
             Siamo qui per rispondere alle tue domande e aiutarti a iniziare 
-            il tuo percorso verso il benessere con Pura Essenza Vegetale.
+            il tuo percorso verso il benessere con Viva Plant Nutrition.
           </p>
         </div>
       </section>

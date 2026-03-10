@@ -73,7 +73,7 @@ const Footer = () => {
         </div>
 
         <div style={{ borderTop: '1px solid var(--color-main)', marginTop: '2rem', paddingTop: '2rem', textAlign: 'center', color: 'var(--color-main)' }}>
-          <p>&copy; {currentYear} Pura Essenza Vegetale - Centro di Nutrizione Vegana. Tutti i diritti riservati.</p>
+          <p>&copy; {currentYear} Viva Plant Nutrition - Centro di Nutrizione Vegana. Tutti i diritti riservati.</p>
           <p style={{ marginTop: '0.5rem' }}>
             <Link href="/privacy-policy" style={{ color: 'var(--color-main)' }}>Privacy Policy</Link>
             {' | '}

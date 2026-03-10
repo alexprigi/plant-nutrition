@@ -3,8 +3,8 @@ import Card from '@/components/ui/Card';
 import Icon from '@/components/icons/Icon';
 
 export const metadata = {
-  title: 'Servizi - Pura Essenza Vegetale | Consulenze Nutrizionali Vegane',
-  description: 'Scopri tutti i servizi di Pura Essenza Vegetale: consulenze nutrizionali personalizzate, piani alimentari vegani, corsi di educazione alimentare e supporto per la transizione.',
+  title: 'Servizi - Viva Plant Nutrition | Consulenze Nutrizionali Vegane',
+  description: 'Scopri tutti i servizi di Viva Plant Nutrition: consulenze nutrizionali personalizzate, piani alimentari vegani, corsi di educazione alimentare e supporto per la transizione.',
 };
 
 export default function Servizi() {
@@ -29,7 +29,7 @@ export default function Servizi() {
           </h1>
           <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--brand-title)' }}>
             Percorsi personalizzati per guidarti verso uno stile di vita vegano
-            sano, equilibrato e sostenibile. Ogni servizio di Pura Essenza Vegetale è pensato per le tue esigenze specifiche.
+            sano, equilibrato e sostenibile. Ogni servizio di Viva Plant Nutrition è pensato per le tue esigenze specifiche.
           </p>
         </div>
       </section>
