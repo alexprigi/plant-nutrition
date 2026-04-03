@@ -113,7 +113,7 @@ export default function Contatti() {
                       value={formData.nome}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
-                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)', '::placeholder': { color: 'var(--color-main)' } }}
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)' }}
                       onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
                       onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
                       placeholder="Il tuo nome completo"
@@ -132,7 +132,7 @@ export default function Contatti() {
                       value={formData.email}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
-                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)', '::placeholder': { color: 'var(--color-main)' } }}
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)' }}
                       onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
                       onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
                       placeholder="la-tua-email@esempio.com"
@@ -150,7 +150,7 @@ export default function Contatti() {
                       value={formData.telefono}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
-                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)', '::placeholder': { color: 'var(--color-main)' } }}
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)' }}
                       onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
                       onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
                       placeholder="+39 123 456 789"
@@ -168,7 +168,7 @@ export default function Contatti() {
                       value={formData.servizio}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
-                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)', '::placeholder': { color: 'var(--color-main)' } }}
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)' }}
                       onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
                       onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
                     >
@@ -195,7 +195,7 @@ export default function Contatti() {
                       value={formData.messaggio}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
-                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)', '::placeholder': { color: 'var(--color-main)' } }}
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)' }}
                       onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
                       onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
                       placeholder="Raccontami i tuoi obiettivi e le tue esigenze..."

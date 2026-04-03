@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import Button from '@/components/ui/Button';
@@ -85,7 +85,7 @@ const STEPS = [
   { num: 4, label: 'Calendario' }
 ];
 
-const PrenotaPage = () => {
+const PrenotaPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -811,6 +811,21 @@ const PrenotaPage = () => {
 
       </div>
     </div>
+  );
+};
+
+const PrenotaPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#F5F7F5] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[var(--brand-title)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="font-bold text-gray-700">Caricamento...</p>
+        </div>
+      </div>
+    }>
+      <PrenotaPageContent />
+    </Suspense>
   );
 };
 

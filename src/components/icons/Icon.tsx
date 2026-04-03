@@ -13,7 +13,9 @@ export type IconName =
   | 'mail' | 'phone' | 'mapPin' | 'chat' | 'check' | 'tag'
   | 'numberOne' | 'numberTwo' | 'numberThree' | 'numberFour'
   | 'shield' | 'lightning' | 'molecule' | 'drop'
-  | 'chevronLeft' | 'chevronRight'; // <--- AGGIUNTE FRECCE
+  | 'chevronLeft' | 'chevronRight'
+  | 'video' | 'checkCircle' | 'refreshCcw' | 'info' | 'pill' | 'fileText'
+  | 'target' | 'clipboard' | 'messageCircle' | 'bookOpen'; // <--- AGGIUNTE NUOVE
 
 interface IconProps {
   name: IconName;
@@ -36,6 +38,7 @@ const getDefaultTheme = (name: IconName): string => {
     case 'numberOne':
     case 'shield': case 'lightning':
     case 'molecule':
+    case 'checkCircle': // <--- Nuova icona
       return 'icon-bg-mint';
 
     // --- AZZURRO ---
@@ -44,12 +47,15 @@ const getDefaultTheme = (name: IconName): string => {
     case 'speech': case 'userSingle': case 'phone':
     case 'numberTwo':
     case 'drop':
-    case 'chevronLeft': case 'chevronRight': // <--- Frecce = Azzurro
+    case 'chevronLeft': case 'chevronRight':
+    case 'video': case 'info': case 'refreshCcw': case 'fileText':
+    case 'clipboard': case 'messageCircle': case 'bookOpen': // <--- Nuove icone
       return 'icon-bg-blue';
 
     // --- PESCA ---
     case 'route': case 'carrot': case 'pawHeart':
     case 'numberThree':
+    case 'target': // <--- Nuova icona
       return 'icon-bg-peach';
 
     // --- ROSA ---
@@ -60,6 +66,7 @@ const getDefaultTheme = (name: IconName): string => {
     // --- LAVANDA ---
     case 'activity': case 'puzzle': case 'dna':
     case 'numberFour':
+    case 'pill': // <--- Nuova icona
       return 'icon-bg-lavender';
 
     // --- LEMON ---
@@ -111,6 +118,92 @@ const Icon: React.FC<IconProps> = ({
 
   const renderSvgPath = () => {
     switch (name) {
+
+      // --- NUOVE ICONE ---
+      case 'video':
+        return (
+          <>
+            <polygon points="23 7 16 12 23 17 23 7" />
+            <rect x="2" y="5" width="12" height="14" rx="2" />
+          </>
+        );
+
+      case 'checkCircle':
+        return (
+          <>
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="9 12 11 14 15 10" />
+          </>
+        );
+
+      case 'refreshCcw':
+        return (
+          <>
+            <polyline points="1 4 1 10 7 10" />
+            <polyline points="23 20 23 14 17 14" />
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
+          </>
+        );
+
+      case 'info':
+        return (
+          <>
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </>
+        );
+
+      case 'pill':
+        return (
+          <>
+            <rect x="4" y="9" width="16" height="6" rx="3" />
+            <line x1="12" y1="9" x2="12" y2="15" />
+          </>
+        );
+
+      case 'fileText':
+        return (
+          <>
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <line x1="10" y1="9" x2="8" y2="9" />
+          </>
+        );
+
+      case 'target':
+        return (
+          <>
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="6" />
+            <circle cx="12" cy="12" r="2" />
+          </>
+        );
+
+      case 'clipboard':
+        return (
+          <>
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+            <rect x="8" y="2" width="8" height="4" rx="1" />
+          </>
+        );
+
+      case 'messageCircle':
+        return (
+          <>
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+          </>
+        );
+
+      case 'bookOpen':
+        return (
+          <>
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+          </>
+        );
 
       // --- FRECCE DI NAVIGAZIONE ---
       case 'chevronLeft':
