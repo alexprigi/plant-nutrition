@@ -273,6 +273,27 @@ const PrenotaPage = () => {
       isPaid: finalIsPaid
     });
 
+    // Send confirmation emails
+    fetch('/api/send-booking-emails', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        clientName: `${formData.name} ${formData.surname}`,
+        clientEmail: formData.email,
+        clientPhone: formData.phone,
+        serviceName: activeService?.title || '',
+        price: activeService?.price || 0,
+        date: selectedDate,
+        time: selectedTime,
+        notes: sanitizedNotes,
+        paymentMethod: activeService?.price! > 0 ? paymentMethod : 'none',
+        isPaid: finalIsPaid
+      })
+    }).catch(error => {
+      console.error('Failed to send emails:', error);
+      // Non bloccare il flusso se le email falliscono
+    });
+
     setTimeout(() => {
       setIsProcessing(false);
       setIsSuccess(true);
