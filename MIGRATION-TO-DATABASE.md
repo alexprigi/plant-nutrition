@@ -1,5 +1,9 @@
 # Piano di Migrazione: Da localStorage a Database SQL + Autenticazione
 
+> ⚠️ **STATO**: PIANIFICAZIONE - NON IMPLEMENTATO
+> Questo documento contiene il piano per una futura migrazione.
+> **Attualmente il progetto usa ancora localStorage.**
+
 ## Panoramica
 
 Questo documento descrive il piano completo per migrare l'applicazione da `localStorage` a un database SQL PostgreSQL con sistema di autenticazione e sessioni.
@@ -630,5 +634,6 @@ npx prisma migrate deploy
 
 ---
 
-**Documento creato il**: 8 Febbraio 2026  
+**Documento creato il**: 8 Febbraio 2025
 **Versione**: 1.0
+**Stato**: 📋 Pianificazione (non implementato)
