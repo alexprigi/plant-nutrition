@@ -50,7 +50,7 @@ export default function ChiSono() {
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
+            <div className="text-center lg:text-left">
               <div className="inline-block mb-4">
                 <Icon name="heart" size={64} variant="mint" animated={true} />
               </div>
@@ -61,7 +61,7 @@ export default function ChiSono() {
                 Benvenuta/o nel mondo di Viva Plant Nutrition! Sono Arianna, e sono entusiasta di accompagnarti nel tuo percorso verso una nutrizione vegana consapevole, sana e gioiosa.
               </p>
               <p className="text-lg mb-8" style={{ color: 'var(--text-darker)' }}>
-                La mia missione è dimostrare che l'alimentazione vegetale non è solo 
+                La mia missione è dimostrare che l'alimentazione vegetale non è solo
                 una scelta etica, ma anche la via per il benessere ottimale.
               </p>
               <Button href="/contatti" size="lg">
