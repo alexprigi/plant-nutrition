@@ -71,26 +71,7 @@ export default function Home() {
       >
         <div className="absolute inset-0 parallax-hero" id="heroImage">
           {/* Slider Container */}
-          <div
-            className="relative w-full h-full"
-            onTouchStart={(e) => {
-              const touch = e.touches[0];
-              e.currentTarget.dataset.touchStart = touch.clientX.toString();
-            }}
-            onTouchEnd={(e) => {
-              const touchStart = parseFloat(e.currentTarget.dataset.touchStart || '0');
-              const touchEnd = e.changedTouches[0].clientX;
-              const diff = touchStart - touchEnd;
-
-              if (Math.abs(diff) > 50) {
-                if (diff > 0) {
-                  nextSlide();
-                } else {
-                  prevSlide();
-                }
-              }
-            }}
-          >
+          <div className="relative w-full h-full">
             {heroImages.map((image, index) => (
               <div
                 key={index}
@@ -183,27 +164,27 @@ export default function Home() {
         </div>
 
         {/* Content sovrapposto */}
-        <div className="relative h-full flex items-center" style={{ zIndex: 10 }}>
+        <div className="relative h-full flex items-center pb-20 md:pb-0" style={{ zIndex: 10 }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-2xl">
-              <h1 className="text-5xl lg:text-7xl font-bold mb-6 text-white" style={{ textShadow: '2px 2px 0 rgba(0,0,0,0.8), -1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8)' }}>
+              <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 text-white" style={{ textShadow: '2px 2px 0 rgba(0,0,0,0.8), -1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8)' }}>
                 Ritrova energia e forma con <span style={{ color: 'var(--brand-title)', textShadow: '2px 2px 0 rgba(255,255,255,0.9), -1px -1px 0 rgba(255,255,255,0.9), 1px -1px 0 rgba(255,255,255,0.9), -1px 1px 0 rgba(255,255,255,0.9)' }}>la nutrizione vegetale</span>
               </h1>
-              <p className="text-xl lg:text-2xl mb-8 text-white" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.8), -1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8)' }}>
+              <p className="text-lg sm:text-xl md:text-xl lg:text-2xl mb-5 md:mb-8 text-white" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.8), -1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8)' }}>
                 Benvenuto in Viva Plant Nutrition, il centro specializzato in nutrizione vegana. <br />
                 <span style={{ color: 'var(--brand-title)', textShadow: '2px 2px 4px rgba(255,255,255,0.95), 1px 1px 0 rgba(255,255,255,0.9), -1px -1px 0 rgba(255,255,255,0.9), 1px -1px 0 rgba(255,255,255,0.9), -1px 1px 0 rgba(255,255,255,0.9)' }}>Sono Arianna e ti accompagno verso uno stile di vita sano, equilibrato e sostenibile.</span>
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                 <Link
                   href="/prenota"
-                  className="inline-flex items-center justify-center px-8 py-4 rounded-full font-medium transition-all duration-200 btn-lift text-lg"
+                  className="inline-flex items-center justify-center px-5 py-3 sm:px-8 sm:py-4 rounded-full font-medium transition-all duration-200 btn-lift text-base sm:text-lg"
                   style={{ background: 'var(--brand-title)', color: 'white' }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--text-dark-green)')}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--brand-title)')}
                 >
                   Prenota Consulenza Gratuita
                 </Link>
-                <Button href="/chi-sono" variant="outline" size="lg" className="!bg-white/90 !text-[var(--brand-title)] !border-white">
+                <Button href="/chi-sono" variant="outline" size="lg" className="!bg-white/90 !text-[var(--brand-title)] !border-white !px-5 !py-3 sm:!px-8 sm:!py-4 !text-base sm:!text-lg">
                   Scopri la Mia Storia
                 </Button>
               </div>
