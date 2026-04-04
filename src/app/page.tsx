@@ -63,15 +63,34 @@ export default function Home() {
       <ParallaxEffect />
 
       {/* Hero Section - Full Width con Slider */}
-      <section 
-        className="relative h-screen overflow-hidden" 
+      <section
+        className="relative h-screen overflow-hidden"
         style={{ background: 'linear-gradient(135deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className="absolute inset-0 parallax-hero" id="heroImage">
           {/* Slider Container */}
-          <div className="relative w-full h-full">
+          <div
+            className="relative w-full h-full"
+            onTouchStart={(e) => {
+              const touch = e.touches[0];
+              e.currentTarget.dataset.touchStart = touch.clientX.toString();
+            }}
+            onTouchEnd={(e) => {
+              const touchStart = parseFloat(e.currentTarget.dataset.touchStart || '0');
+              const touchEnd = e.changedTouches[0].clientX;
+              const diff = touchStart - touchEnd;
+
+              if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                  nextSlide();
+                } else {
+                  prevSlide();
+                }
+              }
+            }}
+          >
             {heroImages.map((image, index) => (
               <div
                 key={index}
@@ -85,6 +104,9 @@ export default function Home() {
                   src={image.src}
                   alt={image.alt}
                   className="w-full h-full object-cover"
+                  style={{
+                    objectPosition: index === 0 ? '65% center' : 'center center'
+                  }}
                 />
               </div>
             ))}
@@ -93,13 +115,13 @@ export default function Home() {
 
         {/* Overlay gradient per leggibilità testo */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" style={{ zIndex: 2 }}></div>
-        
-        {/* Frecce di Navigazione */}
+
+        {/* Frecce di Navigazione - Solo Desktop */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
-          style={{ 
-            background: 'rgba(255,255,255,0.9)', 
+          className="hidden md:flex absolute left-4 top-1/2 transform -translate-y-1/2 w-14 h-14 rounded-full items-center justify-center transition-all duration-300 hover:scale-110"
+          style={{
+            background: 'rgba(255,255,255,0.9)',
             color: 'var(--brand-title)',
             border: 'none',
             cursor: 'pointer',
@@ -119,9 +141,9 @@ export default function Home() {
 
         <button
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
-          style={{ 
-            background: 'rgba(255,255,255,0.9)', 
+          className="hidden md:flex absolute right-4 top-1/2 transform -translate-y-1/2 w-14 h-14 rounded-full items-center justify-center transition-all duration-300 hover:scale-110"
+          style={{
+            background: 'rgba(255,255,255,0.9)',
             color: 'var(--brand-title)',
             border: 'none',
             cursor: 'pointer',
@@ -138,7 +160,7 @@ export default function Home() {
             <path d="M9 18l6-6-6-6"/>
           </svg>
         </button>
-        
+
         {/* Slider Navigation Dots */}
         <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 flex gap-3 z-20">
           {heroImages.map((_, index) => (
