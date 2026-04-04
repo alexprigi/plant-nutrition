@@ -251,23 +251,25 @@ export default function Testimonials() {
         </div>
 
         {/* CTA finale - Migliorata */}
-        <div className="text-center mt-16 p-10 rounded-3xl relative overflow-hidden" 
-          style={{ 
+        <div className="text-center mt-16 p-6 sm:p-10 rounded-3xl relative overflow-hidden"
+          style={{
             background: 'linear-gradient(135deg, var(--bg-hero) 0%, #F4E5C2 100%)',
             boxShadow: '0 20px 60px rgba(0,0,0,0.12)'
           }}
         >
           <div className="relative z-10">
-            <p className="text-2xl font-semibold mb-6 flex items-center justify-center gap-2" style={{ color: 'var(--brand-title)' }}>
+            <p className="text-xl sm:text-2xl font-semibold mb-6 flex items-center justify-center gap-2 px-2" style={{ color: 'var(--brand-title)' }}>
               <span>Vuoi essere anche tu una storia di successo?</span>
               {/* <Icon name="sparkles" size={28} animated={true} /> */}
             </p>
             <a
               href="/prenota"
-              className="inline-flex items-center justify-center px-10 py-5 rounded-full font-bold transition-all duration-200 text-lg shadow-xl hover:shadow-2xl hover:scale-105"
+              className="inline-flex items-center justify-center px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold transition-all duration-200 text-base sm:text-lg shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95"
               style={{ background: 'var(--brand-title)', color: 'white' }}
             >
-              Prenota la Tua Consulenza Gratuita →
+              <span className="text-center leading-tight">
+                Prenota la Tua<br className="sm:hidden" /> Consulenza Gratuita →
+              </span>
             </a>
           </div>
           

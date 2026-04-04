@@ -97,10 +97,10 @@ export default function Home() {
         {/* Overlay gradient per leggibilità testo */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" style={{ zIndex: 2 }}></div>
 
-        {/* Frecce di Navigazione - Solo Desktop */}
+        {/* Frecce di Navigazione - Solo Desktop Large */}
         <button
           onClick={prevSlide}
-          className="hidden md:flex absolute left-4 top-1/2 transform -translate-y-1/2 w-14 h-14 rounded-full items-center justify-center transition-all duration-300 hover:scale-110"
+          className="show-on-wide absolute left-4 top-1/2 transform -translate-y-1/2 w-14 h-14 rounded-full items-center justify-center transition-all duration-300 hover:scale-110"
           style={{
             background: 'rgba(255,255,255,0.9)',
             color: 'var(--brand-title)',
@@ -122,7 +122,7 @@ export default function Home() {
 
         <button
           onClick={nextSlide}
-          className="hidden md:flex absolute right-4 top-1/2 transform -translate-y-1/2 w-14 h-14 rounded-full items-center justify-center transition-all duration-300 hover:scale-110"
+          className="show-on-wide absolute right-4 top-1/2 transform -translate-y-1/2 w-14 h-14 rounded-full items-center justify-center transition-all duration-300 hover:scale-110"
           style={{
             background: 'rgba(255,255,255,0.9)',
             color: 'var(--brand-title)',

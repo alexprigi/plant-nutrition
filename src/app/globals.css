@@ -6,13 +6,16 @@
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 6px 18px 0 rgba(127, 186, 184, 0.16), 0 1px 4px 0 rgba(111, 167, 165, 0.10);
 }
-/* Hover effect for header menu */
+/* Hover effect for header menu - only on devices with hover capability */
 .menu-lift {
   transition: color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
-.menu-lift:hover {
-  transform: translateY(-3px) scale(1.07);
-  box-shadow: 0 4px 16px 0 rgba(127, 186, 184, 0.10);
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-lift:hover {
+    transform: translateY(-3px) scale(1.07);
+    box-shadow: 0 4px 16px 0 rgba(127, 186, 184, 0.10);
+  }
 }
 @import "tailwindcss";
 
@@ -234,6 +237,17 @@ body {
 @media (max-width: 1599px) {
   .content-decorations > div {
     display: none !important;
+  }
+}
+
+/* Custom breakpoint for hero arrows - show only on screens > 1400px */
+.show-on-wide {
+  display: none;
+}
+
+@media (min-width: 1400px) {
+  .show-on-wide {
+    display: flex !important;
   }
 }
 

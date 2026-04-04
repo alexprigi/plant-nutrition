@@ -31,15 +31,13 @@ const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex space-x-4 lg:space-x-6 xl:space-x-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="font-semibold text-lg tracking-wide transition-colors duration-200 menu-lift"
+                className="font-semibold text-base lg:text-lg xl:text-lg tracking-wide transition-all duration-200 menu-lift hover:text-[var(--color-main)] active:scale-95 active:opacity-80"
                 style={{ color: 'var(--brand-title)', letterSpacing: '0.02em' }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-main)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'var(--brand-title)')}
               >
                 {item.name}
               </Link>
@@ -50,12 +48,11 @@ const Header = () => {
           <div className="hidden md:flex">
             <Link
               href="/prenota"
-              className="px-6 py-2 rounded-full font-medium transition-colors duration-200 btn-lift"
+              className="px-5 py-2 lg:px-6 lg:py-2 rounded-full font-medium text-base lg:text-base transition-all duration-200 btn-lift whitespace-nowrap hover:bg-[var(--text-dark-green)] active:scale-95"
               style={{ background: 'var(--brand-title)', color: 'white' }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'var(--text-dark-green)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'var(--brand-title)')}
             >
-              Prenota Consulenza
+              <span className="hidden lg:inline">Prenota Consulenza</span>
+              <span className="lg:hidden">Prenota</span>
             </Link>
           </div>
 
@@ -84,10 +81,8 @@ const Header = () => {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="font-semibold text-lg py-2 tracking-wide menu-lift"
+                  className="font-semibold text-lg py-2 tracking-wide menu-lift transition-all duration-150 active:scale-95 active:opacity-70"
                   style={{ color: 'var(--brand-title)', letterSpacing: '0.02em' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-main)')}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--brand-title)')}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
@@ -95,10 +90,8 @@ const Header = () => {
               ))}
               <Link
                 href="/prenota"
-                className="px-6 py-2 rounded-full font-medium transition-colors duration-200 text-center mt-4 btn-lift"
+                className="px-6 py-2 rounded-full font-medium transition-all duration-150 text-center mt-4 btn-lift active:scale-95"
                 style={{ background: 'var(--button-bg)', color: 'var(--foreground)' }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'var(--button-hover)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'var(--button-bg)')}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Prenota Consulenza
