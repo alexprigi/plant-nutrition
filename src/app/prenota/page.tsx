@@ -475,22 +475,22 @@ const PrenotaPageContent = () => {
               )}
 
               <div className="space-y-5">
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Nome*</label>
-                    <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.name ? 'border-red-500' : 'border-gray-300'}`} placeholder="Il tuo nome" />
+                    <input type="text" name="given-name" autoComplete="given-name" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.name ? 'border-red-500' : 'border-gray-300'}`} placeholder="Il tuo nome" />
                     {errors.name && <p className="text-red-500 text-xs mt-1 ml-1">{errors.name}</p>}
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Cognome*</label>
-                    <input type="text" value={formData.surname} onChange={e => setFormData({ ...formData, surname: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.surname ? 'border-red-500' : 'border-gray-300'}`} placeholder="Il tuo cognome" />
+                    <input type="text" name="family-name" autoComplete="family-name" value={formData.surname} onChange={e => setFormData({ ...formData, surname: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.surname ? 'border-red-500' : 'border-gray-300'}`} placeholder="Il tuo cognome" />
                     {errors.surname && <p className="text-red-500 text-xs mt-1 ml-1">{errors.surname}</p>}
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Email*</label>
-                  <input type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.email ? 'border-red-500' : 'border-gray-300'}`} placeholder="La tua email" />
+                  <input type="email" name="email" autoComplete="email" inputMode="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.email ? 'border-red-500' : 'border-gray-300'}`} placeholder="La tua email" />
                   {errors.email && <p className="text-red-500 text-xs mt-1 ml-1">{errors.email}</p>}
                 </div>
 
@@ -505,7 +505,7 @@ const PrenotaPageContent = () => {
                       </select>
                       <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none text-gray-500"><Icon name="chevronRight" size={14} style={{ transform: 'rotate(90deg)' }} /></div>
                     </div>
-                    <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} className={`flex-1 min-w-0 h-[50px] px-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.phone ? 'border-red-500' : 'border-gray-300'}`} placeholder="Numero di telefono" />
+                    <input type="tel" name="tel-national" autoComplete="tel-national" inputMode="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value.replace(/[^0-9+\s\-().]/g, ''))} className={`flex-1 min-w-0 h-[50px] px-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.phone ? 'border-red-500' : 'border-gray-300'}`} placeholder="Numero di telefono" />
                   </div>
                   {errors.phone && <p className="text-red-500 text-xs mt-1 ml-1">{errors.phone}</p>}
                 </div>
@@ -516,12 +516,12 @@ const PrenotaPageContent = () => {
                     <div className="grid grid-cols-3 gap-4">
                       <div className="col-span-2">
                         <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Indirizzo*</label>
-                        <input type="text" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.address ? 'border-red-500' : 'border-gray-300'}`} placeholder="Via o Piazza" />
+                        <input type="text" name="street-address" autoComplete="street-address" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.address ? 'border-red-500' : 'border-gray-300'}`} placeholder="Via o Piazza" />
                         {errors.address && <p className="text-red-500 text-xs mt-1 ml-1">{errors.address}</p>}
                       </div>
                       <div className="sm:col-span-1">
                         <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">N. Civico*</label>
-                        <input type="text" value={formData.civicNumber} onChange={e => setFormData({ ...formData, civicNumber: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.civicNumber ? 'border-red-500' : 'border-gray-300'}`} placeholder="Numero" />
+                        <input type="text" name="address-line2" autoComplete="address-line2" inputMode="text" value={formData.civicNumber} onChange={e => setFormData({ ...formData, civicNumber: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.civicNumber ? 'border-red-500' : 'border-gray-300'}`} placeholder="Numero" />
                         {errors.civicNumber && <p className="text-red-500 text-xs mt-1 ml-1">{errors.civicNumber}</p>}
                       </div>
                     </div>
@@ -529,17 +529,17 @@ const PrenotaPageContent = () => {
                     <div className="grid grid-cols-3 gap-4">
                       <div className="col-span-1">
                         <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">CAP*</label>
-                        <input type="text" value={formData.zipCode} onChange={e => setFormData({ ...formData, zipCode: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.zipCode ? 'border-red-500' : 'border-gray-300'}`} placeholder="Codice postale" />
+                        <input type="text" name="postal-code" autoComplete="postal-code" inputMode="numeric" value={formData.zipCode} onChange={e => setFormData({ ...formData, zipCode: e.target.value.replace(/\D/g, '') })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.zipCode ? 'border-red-500' : 'border-gray-300'}`} placeholder="Codice postale" />
                         {errors.zipCode && <p className="text-red-500 text-xs mt-1 ml-1">{errors.zipCode}</p>}
                       </div>
                       <div className="col-span-2">
                         <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Città*</label>
-                        <input type="text" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.city ? 'border-red-500' : 'border-gray-300'}`} placeholder="La tua città" />
+                        <input type="text" name="address-level2" autoComplete="address-level2" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.city ? 'border-red-500' : 'border-gray-300'}`} placeholder="La tua città" />
                         {errors.city && <p className="text-red-500 text-xs mt-1 ml-1">{errors.city}</p>}
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Nazione*</label>
                         <div className="relative">
@@ -551,7 +551,7 @@ const PrenotaPageContent = () => {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Cod. Fiscale*</label>
-                        <input type="text" value={formData.fiscalCode} onChange={e => setFormData({ ...formData, fiscalCode: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.fiscalCode ? 'border-red-500' : 'border-gray-300'}`} placeholder="Codice fiscale" />
+                        <input type="text" name="fiscal-code" autoComplete="off" autoCapitalize="characters" value={formData.fiscalCode} onChange={e => setFormData({ ...formData, fiscalCode: e.target.value.toUpperCase() })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.fiscalCode ? 'border-red-500' : 'border-gray-300'}`} placeholder="Codice fiscale" />
                         {errors.fiscalCode && <p className="text-red-500 text-xs mt-1 ml-1">{errors.fiscalCode}</p>}
                       </div>
                     </div>
