@@ -50,8 +50,8 @@ const Header = () => {
             <Link href="/" className="flex items-center space-x-2">
               <span className="text-2xl">🌱</span>
               <div className="flex flex-col">
-                <span className="text-xl font-bold" style={{ color: 'var(--brand-title)' }}>Pura Essenza</span>
-                <span className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>Vegetale</span>
+                <span className="text-xl font-bold" style={{ color: 'var(--brand-title)' }}>Viva Plant</span>
+                <span className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>Nutrition</span>
               </div>
             </Link>
           </div>

@@ -229,7 +229,7 @@ export default function Contatti() {
                     <Icon name="mail" size={32} variant='mint'/>
                     <div>
                       <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>Email</h3>
-                      <p style={{ color: 'var(--text-darker)' }}>info@puraessenzavegetale.it</p>
+                      <p style={{ color: 'var(--text-darker)' }}>info@vivaplantnutrition.com</p>
                     </div>
                   </div>
                 </Card>

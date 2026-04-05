@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     // Qui andrà l'integrazione con il servizio email (Resend, SendGrid, etc.)
     // Per ora simula l'invio dell'email
     const emailContent = {
-      to: ['arianna@puraessenzavegetale.it'], // Email della nutrizionista
+      to: ['info@vivaplantnutrition.com'], // Email della nutrizionista
       cc: [bookingData.email], // Copia al cliente
       subject: `Nuova Prenotazione - ${bookingData.name}`,
       html: `

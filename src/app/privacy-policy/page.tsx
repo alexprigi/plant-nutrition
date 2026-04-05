@@ -27,7 +27,7 @@ export default function PrivacyPolicy() {
             <p>
               <strong>Viva Plant Nutrition</strong><br />
               Arianna Ciervo - Nutrizionista<br />
-              Email: <a href="mailto:info@puraessenzavegetale.it">info@puraessenzavegetale.it</a>
+              Email: <a href="mailto:info@vivaplantnutrition.com">info@vivaplantnutrition.com</a>
             </p>
 
             <h2 style={{ color: 'var(--brand-title)' }}>2. Tipologie di Dati Raccolti</h2>
@@ -112,7 +112,7 @@ export default function PrivacyPolicy() {
             </ul>
             <p>
               Per esercitare i tuoi diritti, contatta:{' '}
-              <a href="mailto:privacy@puraessenzavegetale.it">privacy@puraessenzavegetale.it</a>
+              <a href="mailto:info@vivaplantnutrition.com">info@vivaplantnutrition.com</a>
             </p>
 
             <h2 style={{ color: 'var(--brand-title)' }}>8. Sicurezza dei Dati</h2>
@@ -148,8 +148,8 @@ export default function PrivacyPolicy() {
             <h2 style={{ color: 'var(--brand-title)' }}>12. Contatti</h2>
             <p>Per qualsiasi domanda sulla privacy:</p>
             <ul>
-              <li><strong>Email</strong>: <a href="mailto:privacy@puraessenzavegetale.it">privacy@puraessenzavegetale.it</a></li>
-              <li><strong>Email generale</strong>: <a href="mailto:info@puraessenzavegetale.it">info@puraessenzavegetale.it</a></li>
+              <li><strong>Email</strong>: <a href="mailto:info@vivaplantnutrition.com">info@vivaplantnutrition.com</a></li>
+              <li><strong>Email</strong>: <a href="mailto:info@vivaplantnutrition.com">info@vivaplantnutrition.com</a></li>
             </ul>
 
             <h2 style={{ color: 'var(--brand-title)' }}>13. Autorità di Controllo</h2>

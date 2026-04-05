@@ -90,7 +90,7 @@ export default function ChatWidget() {
       return "Fantastico! 📅 Puoi prenotare direttamente online:\n\n" +
         "[➡️ Prenota la tua consulenza](/prenota)\n\n" +
         "Oppure contattami:\n" +
-        "📧 Email: info@puraessenzavegetale.it\n" +
+        "📧 Email: info@vivaplantnutrition.com\n" +
         "📱 WhatsApp: [Scrivimi](https://wa.me/393123456789)\n\n" +
         "La prima consulenza conoscitiva di 15 minuti è GRATUITA! 🎁";
     }
@@ -161,7 +161,7 @@ export default function ChatWidget() {
     // Contatti
     if (msg.match(/contatto|contatti|email|telefono|whatsapp|scrivere/)) {
       return "📬 Ecco come puoi contattarmi:\n\n" +
-        "📧 **Email**: info@puraessenzavegetale.it\n" +
+        "📧 **Email**: info@vivaplantnutrition.com\n" +
         "📱 **WhatsApp**: [Scrivimi ora](https://wa.me/393123456789)\n" +
         "💬 **Telegram**: @puraessenzavegetale\n" +
         "📷 **Instagram**: @pura_essenza_vegetale\n\n" +
@@ -281,7 +281,7 @@ export default function ChatWidget() {
             <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
           </div>
           <div>
-            <h3 className="font-bold text-white">Assistente Pura Essenza</h3>
+            <h3 className="font-bold text-white">Assistente Viva Plant</h3>
             <p className="text-xs text-white/80">Online • Rispondo subito</p>
           </div>
         </div>

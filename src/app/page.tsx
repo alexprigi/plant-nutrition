@@ -756,7 +756,7 @@ export default function Home() {
             Ricette, consigli e ispirazione quotidiana per il tuo percorso vegano
           </p>
 
-          <div className="flex justify-center space-x-8 mb-12">
+          <div className="flex flex-wrap justify-center gap-6 mb-12">
             <a
               href="https://wa.me/393123456789"
               className="group flex flex-col items-center space-y-3 hover:scale-105 transition-transform duration-200"
@@ -772,7 +772,7 @@ export default function Home() {
             </a>
 
             <a
-              href="https://t.me/puraessenzavegetale"
+              href="https://t.me/vivaplantnutrition"
               className="group flex flex-col items-center space-y-3 hover:scale-105 transition-transform duration-200"
               target="_blank"
               rel="noopener noreferrer"
@@ -786,7 +786,7 @@ export default function Home() {
             </a>
 
             <a
-              href="https://instagram.com/pura_essenza_vegetale"
+              href="https://instagram.com/vivaplantnutrition"
               className="group flex flex-col items-center space-y-3 hover:scale-105 transition-transform duration-200"
               target="_blank"
               rel="noopener noreferrer"
@@ -800,7 +800,7 @@ export default function Home() {
             </a>
 
             <a
-              href="https://facebook.com/pura.essenza.vegetale"
+              href="https://facebook.com/vivaplantnutrition"
               className="group flex flex-col items-center space-y-3 hover:scale-105 transition-transform duration-200"
               target="_blank"
               rel="noopener noreferrer"
