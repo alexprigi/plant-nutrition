@@ -66,7 +66,7 @@ const Footer = () => {
             <ul className="space-y-2" style={{ color: 'var(--color-main)' }}>
               <li>📧 info@vivaplantnutrition.com</li>
               <li>📞 +39 123 456 789</li>
-              <li>📍 Via Roma 123, Milano</li>
+              <li>📍 Darmstadt, Germania</li>
               <li>🕒 Lun-Ven 9:00-18:00</li>
             </ul>
           </div>

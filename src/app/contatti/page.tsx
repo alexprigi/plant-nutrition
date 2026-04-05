@@ -248,10 +248,10 @@ export default function Contatti() {
                   <div className="flex items-center space-x-4">
                     <Icon name="mapPin" size={32} variant='lavender' />
                     <div>
-                      <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>Studio</h3>
+                      <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>Area di Servizio</h3>
                       <p style={{ color: 'var(--text-darker)' }}>
-                        Via Roma 123<br />
-                        20121 Milano (MI)
+                        Darmstadt, Germania<br />
+                        Consultazioni online e visite a domicilio disponibili
                       </p>
                     </div>
                   </div>
@@ -398,11 +398,11 @@ export default function Contatti() {
                 <Icon name="mapPin" size={48} animated={true} />
               </div>
               <p style={{ color: 'var(--foreground)' }}>
-                Mappa interattiva dello studio<br />
-                Via Roma 123, Milano
+                Area di servizio<br />
+                Darmstadt, Germania
               </p>
               <p className="text-sm mt-2" style={{ color: 'var(--color-main)' }}>
-                Metro: Duomo (Linea 1, 3) - 5 minuti a piedi
+                Consultazioni online e visite a domicilio
               </p>
             </div>
           </div>

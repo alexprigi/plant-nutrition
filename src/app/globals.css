@@ -309,11 +309,27 @@ button .spinner {
 }
 
 /* Assicura che i testi interni non ereditino colori sbagliati */
-.card-pure-white h2, 
-.card-pure-white h3, 
-.card-pure-white p, 
-.card-pure-white span, 
+.card-pure-white h2,
+.card-pure-white h3,
+.card-pure-white p,
+.card-pure-white span,
 .card-pure-white label,
 .card-pure-white div {
-  color: inherit; 
+  color: inherit;
+}
+
+/* Bounce animation - slower and smoother */
+@keyframes bounceSlow {
+  0%, 100% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(-15px);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounceSlow 2s infinite;
 }

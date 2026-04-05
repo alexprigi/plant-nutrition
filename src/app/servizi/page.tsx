@@ -1,6 +1,7 @@
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Icon from '@/components/icons/Icon';
+import ScrollButton from '@/components/ui/ScrollButton';
 
 export const metadata = {
   title: 'Servizi - Viva Plant Nutrition | Consulenze Nutrizionali Vegane',
@@ -9,7 +10,20 @@ export const metadata = {
 
 export default function Servizi() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
+      {/* Floating button - solo mobile/tablet/iPad, lato sinistro */}
+      <a
+        href="#prezzi"
+        className="xl:hidden fixed bottom-6 left-6 z-50 px-6 py-4 rounded-full font-bold shadow-2xl transition-all duration-200 hover:scale-110 animate-bounce-slow flex items-center gap-2"
+        style={{
+          background: 'var(--brand-title)',
+          color: 'white'
+        }}
+      >
+        <Icon name="tag" size={20} />
+        <span className="hidden sm:inline">Vai a Tariffe e Percorsi</span>
+        <span className="sm:hidden">Tariffe e Percorsi</span>
+      </a>
       {/* Hero Section */}
       <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
         {/* Decorative circles */}
@@ -27,10 +41,11 @@ export default function Servizi() {
           <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>
             I Miei Servizi
           </h1>
-          <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--brand-title)' }}>
+          <p className="text-xl max-w-3xl mx-auto mb-8" style={{ color: 'var(--brand-title)' }}>
             Percorsi personalizzati per guidarti verso uno stile di vita vegano
             sano, equilibrato e sostenibile. Ogni servizio di Viva Plant Nutrition è pensato per le tue esigenze specifiche.
           </p>
+
         </div>
       </section>
 
@@ -369,7 +384,7 @@ export default function Servizi() {
       <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-section-light) 100%)' }} />
 
       {/* Consulenze e Percorsi - SEZIONE PREZZI INTEGRATA */}
-      <section className="pt-12 pb-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
+      <section id="prezzi" className="pt-12 pb-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
         {/* Decorative circles */}
         <div className="absolute top-1/4 right-0 w-80 h-80 rounded-full opacity-8"
           style={{ background: 'linear-gradient(135deg, var(--color-main-light) 0%, var(--color-main) 100%)', transform: 'translate(40%, 0)' }}
@@ -799,7 +814,7 @@ export default function Servizi() {
                 Le consulenze sono disponibili anche online?
               </h3>
               <p style={{ color: 'var(--brand-title)' }}>
-                Sì, offro consulenze sia in presenza nel mio studio che online via video-chiamata.
+                Sì, offro consulenze online via video-chiamata e visite a domicilio nell'area di Darmstadt.
                 L'efficacia del percorso è la stessa in entrambe le modalità.
               </p>
             </div>
