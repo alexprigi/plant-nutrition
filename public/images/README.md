@@ -4,7 +4,7 @@
 
 ### Hero Section (Home page)
 - **hero-arianna.jpg** (500x600px)
-  - Dott.ssa Arianna Ciervo in cucina
+  - Arianna Ciervo in cucina
   - Con piante sul tavolo
   - Indossa un camice professionale
   - Atmosfera calda e accogliente
@@ -12,7 +12,7 @@
 
 ### Sezione Presentazione (Home page)  
 - **studio-arianna.jpg** (600x500px)
-  - Dott.ssa nel suo studio professionale
+  - Nutrizionista nel suo studio professionale
   - Ambiente con piante
   - Strumenti di lavoro visibili
   - Atmosfera professionale ma accogliente

@@ -26,7 +26,7 @@ export default function PrivacyPolicy() {
             <h2 style={{ color: 'var(--brand-title)' }}>1. Titolare del Trattamento</h2>
             <p>
               <strong>Viva Plant Nutrition</strong><br />
-              Dott.ssa Arianna Ciervo - Nutrizionista<br />
+              Arianna Ciervo - Nutrizionista<br />
               Email: <a href="mailto:info@puraessenzavegetale.it">info@puraessenzavegetale.it</a>
             </p>
 

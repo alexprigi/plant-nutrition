@@ -6,7 +6,9 @@ import { useState, useEffect, useRef } from 'react';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [isBtnPressed, setIsBtnPressed] = useState(false);
   const lastScrollY = useRef(0);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +21,8 @@ const Header = () => {
       } else if (scrollingDown) {
         setIsVisible(false);
         setIsMenuOpen(false);
+        setIsBtnPressed(false);
+        menuButtonRef.current?.blur();
       } else {
         setIsVisible(true);
       }
@@ -81,11 +85,15 @@ const Header = () => {
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className=""
-              style={{ color: 'var(--brand-title)' }}
+              ref={menuButtonRef}
+              onClick={() => { setIsMenuOpen(!isMenuOpen); setIsBtnPressed(false); }}
+              onPointerDown={() => setIsBtnPressed(true)}
+              onPointerUp={() => setIsBtnPressed(false)}
+              onPointerLeave={() => setIsBtnPressed(false)}
+              className="p-1 rounded-md focus:outline-none"
+              style={{ color: isBtnPressed ? 'var(--color-main)' : 'var(--brand-title)' }}
               onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-main)')}
-              onMouseLeave={e => (e.currentTarget.style.color = 'var(--brand-title)')}
+              onMouseLeave={e => (e.currentTarget.style.color = isBtnPressed ? 'var(--color-main)' : 'var(--brand-title)')}
             >
               <span className="sr-only">Apri menu</span>
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

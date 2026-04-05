@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Viva Plant Nutrition - Dott.ssa Arianna Ciervo Nutrizionista Vegana",
+  title: "Viva Plant Nutrition - Arianna Ciervo Nutrizionista Vegana",
   description: "Centro specializzato in nutrizione vegana. Consulenze personalizzate, piani alimentari e supporto per uno stile di vita sano, equilibrato e sostenibile.",
 };
 
