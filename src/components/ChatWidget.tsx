@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface Message {
   id: number;
@@ -10,6 +11,9 @@ interface Message {
 }
 
 export default function ChatWidget() {
+  const pathname = usePathname();
+  const isBookingPage = pathname === '/prenota';
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -240,7 +244,7 @@ export default function ChatWidget() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 p-5 rounded-full shadow-2xl transition-all hover:scale-110 group"
+        className={`fixed right-6 z-50 p-5 rounded-full shadow-2xl transition-all hover:scale-110 group ${isBookingPage ? 'bottom-24 md:bottom-6' : 'bottom-6'}`}
         style={{ background: 'var(--brand-title)' }}
         aria-label="Apri chat assistente"
       >
@@ -264,7 +268,7 @@ export default function ChatWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] shadow-2xl rounded-2xl overflow-hidden"
+    <div className={`fixed right-6 z-50 w-96 max-w-[calc(100vw-3rem)] shadow-2xl rounded-2xl overflow-hidden ${isBookingPage ? 'bottom-24 md:bottom-6' : 'bottom-6'}`}
       style={{ background: 'white', height: '600px', maxHeight: 'calc(100vh-3rem)' }}
     >
       {/* Header */}

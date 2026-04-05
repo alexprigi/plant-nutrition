@@ -89,6 +89,21 @@ const PrenotaPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // Hide footer on mobile for this page
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.id = 'prenota-page-styles';
+    style.textContent = '@media (max-width: 768px) { footer { display: none !important; } }';
+    document.head.appendChild(style);
+
+    return () => {
+      const existingStyle = document.getElementById('prenota-page-styles');
+      if (existingStyle) {
+        existingStyle.remove();
+      }
+    };
+  }, []);
+
   // --- NAVIGATION STATE ---
   const stepParam = searchParams.get('step');
   const currentStep = stepParam ? parseInt(stepParam) : 1;
@@ -395,59 +410,72 @@ const PrenotaPageContent = () => {
 
         {/* --- STEP 1: SERVICE --- */}
         {currentStep === 1 && (
-          <div className="animate-fade-in max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">Come posso aiutarti?</h1>
-            <p className="text-center text-gray-500 mb-8">Scegli il percorso più adatto alle tue esigenze.</p>
+          <div className="max-w-4xl mx-auto">
+            <div className="animate-fade-in">
+              <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">Come posso aiutarti?</h1>
+              <p className="text-center text-gray-500 mb-8">Scegli il percorso più adatto alle tue esigenze.</p>
 
-            {eligibilityError && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
-                <div className="flex items-start gap-3">
-                  <Icon name="alert" size={20} className="text-red-600 mt-0.5" />
-                  <div>
-                    <h4 className="font-bold text-red-800 mb-1">Colloquio già utilizzato</h4>
-                    <p className="text-sm text-red-700">{eligibilityError}</p>
+              {eligibilityError && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
+                  <div className="flex items-start gap-3">
+                    <Icon name="alert" size={20} className="text-red-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-bold text-red-800 mb-1">Colloquio già utilizzato</h4>
+                      <p className="text-sm text-red-700">{eligibilityError}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {CONSULTATION_TYPES.map(type => (
-                <button
-                  key={type.value}
-                  onClick={() => {
-                    setSelectedService(type.value);
-                    setEligibilityError('');
-                  }}
-                  className={`
-                    p-6 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col group
-                    ${type.value === 'first-visit' ? 'md:col-span-2' : ''}
-                    ${selectedService === type.value ? 'ring-2 ring-[var(--brand-title)] shadow-lg scale-[1.01]' : 'hover:shadow-md border-transparent hover:-translate-y-1'}
-                  `}
-                  style={{ background: type.bgStyle.background }}
-                >
-                  {type.badge && (
-                    <span className="absolute top-0 right-0 px-3 py-1.5 bg-[var(--brand-title)] text-white text-[10px] font-bold rounded-bl-xl uppercase tracking-wider">{type.badge}</span>
-                  )}
-                  <div className="flex items-start gap-4 mb-3">
-                    <div className="p-3 bg-white/50 rounded-xl" style={{ color: type.iconColor }}>
-                      <Icon name={type.iconName as any} size={24} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-28 md:mb-8">
+                {CONSULTATION_TYPES.map(type => (
+                  <button
+                    key={type.value}
+                    onClick={() => {
+                      setSelectedService(type.value);
+                      setEligibilityError('');
+                    }}
+                    className={`
+                      p-6 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col group
+                      ${type.value === 'first-visit' ? 'md:col-span-2' : ''}
+                      ${selectedService === type.value ? 'ring-2 ring-[var(--brand-title)] shadow-lg scale-[1.01]' : 'hover:shadow-md border-transparent hover:-translate-y-1'}
+                    `}
+                    style={{ background: type.bgStyle.background }}
+                  >
+                    {type.badge && (
+                      <span className="absolute top-0 right-0 px-3 py-1.5 bg-[var(--brand-title)] text-white text-[10px] font-bold rounded-bl-xl uppercase tracking-wider">{type.badge}</span>
+                    )}
+                    <div className="flex items-start gap-4 mb-3">
+                      <div className="p-3 bg-white/50 rounded-xl" style={{ color: type.iconColor }}>
+                        <Icon name={type.iconName as any} size={24} />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-lg text-gray-900 group-hover:text-black">{type.title}</h3>
+                        <p className="text-sm text-gray-600 leading-snug">{type.description}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-bold text-lg text-gray-900 group-hover:text-black">{type.title}</h3>
-                      <p className="text-sm text-gray-600 leading-snug">{type.description}</p>
+                    <div className="mt-auto flex justify-between items-end w-full pt-3 border-t border-black/5">
+                      <span className="text-xs font-bold text-gray-500 bg-white/50 px-2 py-1 rounded flex items-center gap-1">
+                        <Icon name="clock" size={12} /> {type.duration}
+                      </span>
+                      <span className="text-xl font-bold text-gray-900">{type.labelPrice}</span>
                     </div>
-                  </div>
-                  <div className="mt-auto flex justify-between items-end w-full pt-3 border-t border-black/5">
-                    <span className="text-xs font-bold text-gray-500 bg-white/50 px-2 py-1 rounded flex items-center gap-1">
-                      <Icon name="clock" size={12} /> {type.duration}
-                    </span>
-                    <span className="text-xl font-bold text-gray-900">{type.labelPrice}</span>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="mt-8 text-center pb-20">
+
+            {/* Sticky Bottom Bar - Mobile */}
+            <div className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4 z-50">
+              <div className="max-w-4xl mx-auto text-center">
+                <Button onClick={nextStep} disabled={!selectedService || !!eligibilityError} className={`w-full rounded-full px-12 py-4 text-base font-bold ${!selectedService || !!eligibilityError ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] hover:shadow-xl'} text-white transition-all`}>
+                  Continua
+                </Button>
+              </div>
+            </div>
+
+            {/* Desktop Button */}
+            <div className="hidden md:block text-center mt-8">
               <Button onClick={nextStep} disabled={!selectedService || !!eligibilityError} className={`rounded-full px-12 py-3 ${!selectedService || !!eligibilityError ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] hover:shadow-xl'} text-white`}>
                 Continua
               </Button>
@@ -457,22 +485,24 @@ const PrenotaPageContent = () => {
 
         {/* --- STEP 2: USER DATA (NO NOTES) --- */}
         {currentStep === 2 && (
-          <div className="animate-fade-in max-w-xl mx-auto w-full pb-20">
-            <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
-              <h2 className="text-2xl font-bold mb-8 text-center text-gray-900">I tuoi dati</h2>
+          <>
+          <div className="max-w-xl mx-auto w-full">
+            <div className="animate-fade-in pb-28 md:pb-20">
+              <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
+                <h2 className="text-2xl font-bold mb-8 text-center text-gray-900">I tuoi dati</h2>
 
-              {/* DEV ONLY: Auto-fill button */}
-              {process.env.NODE_ENV === 'development' && (
-                <div className="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded-xl flex items-center justify-between">
-                  <span className="text-xs font-bold text-yellow-800">🛠️ DEV MODE</span>
-                  <button
-                    onClick={fillRandomData}
-                    className="px-4 py-2 bg-yellow-500 text-white text-xs font-bold rounded-lg hover:bg-yellow-600 transition-colors"
-                  >
-                    Compila Dati Random
-                  </button>
-                </div>
-              )}
+                {/* DEV ONLY: Auto-fill button */}
+                {process.env.NODE_ENV === 'development' && (
+                  <div className="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded-xl flex items-center justify-between">
+                    <span className="text-xs font-bold text-yellow-800">🛠️ DEV MODE</span>
+                    <button
+                      onClick={fillRandomData}
+                      className="px-4 py-2 bg-yellow-500 text-white text-xs font-bold rounded-lg hover:bg-yellow-600 transition-colors"
+                    >
+                      Compila Dati Random
+                    </button>
+                  </div>
+                )}
 
               <div className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -559,36 +589,55 @@ const PrenotaPageContent = () => {
                 </div>
               </div>
 
-              <div className="flex justify-between mt-10 pt-6 border-t border-gray-100">
-                <button onClick={() => setStep(1)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
-                <Button
-                  onClick={nextStep}
-                  disabled={isProcessing}
-                  className={`rounded-full px-8 transition-all ${isProcessing ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'}`}
-                >
-                  {isProcessing ? 'Validazione...' : 'Continua'}
-                </Button>
-              </div>
+                {errors.general && (
+                  <p className="text-red-500 text-sm text-center mt-4">{errors.general}</p>
+                )}
 
-              {errors.general && (
-                <p className="text-red-500 text-sm text-center mt-4">{errors.general}</p>
-              )}
+                {/* Desktop Buttons - inside card */}
+                <div className="hidden md:flex justify-between mt-10 pt-6 border-t border-gray-100">
+                  <button onClick={() => setStep(1)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
+                  <Button
+                    onClick={nextStep}
+                    disabled={isProcessing}
+                    className={`rounded-full px-8 py-3 transition-all ${isProcessing ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'}`}
+                  >
+                    {isProcessing ? 'Validazione...' : 'Continua'}
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* Mobile Sticky Bar - outside card, always in DOM */}
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4 z-50">
+            <div className="max-w-xl mx-auto flex justify-between items-center gap-4">
+              <button onClick={() => setStep(1)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">Indietro</button>
+              <Button
+                onClick={nextStep}
+                disabled={isProcessing}
+                className={`flex-1 rounded-full px-8 py-4 text-base font-bold transition-all ${isProcessing ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'}`}
+              >
+                {isProcessing ? 'Validazione...' : 'Continua'}
+              </Button>
+            </div>
+          </div>
+          </>
         )}
 
         {/* --- STEP 3: CONFIRMATION / PAYMENT (NO NOTES) --- */}
         {currentStep === 3 && (
-          <div className="animate-fade-in max-w-xl mx-auto w-full pb-20 relative">
-            {isProcessing && (
-              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-3xl">
-                <div className="text-center">
-                  <div className="w-16 h-16 border-4 border-[var(--brand-title)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="font-bold text-gray-700">Elaborazione in corso...</p>
+          <>
+          <div className="max-w-xl mx-auto w-full">
+            <div className="animate-fade-in pb-28 md:pb-20 relative">
+              {isProcessing && (
+                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-3xl">
+                  <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-[var(--brand-title)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="font-bold text-gray-700">Elaborazione in corso...</p>
+                  </div>
                 </div>
-              </div>
-            )}
-            <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
+              )}
+              <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
 
               {activeService?.price! > 0 ? (
                 <>
@@ -667,29 +716,46 @@ const PrenotaPageContent = () => {
                 </div>
               )}
 
-              <div className="mt-8 pt-6 border-t border-gray-100 flex justify-between items-center">
-                <button onClick={() => setStep(2)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
-                <Button
-                  onClick={nextStep}
-                  disabled={isProcessing}
-                  className="bg-black text-white rounded-xl px-4 sm:px-8 py-3 shadow-lg hover:scale-[1.02] transition-transform font-bold text-sm sm:text-base"
-                >
-                  {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? 'Paga e Prenota' : (
-                    <>
-                      <span className="hidden sm:inline">Conferma e Scegli Data</span>
-                      <span className="sm:hidden">Conferma</span>
-                    </>
-                  ))}
-                </Button>
-              </div>
-
               {activeService?.price! > 0 && (
                 <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
                   <Icon name="shield" size={12} /> Pagamenti crittografati SSL
                 </p>
               )}
+
+              {/* Desktop Buttons - inside card */}
+              <div className="hidden md:flex justify-between mt-8 pt-6 border-t border-gray-100">
+                <button onClick={() => setStep(2)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
+                <Button
+                  onClick={nextStep}
+                  disabled={isProcessing}
+                  className="bg-black text-white rounded-xl px-8 py-3 shadow-lg hover:scale-[1.02] transition-transform font-bold text-sm"
+                >
+                  {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? 'Paga e Prenota' : 'Conferma e Scegli Data')}
+                </Button>
+              </div>
             </div>
           </div>
+          </div>
+
+          {/* Mobile Sticky Bar - outside card, always in DOM */}
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4 z-50">
+            <div className="max-w-xl mx-auto flex justify-between items-center gap-4">
+              <button onClick={() => setStep(2)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">Indietro</button>
+              <Button
+                onClick={nextStep}
+                disabled={isProcessing}
+                className="flex-1 bg-black text-white rounded-xl px-6 py-4 shadow-lg hover:scale-[1.02] transition-transform font-bold text-base"
+              >
+                {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? 'Paga e Prenota' : (
+                  <>
+                    <span className="hidden sm:inline">Conferma e Scegli Data</span>
+                    <span className="sm:hidden">Conferma</span>
+                  </>
+                ))}
+              </Button>
+            </div>
+          </div>
+          </>
         )}
 
         {/* --- STEP 4: CALENDAR (NOTES HERE) --- */}
