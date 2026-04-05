@@ -80,7 +80,7 @@ export default function Contatti() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
 
       <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
         {/* Decorative circles */}
@@ -330,7 +330,7 @@ export default function Contatti() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }} />
 
       {/* FAQ Rapide */}
       <section className="py-20" style={{ background: 'var(--bg-section-warm)' }}>
@@ -384,7 +384,7 @@ export default function Contatti() {
       </section>
 
       {/* Transizione sfumata */}
-      {/* <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-hero) 100%)' }} /> */}
+      {/* <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-hero) 100%)' }} /> */}
 
       {/* Mappa (placeholder) */}
       {/* <section className="py-20" style={{ background: 'var(--bg-hero)' }}>

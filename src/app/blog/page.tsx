@@ -94,7 +94,7 @@ export default function Blog() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
 
       {/* Filtri Categorie */}
       <section className="py-8 border-b" style={{ background: 'var(--bg-section-light)' }}>
@@ -117,7 +117,7 @@ export default function Blog() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }} />
 
       {/* Articolo in Evidenza */}
       <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
@@ -154,7 +154,7 @@ export default function Blog() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
 
       {/* Griglia Articoli */}
       <section className="py-20" style={{ background: 'var(--bg-section-light)' }}>
@@ -195,7 +195,7 @@ export default function Blog() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--color-main) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--color-main) 100%)' }} />
 
       {/* Newsletter */}
       <section className="py-20" style={{ background: 'var(--color-main)' }}>
@@ -230,7 +230,7 @@ export default function Blog() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--color-main) 0%, var(--bg-section-warm) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--color-main) 0%, var(--bg-section-warm) 100%)' }} />
 
       {/* Risorse Gratuite */}
       <section className="py-20" style={{ background: 'var(--bg-section-warm)' }}>

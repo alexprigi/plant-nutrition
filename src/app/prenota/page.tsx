@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import Button from '@/components/ui/Button';
 import { createFullBooking, checkEligibility, AppointmentStatus } from '@/lib/bookingService';
-import { COUNTRIES, COUNTRY_PREFIXES } from '@/lib/constants';
+import { COUNTRIES, COUNTRY_FLAGS, COUNTRY_PREFIXES } from '@/lib/constants';
 import Icon from '@/components/icons/Icon';
 
 // --- CONSTANTS ---
@@ -385,7 +385,7 @@ const PrenotaPageContent = () => {
                     {step.num}
                   </div>
                   {showLine && (
-                    <div className={`w-12 sm:w-20 h-1 -mx-2 rounded transition-colors duration-300 ${isPast ? 'bg-[var(--brand-title)]' : 'bg-gray-200'}`} />
+                    <div className={`w-16 sm:w-24 md:w-28 h-1 -mx-2 rounded transition-colors duration-300 ${isPast ? 'bg-[var(--brand-title)]' : 'bg-gray-200'}`} />
                   )}
                 </div>
               );
@@ -496,16 +496,16 @@ const PrenotaPageContent = () => {
 
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Telefono*</label>
-                  <div className="flex gap-2">
-                    <div className="relative w-32">
-                      <select value={phonePrefix} onChange={(e) => setPhonePrefix(e.target.value)} className="w-full p-3 bg-white text-gray-900 border border-gray-300 rounded-xl outline-none appearance-none cursor-pointer text-sm pr-8">
+                  <div className="flex items-center gap-2">
+                    <div className="relative shrink-0">
+                      <select value={phonePrefix} onChange={(e) => setPhonePrefix(e.target.value)} className={`h-[50px] px-3 pr-8 bg-white text-gray-900 border rounded-xl outline-none appearance-none cursor-pointer text-sm min-w-[5.5rem] w-auto ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}>
                         {COUNTRY_PREFIXES.map(country => (
                           <option key={country.name} value={country.code}>{country.flag} {country.code}</option>
                         ))}
                       </select>
                       <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none text-gray-500"><Icon name="chevronRight" size={14} style={{ transform: 'rotate(90deg)' }} /></div>
                     </div>
-                    <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} className={`flex-1 p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.phone ? 'border-red-500' : 'border-gray-300'}`} placeholder="Numero di telefono" />
+                    <input type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} className={`flex-1 min-w-0 h-[50px] px-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.phone ? 'border-red-500' : 'border-gray-300'}`} placeholder="Numero di telefono" />
                   </div>
                   {errors.phone && <p className="text-red-500 text-xs mt-1 ml-1">{errors.phone}</p>}
                 </div>
@@ -519,7 +519,7 @@ const PrenotaPageContent = () => {
                         <input type="text" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.address ? 'border-red-500' : 'border-gray-300'}`} placeholder="Via o Piazza" />
                         {errors.address && <p className="text-red-500 text-xs mt-1 ml-1">{errors.address}</p>}
                       </div>
-                      <div className="col-span-1">
+                      <div className="sm:col-span-1">
                         <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">N. Civico*</label>
                         <input type="text" value={formData.civicNumber} onChange={e => setFormData({ ...formData, civicNumber: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.civicNumber ? 'border-red-500' : 'border-gray-300'}`} placeholder="Numero" />
                         {errors.civicNumber && <p className="text-red-500 text-xs mt-1 ml-1">{errors.civicNumber}</p>}
@@ -542,9 +542,12 @@ const PrenotaPageContent = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Nazione*</label>
-                        <select value={formData.country} onChange={e => setFormData({ ...formData, country: e.target.value })} className="w-full p-3 bg-white text-gray-900 border border-gray-300 rounded-xl outline-none focus:border-[var(--brand-title)] appearance-none">
-                          {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
-                        </select>
+                        <div className="relative">
+                          <select value={formData.country} onChange={e => setFormData({ ...formData, country: e.target.value })} className="w-full p-3 pr-8 bg-white text-gray-900 border border-gray-300 rounded-xl outline-none focus:border-[var(--brand-title)] appearance-none cursor-pointer">
+                            {COUNTRIES.map(c => <option key={c} value={c}>{COUNTRY_FLAGS[c] ? `${COUNTRY_FLAGS[c]} ${c}` : c}</option>)}
+                          </select>
+                          <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none text-gray-500"><Icon name="chevronRight" size={14} style={{ transform: 'rotate(90deg)' }} /></div>
+                        </div>
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Cod. Fiscale*</label>
@@ -669,9 +672,14 @@ const PrenotaPageContent = () => {
                 <Button
                   onClick={nextStep}
                   disabled={isProcessing}
-                  className="bg-black text-white rounded-xl px-8 py-3 shadow-lg hover:scale-[1.02] transition-transform font-bold"
+                  className="bg-black text-white rounded-xl px-4 sm:px-8 py-3 shadow-lg hover:scale-[1.02] transition-transform font-bold text-sm sm:text-base"
                 >
-                  {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? 'Paga e Prenota' : 'Conferma e Scegli Data')}
+                  {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? 'Paga e Prenota' : (
+                    <>
+                      <span className="hidden sm:inline">Conferma e Scegli Data</span>
+                      <span className="sm:hidden">Conferma</span>
+                    </>
+                  ))}
                 </Button>
               </div>
 
@@ -723,12 +731,12 @@ const PrenotaPageContent = () => {
                     const noSlots = !hasAvailableSlots(d);
                     const isDisabled = isPast || noSlots;
                     return (
-                      <button 
-                        key={d} 
-                        onClick={() => !isDisabled && setSelectedDate(d)} 
+                      <button
+                        key={d}
+                        onClick={() => !isDisabled && setSelectedDate(d)}
                         disabled={isDisabled}
                         className={`
-                            w-10 h-10 rounded-full flex items-center justify-center text-sm transition-all font-medium
+                            w-11 h-11 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm transition-all font-medium
                             ${isDisabled
                           ? 'text-gray-300 cursor-not-allowed bg-gray-50'
                           : isSel
@@ -748,7 +756,7 @@ const PrenotaPageContent = () => {
               {/* SLOTS UI */}
               <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex flex-col">
                 <h3 className="font-bold text-gray-900 mb-4 text-center">Orari disponibili</h3>
-                <div className="grid grid-cols-3 gap-3 mb-auto max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-auto max-h-80 overflow-y-auto pr-2 custom-scrollbar">
                   {availableTimeSlots.map(slot => {
                     const isAvailable = typeof slot === 'string' ? true : slot.available;
                     const timeValue = typeof slot === 'string' ? slot : slot.time;

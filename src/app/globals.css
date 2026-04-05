@@ -233,10 +233,25 @@ body {
   50% { transform: rotate(5deg); }
 }
 
-/* Hide plant decorations on screens smaller than 1600px */
-@media (max-width: 1599px) {
+/* Hide plant decorations on screens smaller than 1500px */
+@media (max-width: 1499px) {
   .content-decorations > div {
     display: none !important;
+  }
+}
+
+/* Gradient transition divs - fix for mobile */
+.gradient-transition {
+  height: 64px;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+/* On mobile, use simpler approach to avoid overflow issues */
+@media (max-width: 768px) {
+  .gradient-transition {
+    width: 100%;
+    margin-left: 0;
   }
 }
 

@@ -35,7 +35,7 @@ export default function Servizi() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
 
       {/* Come Funziona - Prima Sezione */}
       <section className="pt-16 pb-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
@@ -131,7 +131,7 @@ export default function Servizi() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }} />
 
       {/* Sezione Specializzazione Principale - Gravidanza */}
       <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-section-warm)' }}>
@@ -251,7 +251,7 @@ export default function Servizi() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-section-warm) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-section-warm) 100%)' }} />
 
       {/* Altre Specializzazioni */}
       <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-section-warm)' }}>
@@ -366,7 +366,7 @@ export default function Servizi() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-section-light) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-section-light) 100%)' }} />
 
       {/* Consulenze e Percorsi - SEZIONE PREZZI INTEGRATA */}
       <section className="pt-12 pb-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
@@ -695,7 +695,7 @@ export default function Servizi() {
       </section>
 
       {/* Transizione sfumata */}
-      {/* <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }} /> */}
+      {/* <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }} /> */}
 
       {/* Corsi e Workshop (COMMENTATO) */}
       {/* <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
@@ -781,7 +781,7 @@ export default function Servizi() {
       </section> */}
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }} />
 
       {/* FAQ */}
       <section className="py-20" style={{ background: 'var(--bg-section-warm)' }}>
@@ -840,7 +840,7 @@ export default function Servizi() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-hero) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-hero) 100%)' }} />
 
       {/* Call to Action */}
       <section className="py-24" style={{ background: 'var(--brand-title)', color: 'var(--foreground)' }}>

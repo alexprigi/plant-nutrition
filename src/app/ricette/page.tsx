@@ -120,7 +120,7 @@ export default function Ricette() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
 
       {/* Filtri per categoria */}
       <section className="py-8" style={{ background: 'var(--bg-section-light)' }}>

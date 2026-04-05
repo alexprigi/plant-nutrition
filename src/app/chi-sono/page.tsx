@@ -90,7 +90,7 @@ export default function ChiSono() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
 
       {/* La Mia Storia */}
       <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
@@ -125,7 +125,7 @@ export default function ChiSono() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }} />
 
       {/* Formazione e Qualifiche */}
       <section className="py-20" style={{ background: 'var(--bg-hero)' }}>
@@ -218,7 +218,7 @@ export default function ChiSono() {
       </section>
 
       {/* Transizione sfumata */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
 
       {/* Filosofia e Approccio */}
       <section className="py-20" style={{ background: 'var(--bg-section-light)' }}>
@@ -283,7 +283,7 @@ export default function ChiSono() {
       </section>
 
       {/* Transizione sfumata */}
-      {/* <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }} /> */}
+      {/* <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }} /> */}
 
       {/* Esperienza Professionale */}
       {/* <section className="py-20" style={{ background: 'var(--bg-section-warm)' }}>
@@ -318,7 +318,7 @@ export default function ChiSono() {
       </section> */}
 
       {/* Transizione sfumata */}
-      {/* <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-hero) 100%)' }} /> */}
+      {/* <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-warm) 0%, var(--bg-hero) 100%)' }} /> */}
 
       {/* Call to Action */}
       <section className="py-24" style={{ background: 'var(--brand-title)', color: 'var(--foreground)' }}>

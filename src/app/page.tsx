@@ -205,7 +205,7 @@ export default function Home() {
 
 
       {/* Transizione sfumata accentuata tra Hero e Presentazione Personale */}
-      <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
 
       {/* Decorazioni botaniche per sezioni centrali */}
       <div className="content-decorations" style={{ position: 'relative' }}>
@@ -402,9 +402,14 @@ export default function Home() {
             </div>
           </div>
         </section>
+      </div>
+      {/* Fine content-decorations gruppo 1 */}
 
-        {/* Transizione sfumata accentuata tra Presentazione Personale e Servizi Principali */}
-        <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }} />
+      {/* Transizione sfumata accentuata tra Presentazione Personale e Servizi Principali */}
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-hero) 100%)' }} />
+
+      {/* Decorazioni botaniche gruppo 2 */}
+      <div className="content-decorations" style={{ position: 'relative' }}>
         {/* Servizi Principali */}
         <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
           {/* Decorative circles */}
@@ -506,9 +511,14 @@ export default function Home() {
             </div>
           </div>
         </section>
+      </div>
+      {/* Fine content-decorations gruppo 2 */}
 
-        {/* Transizione sfumata accentuata tra Servizi Principali e Perché Scegliere l'Alimentazione Vegana */}
-        <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+      {/* Transizione sfumata accentuata tra Servizi Principali e Perché Scegliere l'Alimentazione Vegana */}
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+
+      {/* Decorazioni botaniche gruppo 3 */}
+      <div className="content-decorations" style={{ position: 'relative' }}>
         {/* Perché Scegliere l'Alimentazione Vegana */}
         <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
           {/* Decorative circles */}
@@ -585,10 +595,14 @@ export default function Home() {
 
         {/* Testimonianze */}
         <Testimonials />
+      </div>
+      {/* Fine content-decorations gruppo 3 */}
 
-        {/* Transizione sfumata accentuata tra Testimonianze e FAQ */}
-        <div style={{ height: '64px', width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }} />
+      {/* Transizione sfumata accentuata tra Testimonianze e FAQ */}
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }} />
 
+      {/* Decorazioni botaniche gruppo 4 */}
+      <div className="content-decorations" style={{ position: 'relative' }}>
         {/* FAQ Section */}
         <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-section-warm)' }}>
           {/* Decorative circles */}
@@ -687,7 +701,7 @@ export default function Home() {
           </div>
         </section>
       </div>
-      {/* Fine decorazioni */}
+      {/* Fine content-decorations gruppo 4 */}
 
       {/* Call to Action Finale */}
       <section className="py-24 relative overflow-hidden" style={{ background: 'var(--brand-title)', color: 'var(--foreground)' }}>
