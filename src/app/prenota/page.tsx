@@ -142,6 +142,16 @@ const PrenotaPageContent = () => {
     CONSULTATION_TYPES.find(t => t.value === selectedService),
     [selectedService]);
 
+  // Redirect protection: prevent direct access to steps without completing previous ones
+  useEffect(() => {
+    // Can't access step 2, 3, or 4 without selecting a service first
+    if (currentStep > 1 && !selectedService) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('step', '1');
+      router.replace(`?${params.toString()}`);
+    }
+  }, [currentStep, selectedService, router, searchParams]);
+
   // Memoize available time slots based on selected date
   const availableTimeSlots = useMemo(() => {
     if (!selectedDate) return TIME_SLOTS;
