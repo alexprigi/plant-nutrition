@@ -1,10 +1,32 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = Math.max(0, window.scrollY);
+      const scrollingDown = currentScrollY > lastScrollY.current;
+      lastScrollY.current = currentScrollY;
+
+      if (currentScrollY < 80) {
+        setIsVisible(true);
+      } else if (scrollingDown) {
+        setIsVisible(false);
+        setIsMenuOpen(false);
+      } else {
+        setIsVisible(true);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -16,7 +38,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="shadow-sm sticky top-0 z-50" style={{ background: 'var(--bg-hero)' }}>
+    <header className={`shadow-sm fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`} style={{ background: 'var(--bg-hero)' }}>
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}

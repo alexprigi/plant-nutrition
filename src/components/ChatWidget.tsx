@@ -258,7 +258,7 @@ export default function ChatWidget() {
         </div>
         
         {/* Tooltip */}
-        <div className="absolute bottom-full right-0 mb-2 px-4 py-2 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity"
+        <div className="absolute bottom-full right-0 mb-2 px-4 py-2 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
           style={{ background: 'white', color: 'var(--brand-title)' }}
         >
           💬 Chiedimi qualsiasi cosa!

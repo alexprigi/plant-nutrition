@@ -760,7 +760,8 @@ const PrenotaPageContent = () => {
 
         {/* --- STEP 4: CALENDAR (NOTES HERE) --- */}
         {currentStep === 4 && (
-          <div className="animate-fade-in max-w-4xl mx-auto pb-20">
+          <>
+          <div className="animate-fade-in max-w-4xl mx-auto pb-28 md:pb-20">
             <h2 className="text-3xl font-bold mb-2 text-center text-gray-800">
               {activeService?.price! > 0 ? 'Scegli la data della Prima Visita' : 'Scegli la data'}
             </h2>
@@ -815,7 +816,7 @@ const PrenotaPageContent = () => {
                   })}
                 </div>
                 <div className="mt-auto pt-4 border-t border-gray-100">
-                  <button onClick={() => setStep(3)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
+                  <button onClick={() => setStep(3)} className="hidden md:block text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
                 </div>
               </div>
 
@@ -866,7 +867,7 @@ const PrenotaPageContent = () => {
                   />
                 </div>
 
-                <div className="mt-6 pt-2">
+                <div className="hidden md:block mt-6 pt-2">
                   <Button
                     onClick={handleFinalBooking}
                     disabled={!selectedDate || !selectedTime || isProcessing}
@@ -881,6 +882,24 @@ const PrenotaPageContent = () => {
               </div>
             </div>
           </div>
+
+          {/* Mobile Sticky Bar - step 4 */}
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4 z-50">
+            <div className="max-w-xl mx-auto flex justify-between items-center gap-4">
+              <button onClick={() => setStep(3)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">Indietro</button>
+              <Button
+                onClick={handleFinalBooking}
+                disabled={!selectedDate || !selectedTime || isProcessing}
+                className={`flex-1 rounded-full px-6 py-3 text-sm font-bold transition-all ${!selectedDate || !selectedTime || isProcessing
+                    ? 'opacity-50 cursor-not-allowed bg-gray-300'
+                    : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'
+                  }`}
+              >
+                {isProcessing ? 'Conferma in corso...' : 'Conferma Appuntamento'}
+              </Button>
+            </div>
+          </div>
+          </>
         )}
 
       </div>
