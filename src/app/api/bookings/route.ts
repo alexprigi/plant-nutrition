@@ -1,142 +1,159 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import {
+  AppointmentStatus,
+  AppointmentType,
+  PaymentMethod,
+  SubscriptionStatus,
+  SubscriptionType,
+} from '@prisma/client'
+import type { CreateBookingDTO } from '@/lib/bookingService'
 
-interface BookingRequest {
-  name: string;
-  email: string;
-  phone: string;
-  consultationType: string;
-  selectedDate: string;
-  selectedTime: string;
-  notes: string;
+// Mappa tipi frontend → Prisma enums
+function mapCommercialType(commercialType: CreateBookingDTO['commercialType']): {
+  subType: SubscriptionType
+  apptType: AppointmentType
+  totalSessions: number
+  price: number
+} {
+  switch (commercialType) {
+    case 'free-consultation':
+      return { subType: 'FREE_CONSULTATION', apptType: 'FREE_CONSULTATION', totalSessions: 1, price: 0 }
+    case 'follow-up':
+      return { subType: 'SINGLE_SESSION', apptType: 'FOLLOW_UP', totalSessions: 1, price: 50 }
+    case 'first-visit':
+      return { subType: 'SINGLE_SESSION', apptType: 'FIRST_VISIT', totalSessions: 1, price: 85 }
+    case 'plan-3-months':
+      return { subType: 'BUNDLE_3_MONTHS', apptType: 'FIRST_VISIT', totalSessions: 3, price: 237 }
+    case 'plan-6-months':
+      return { subType: 'BUNDLE_6_MONTHS', apptType: 'FIRST_VISIT', totalSessions: 6, price: 450 }
+  }
+}
+
+function mapPaymentMethod(pm: CreateBookingDTO['paymentMethod']): PaymentMethod {
+  const map: Record<string, PaymentMethod> = {
+    stripe: 'STRIPE',
+    paypal: 'PAYPAL',
+    bank_transfer: 'BANK_TRANSFER',
+    none: 'NONE',
+  }
+  return map[pm] ?? 'NONE'
+}
+
+function mapStatus(status: CreateBookingDTO['status']): AppointmentStatus {
+  const map: Record<string, AppointmentStatus> = {
+    pending: 'PENDING',
+    confirmed: 'CONFIRMED',
+    cancelled: 'CANCELLED',
+    completed: 'COMPLETED',
+  }
+  return map[status] ?? 'PENDING'
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const bookingData: BookingRequest = await request.json();
-    
-    // Validazione basic
-    if (!bookingData.name || !bookingData.email || !bookingData.phone || 
-        !bookingData.selectedDate || !bookingData.selectedTime) {
-      return NextResponse.json(
-        { error: 'Tutti i campi obbligatori devono essere compilati' },
-        { status: 400 }
-      );
-    }
+    const data: CreateBookingDTO = await request.json()
 
-    // Validazione email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(bookingData.email)) {
-      return NextResponse.json(
-        { error: 'Email non valida' },
-        { status: 400 }
-      );
-    }
+    const { subType, apptType, totalSessions, price } = mapCommercialType(data.commercialType)
 
-    // Formatta i dati per l'email
-    const formattedDate = new Date(bookingData.selectedDate).toLocaleDateString('it-IT', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Crea o aggiorna il cliente
+      const client = await tx.client.upsert({
+        where: { email: data.email.toLowerCase() },
+        update: {
+          name: data.name,
+          surname: data.surname,
+          phone: data.phone,
+          address: data.address,
+          civicNumber: data.civicNumber,
+          city: data.city,
+          zipCode: data.zipCode,
+          country: data.country,
+          fiscalCode: data.fiscalCode,
+          isDeleted: false,
+        },
+        create: {
+          email: data.email.toLowerCase(),
+          name: data.name,
+          surname: data.surname,
+          phone: data.phone,
+          address: data.address,
+          civicNumber: data.civicNumber,
+          city: data.city,
+          zipCode: data.zipCode,
+          country: data.country,
+          fiscalCode: data.fiscalCode,
+          role: 'GUEST',
+        },
+      })
 
-    const consultationTypes = {
-      'prima-visita': 'Prima Visita (60 min) - €80',
-      'controllo': 'Controllo (30 min) - €50',
-      'consulenza-online': 'Consulenza Online (45 min) - €60'
-    };
+      // 2. Crea subscription
+      const subscription = await tx.subscription.create({
+        data: {
+          clientId: client.id,
+          type: subType,
+          price,
+          isPaid: data.isPaid,
+          paymentMethod: mapPaymentMethod(data.paymentMethod),
+          totalSessions,
+          usedSessions: 1,
+          status: 'ACTIVE' as SubscriptionStatus,
+        },
+      })
 
-    // Log della prenotazione (in produzione andrà in un database)
-    console.log('NUOVA PRENOTAZIONE:', {
-      ...bookingData,
-      timestamp: new Date().toISOString()
-    });
+      // 3. Crea appointment
+      const appointment = await tx.appointment.create({
+        data: {
+          subscriptionId: subscription.id,
+          clientId: client.id,
+          type: apptType,
+          date: data.selectedDate,
+          time: data.selectedTime,
+          status: mapStatus(data.status),
+          notes: data.notes ?? '',
+        },
+      })
 
-    // Qui andrà l'integrazione con il servizio email (Resend, SendGrid, etc.)
-    // Per ora simula l'invio dell'email
-    const emailContent = {
-      to: ['info@vivaplantnutrition.com'], // Email della nutrizionista
-      cc: [bookingData.email], // Copia al cliente
-      subject: `Nuova Prenotazione - ${bookingData.name}`,
-      html: `
-        <h2>Nuova Richiesta di Prenotazione</h2>
-        
-        <h3>Dettagli Cliente:</h3>
-        <ul>
-          <li><strong>Nome:</strong> ${bookingData.name}</li>
-          <li><strong>Email:</strong> ${bookingData.email}</li>
-          <li><strong>Telefono:</strong> ${bookingData.phone}</li>
-        </ul>
-        
-        <h3>Dettagli Appuntamento:</h3>
-        <ul>
-          <li><strong>Data:</strong> ${formattedDate}</li>
-          <li><strong>Orario:</strong> ${bookingData.selectedTime}</li>
-          <li><strong>Tipo Consulenza:</strong> ${consultationTypes[bookingData.consultationType as keyof typeof consultationTypes]}</li>
-        </ul>
-        
-        ${bookingData.notes ? `
-          <h3>Note aggiuntive:</h3>
-          <p>${bookingData.notes}</p>
-        ` : ''}
-        
-        <hr>
-        <p><em>Ricordati di confermare l'appuntamento contattando il cliente entro 24 ore.</em></p>
-      `
-    };
+      return { client, subscription, appointment }
+    })
 
-    // Log email content (sostituire con invio email reale)
-    console.log('EMAIL DA INVIARE:', emailContent);
-
-    // Salva la prenotazione (in futuro: database)
-    // Per ora utilizziamo un file locale per i test
-    
-    return NextResponse.json(
-      { 
-        message: 'Prenotazione ricevuta con successo!',
-        booking: {
-          id: `booking_${Date.now()}`,
-          date: formattedDate,
-          time: bookingData.selectedTime,
-          status: 'pending'
-        }
-      },
-      { status: 200 }
-    );
-
+    return NextResponse.json(result, { status: 201 })
   } catch (error) {
-    console.error('Errore nell\'elaborazione della prenotazione:', error);
-    return NextResponse.json(
-      { error: 'Errore interno del server' },
-      { status: 500 }
-    );
+    console.error('Booking error:', error)
+    return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 })
   }
 }
 
-// Gestione richieste GET per ottenere gli slot disponibili
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const date = searchParams.get('date');
-  
+  const { searchParams } = new URL(request.url)
+  const date = searchParams.get('date')
+
   if (!date) {
-    return NextResponse.json(
-      { error: 'Data richiesta' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Data richiesta' }, { status: 400 })
   }
 
-  // Qui andrà la logica per controllare gli slot già prenotati
-  // Per ora restituisce tutti gli slot come disponibili
-  const availableSlots = [
+  const allSlots = [
     '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-    '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
-  ];
+    '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+  ]
+
+  // Recupera slot già prenotati per quella data (esclusi cancellati)
+  const bookedAppointments = await prisma.appointment.findMany({
+    where: {
+      date,
+      isDeleted: false,
+      status: { notIn: ['CANCELLED'] },
+    },
+    select: { time: true },
+  })
+
+  const bookedTimes = new Set(bookedAppointments.map((a) => a.time))
 
   return NextResponse.json({
     date,
-    slots: availableSlots.map(time => ({
+    slots: allSlots.map((time) => ({
       time,
-      available: true // In futuro: controllare dal database
-    }))
-  });
+      available: !bookedTimes.has(time),
+    })),
+  })
 }

@@ -210,7 +210,7 @@ const PrenotaPageContent = () => {
       
       // Check eligibility for free consultation BEFORE validation
       if (selectedService === 'free-consultation' && formData.email) {
-        const check = checkEligibility(formData.email);
+        const check = await checkEligibility(formData.email);
         if (!check.eligible) {
           setEligibilityError('Risulta che hai già usufruito del colloquio gratuito. Per proseguire il tuo percorso, ti invitiamo a prenotare una Visita di Controllo.');
           setIsProcessing(false);
@@ -259,7 +259,7 @@ const PrenotaPageContent = () => {
     }
   };
 
-  const handleFinalBooking = () => {
+  const handleFinalBooking = async () => {
     if (!selectedDate || !selectedTime) return;
     setIsProcessing(true);
 
@@ -284,19 +284,25 @@ const PrenotaPageContent = () => {
       finalIsPaid = true;
     }
 
-    createFullBooking({
-      name: formData.name, surname: formData.surname, email: formData.email, phone: formData.phone,
-      address: formData.address, civicNumber: formData.civicNumber, city: formData.city,
-      zipCode: formData.zipCode, country: formData.country, fiscalCode: formData.fiscalCode,
+    try {
+      await createFullBooking({
+        name: formData.name, surname: formData.surname, email: formData.email, phone: formData.phone,
+        address: formData.address, civicNumber: formData.civicNumber, city: formData.city,
+        zipCode: formData.zipCode, country: formData.country, fiscalCode: formData.fiscalCode,
 
-      commercialType: selectedService as any,
-      paymentMethod: activeService?.price! > 0 ? paymentMethod : 'none',
+        commercialType: selectedService as any,
+        paymentMethod: activeService?.price! > 0 ? paymentMethod : 'none',
 
-      selectedDate, selectedTime, notes: sanitizedNotes,
+        selectedDate, selectedTime, notes: sanitizedNotes,
 
-      status: finalStatus,
-      isPaid: finalIsPaid
-    });
+        status: finalStatus,
+        isPaid: finalIsPaid
+      });
+    } catch (error) {
+      console.error('Booking error:', error);
+      setIsProcessing(false);
+      return;
+    }
 
     // Send confirmation emails
     fetch('/api/send-booking-emails', {

@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =====================
+// MODELLI
+// =====================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+model Client {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  name         String
+  surname      String
+  phone        String
+  address      String
+  civicNumber  String
+  city         String
+  zipCode      String
+  country      String
+  fiscalCode   String
+  role         ClientRole     @default(GUEST)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  isDeleted    Boolean        @default(false)
+
+  subscriptions Subscription[]
+  appointments  Appointment[]
+
+  @@map("clients")
+}
+
+enum ClientRole {
+  GUEST
+  REGISTERED
+}
+
+model Subscription {
+  id            String             @id @default(cuid())
+  clientId      String
+  client        Client             @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  type          SubscriptionType
+  price         Float
+  isPaid        Boolean            @default(false)
+  paymentMethod PaymentMethod
+  totalSessions Int
+  usedSessions  Int                @default(0)
+  status        SubscriptionStatus @default(ACTIVE)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  isDeleted     Boolean            @default(false)
+
+  appointments Appointment[]
+
+  @@map("subscriptions")
+}
+
+enum SubscriptionType {
+  FREE_CONSULTATION
+  SINGLE_SESSION
+  BUNDLE_3_MONTHS
+  BUNDLE_6_MONTHS
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXHAUSTED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  STRIPE
+  PAYPAL
+  BANK_TRANSFER
+  NONE
+}
+
+model Appointment {
+  id             String            @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription      @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  clientId       String
+  client         Client            @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  type           AppointmentType
+  date           String
+  time           String
+  status         AppointmentStatus @default(PENDING)
+  notes          String            @default("")
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  isDeleted      Boolean           @default(false)
+
+  @@map("appointments")
+}
+
+enum AppointmentType {
+  FREE_CONSULTATION
+  FIRST_VISIT
+  FOLLOW_UP
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
