@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Icon from '@/components/icons/Icon';
+import { EyeIcon } from '@/components/ui/EyeIcon';
 
 type Tab = 'profilo' | 'sicurezza';
 
@@ -23,6 +24,7 @@ const SettingsPage = () => {
 
   // Password
   const [pwd, setPwd] = useState({ current: '', next: '', confirm: '' });
+  const [showPwd, setShowPwd] = useState({ current: false, next: false, confirm: false });
   const [pwdMsg, setPwdMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isSavingPwd, setIsSavingPwd] = useState(false);
 
@@ -175,37 +177,52 @@ const SettingsPage = () => {
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Password attuale</label>
-                <input
-                  type="password"
-                  value={pwd.current}
-                  onChange={e => setPwd(d => ({ ...d, current: e.target.value }))}
-                  required
-                  className={INPUT_CLASS}
-                  placeholder="Inserisci la password attuale"
-                />
+                <div className="relative">
+                  <input
+                    type={showPwd.current ? 'text' : 'password'}
+                    value={pwd.current}
+                    onChange={e => setPwd(d => ({ ...d, current: e.target.value }))}
+                    required
+                    className={`${INPUT_CLASS} pr-10`}
+                    placeholder="Inserisci la password attuale"
+                  />
+                  <button type="button" onClick={() => setShowPwd(v => ({ ...v, current: !v.current }))} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    <EyeIcon open={showPwd.current} />
+                  </button>
+                </div>
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Nuova password</label>
-                <input
-                  type="password"
-                  value={pwd.next}
-                  onChange={e => setPwd(d => ({ ...d, next: e.target.value }))}
-                  required
-                  minLength={8}
-                  className={INPUT_CLASS}
-                  placeholder="Inserisci la nuova password"
-                />
+                <div className="relative">
+                  <input
+                    type={showPwd.next ? 'text' : 'password'}
+                    value={pwd.next}
+                    onChange={e => setPwd(d => ({ ...d, next: e.target.value }))}
+                    required
+                    minLength={8}
+                    className={`${INPUT_CLASS} pr-10`}
+                    placeholder="Inserisci la nuova password"
+                  />
+                  <button type="button" onClick={() => setShowPwd(v => ({ ...v, next: !v.next }))} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    <EyeIcon open={showPwd.next} />
+                  </button>
+                </div>
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Conferma nuova password</label>
-                <input
-                  type="password"
-                  value={pwd.confirm}
-                  onChange={e => setPwd(d => ({ ...d, confirm: e.target.value }))}
-                  required
-                  className={INPUT_CLASS}
-                  placeholder="Ripeti la nuova password"
-                />
+                <div className="relative">
+                  <input
+                    type={showPwd.confirm ? 'text' : 'password'}
+                    value={pwd.confirm}
+                    onChange={e => setPwd(d => ({ ...d, confirm: e.target.value }))}
+                    required
+                    className={`${INPUT_CLASS} pr-10`}
+                    placeholder="Ripeti la nuova password"
+                  />
+                  <button type="button" onClick={() => setShowPwd(v => ({ ...v, confirm: !v.confirm }))} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    <EyeIcon open={showPwd.confirm} />
+                  </button>
+                </div>
               </div>
               {pwdMsg && (
                 <p className={`text-sm ${pwdMsg.type === 'success' ? 'text-green-600' : 'text-red-500'}`}>

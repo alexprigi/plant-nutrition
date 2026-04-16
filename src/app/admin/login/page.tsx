@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { EyeIcon } from '@/components/ui/EyeIcon';
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -49,14 +51,19 @@ export default function AdminLoginPage() {
           </div>
           <div>
             <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              className="w-full p-3 bg-white text-gray-900 border border-gray-300 rounded-xl outline-none focus:border-[var(--brand-title)]"
-              placeholder="Inserisci la tua password"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                className="w-full p-3 pr-10 bg-white text-gray-900 border border-gray-300 rounded-xl outline-none focus:border-[var(--brand-title)]"
+                placeholder="Inserisci la tua password"
+              />
+              <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <EyeIcon open={showPassword} />
+              </button>
+            </div>
           </div>
 
           {error && (
