@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type MouseEvent } from 'react';
+import { usePathname } from 'next/navigation';
 
 const Header = () => {
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isBtnPressed, setIsBtnPressed] = useState(false);
@@ -41,13 +43,25 @@ const Header = () => {
     { name: 'Contatti', href: '/contatti' },
   ];
 
+  const handleHomeClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    setIsMenuOpen(false);
+
+    if (pathname !== '/') {
+      return;
+    }
+
+    event.preventDefault();
+    setIsVisible(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <header className={`shadow-sm fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`} style={{ background: 'var(--bg-hero)' }}>
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
+            <Link href="/" className="flex items-center space-x-2" onClick={handleHomeClick}>
               <span className="text-2xl">🌱</span>
               <div className="flex flex-col">
                 <span className="text-xl font-bold" style={{ color: 'var(--brand-title)' }}>Viva Plant</span>
@@ -64,6 +78,7 @@ const Header = () => {
                 href={item.href}
                 className="font-semibold text-base lg:text-lg xl:text-lg tracking-wide transition-all duration-200 menu-lift hover:text-[var(--color-main)] active:scale-95 active:opacity-80"
                 style={{ color: 'var(--brand-title)', letterSpacing: '0.02em' }}
+                onClick={item.href === '/' ? handleHomeClick : undefined}
               >
                 {item.name}
               </Link>
@@ -113,7 +128,7 @@ const Header = () => {
                   href={item.href}
                   className="font-semibold text-lg py-2 tracking-wide menu-lift transition-all duration-150 active:scale-95 active:opacity-70"
                   style={{ color: 'var(--brand-title)', letterSpacing: '0.02em' }}
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={item.href === '/' ? handleHomeClick : () => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
