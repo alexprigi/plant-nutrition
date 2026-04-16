@@ -23,15 +23,31 @@ export default function Contatti() {
     });
   };
 
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simula invio form - qui dovresti integrare con un servizio di email
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setSubmitError(null);
+
+    try {
+      const res = await fetch('/api/send-contact-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.error || 'Errore durante l\'invio');
+      }
+
       setIsSubmitted(true);
-    }, 2000);
+    } catch (err: any) {
+      setSubmitError(err.message || 'Si è verificato un errore. Riprova.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {
@@ -96,7 +112,7 @@ export default function Contatti() {
             {/* Form di Contatto */}
             <div>
               <h2 className="text-3xl font-bold mb-8" style={{ color: 'var(--brand-title)' }}>
-                Prenota una Consulenza Gratuita
+                Scrivimi un Messaggio
               </h2>
               
               <Card className="p-8" style={{ background: 'var(--bg-section-warm)' }}>
@@ -186,12 +202,13 @@ export default function Contatti() {
 
                   <div>
                     <label htmlFor="messaggio" className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>
-                      Messaggio
+                      Messaggio *
                     </label>
                     <textarea
                       id="messaggio"
                       name="messaggio"
                       rows={5}
+                      required
                       value={formData.messaggio}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
@@ -209,6 +226,10 @@ export default function Contatti() {
                   >
                     {isSubmitting ? 'Invio in corso...' : 'Invia Messaggio'}
                   </Button>
+
+                  {submitError && (
+                    <p className="text-sm text-center text-red-600">{submitError}</p>
+                  )}
 
                   <p className="text-sm text-center" style={{ color: 'var(--brand-title)' }}>
                     * Campi obbligatori. Ti risponderò entro 24 ore.
