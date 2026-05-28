@@ -309,7 +309,7 @@ export default function Contatti() {
                   </a>
                   
                   <a 
-                    href="https://t.me/puraessenzavegetale" 
+                    href="https://t.me/vivaplantnuition" 
                     className="bg-sky-500 text-white p-3 rounded-full hover:bg-sky-600 transition-colors"
                     aria-label="Telegram"
                     target="_blank"
@@ -321,7 +321,7 @@ export default function Contatti() {
                   </a>
                   
                   <a 
-                    href="https://instagram.com/pura_essenza_vegetale" 
+                    href="https://instagram.com/vivaplantnuition" 
                     className="bg-pink-600 text-white p-3 rounded-full hover:bg-pink-700 transition-colors"
                     aria-label="Instagram"
                     target="_blank"
@@ -333,7 +333,7 @@ export default function Contatti() {
                   </a>
                   
                   <a 
-                    href="https://facebook.com/pura.essenza.vegetale" 
+                    href="https://facebook.com/vivaplantnuition" 
                     className="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition-colors"
                     aria-label="Facebook"
                     target="_blank"

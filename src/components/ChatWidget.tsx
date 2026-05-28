@@ -163,8 +163,8 @@ export default function ChatWidget() {
       return "📬 Ecco come puoi contattarmi:\n\n" +
         "📧 **Email**: info@vivaplantnutrition.com\n" +
         "📱 **WhatsApp**: [Scrivimi ora](https://wa.me/393123456789)\n" +
-        "💬 **Telegram**: @puraessenzavegetale\n" +
-        "📷 **Instagram**: @pura_essenza_vegetale\n\n" +
+        "💬 **Telegram**: @vivaplantnuition\n" +
+        "📷 **Instagram**: @vivaplantnuition\n\n" +
         "Oppure [compila il form contatti](/contatti)";
     }
 
