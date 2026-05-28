@@ -1,5 +1,6 @@
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -10,12 +11,23 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo e descrizione */}
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <span className="text-2xl">🌱</span>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold">Viva Plant</span>
-                <span className="text-sm font-medium" style={{ color: 'var(--color-main)' }}>Nutrition</span>
-              </div>
+            <div className="inline-flex items-center gap-2 mb-4 bg-white rounded-xl px-3 py-1">
+              <Image
+                src="/images/logo_icon.png"
+                alt=""
+                width={588}
+                height={670}
+                className="h-14 w-auto object-contain"
+                style={{ mixBlendMode: 'multiply' }}
+              />
+              <Image
+                src="/images/logo_text.png"
+                alt="Viva Plant Nutrition"
+                width={591}
+                height={315}
+                className="h-12 w-auto object-contain"
+                style={{ mixBlendMode: 'multiply' }}
+              />
             </div>
             <p className="mb-4" style={{ color: 'var(--color-main)' }}>
               Centro specializzato in nutrizione vegana e benessere naturale. 

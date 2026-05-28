@@ -38,6 +38,14 @@ export function getAdminNotificationEmailHTML(data: EmailAdminData): string {
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden;">
           
+          <!-- Logo -->
+          <tr>
+            <td style="background-color: #ffffff; padding: 20px 30px; text-align: center; border-bottom: 1px solid #E5E7EB;">
+              <img src="https://www.vivaplantnutrition.com/images/logo_icon.png" alt="" width="44" height="50" style="display: inline-block; vertical-align: middle;">
+              <img src="https://www.vivaplantnutrition.com/images/logo_text.png" alt="Viva Plant Nutrition" width="94" height="50" style="display: inline-block; vertical-align: middle; margin-left: 6px;">
+            </td>
+          </tr>
+
           <!-- Header -->
           <tr>
             <td style="background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); padding: 40px 30px; text-align: center;">
@@ -142,7 +150,7 @@ export function getAdminNotificationEmailHTML(data: EmailAdminData): string {
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 30px;">
                 <tr>
                   <td align="center">
-                    <a href="https://plant-nutrition.vercel.app/admin" style="display: inline-block; background-color: #2563EB; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 15px;">
+                    <a href="https://www.vivaplantnutrition.com/admin" style="display: inline-block; background-color: #2563EB; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 15px;">
                       Visualizza nel Dashboard
                     </a>
                   </td>
@@ -216,7 +224,7 @@ Stato Pagamento: ${data.isPaid ? 'Pagato' : 'In attesa'}
 
 ${data.notes ? `Note del cliente:\n${data.notes}\n\n` : ''}
 
-Visualizza nel dashboard: https://plant-nutrition.vercel.app/admin
+Visualizza nel dashboard: https://www.vivaplantnutrition.com/admin
 
 ${!data.isPaid && data.price > 0 ? '\nATTENZIONE: Il pagamento è ancora in sospeso. Ricordati di verificare quando ricevi il bonifico.\n' : ''}
 

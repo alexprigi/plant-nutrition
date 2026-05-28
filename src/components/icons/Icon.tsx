@@ -121,7 +121,6 @@ const Icon: React.FC<IconProps> = ({
   const renderSvgPath = () => {
     switch (name) {
 
-      // --- NUOVE ICONE ---
       case 'video':
         return (
           <>

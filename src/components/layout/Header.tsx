@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect, useRef, type MouseEvent } from 'react';
 import { usePathname } from 'next/navigation';
 
@@ -58,15 +59,28 @@ const Header = () => {
   return (
     <header className={`shadow-sm fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`} style={{ background: 'var(--bg-hero)' }}>
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+        <div className="flex justify-between items-center py-2">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2" onClick={handleHomeClick}>
-              <span className="text-2xl">🌱</span>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold" style={{ color: 'var(--brand-title)' }}>Viva Plant</span>
-                <span className="text-sm font-medium" style={{ color: 'var(--text-dark-green)' }}>Nutrition</span>
-              </div>
+            <Link href="/" onClick={handleHomeClick} className="flex items-center gap-1">
+              <Image
+                src="/images/logo_icon.png"
+                alt=""
+                width={588}
+                height={670}
+                className="h-14 w-auto object-contain"
+                style={{ mixBlendMode: 'multiply' }}
+                priority
+              />
+              <Image
+                src="/images/logo_text.png"
+                alt="Viva Plant Nutrition"
+                width={591}
+                height={315}
+                className="h-12 w-auto object-contain"
+                style={{ mixBlendMode: 'multiply' }}
+                priority
+              />
             </Link>
           </div>
 
