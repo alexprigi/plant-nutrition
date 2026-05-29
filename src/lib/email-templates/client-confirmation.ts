@@ -9,6 +9,8 @@ interface EmailClientData {
   notes?: string;
   isFree: boolean;
   isBankTransfer: boolean;
+  managementToken?: string;
+  isTest?: boolean;
 }
 
 export function getClientConfirmationEmailHTML(data: EmailClientData): string {
@@ -28,6 +30,15 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
   <title>Conferma Prenotazione</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #F5F7F5;">
+  ${data.isTest ? `
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #FEF08A; border-bottom: 2px solid #EAB308;">
+    <tr>
+      <td style="padding: 10px 20px; text-align: center; font-size: 13px; font-weight: bold; color: #854D0E;">
+        ⚠️ EMAIL DI TEST — Non inviata in produzione
+      </td>
+    </tr>
+  </table>
+  ` : ''}
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F5F7F5; padding: 40px 20px;">
     <tr>
       <td align="center">
@@ -155,10 +166,8 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                     </h3>
                     <ul style="margin: 0; padding-left: 20px; color: #374151; font-size: 14px; line-height: 1.8;">
                       ${data.isFree ? `
-                        <li>Riceverai un promemoria 24 ore prima dell'appuntamento</li>
                         <li>Prepara eventuali domande o obiettivi da discutere</li>
                       ` : `
-                        <li>Riceverai un promemoria 24 ore prima dell'appuntamento</li>
                         <li>Porta con te eventuali referti medici o esami</li>
                         <li>Prepara un diario alimentare degli ultimi giorni (se possibile)</li>
                       `}
@@ -168,6 +177,22 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                 </tr>
               </table>
 
+              ${data.managementToken ? `
+                <!-- Manage Appointment -->
+                <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F9FAFB; border-radius: 12px; margin: 25px 0; border: 1px solid #E5E7EB;">
+                  <tr>
+                    <td style="padding: 20px; text-align: center;">
+                      <p style="margin: 0 0 12px; font-size: 14px; color: #6B7280;">
+                        Hai bisogno di modificare l'appuntamento?
+                      </p>
+                      <a href="https://www.vivaplantnutrition.com/gestisci/${data.managementToken}" style="display: inline-block; background-color: #ffffff; color: #374151; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #D1D5DB;">
+                        Gestisci appuntamento
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              ` : ''}
+
               <!-- Contact Info -->
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 30px; padding-top: 25px; border-top: 1px solid #E5E7EB;">
                 <tr>
@@ -176,7 +201,7 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                       Hai domande? Contattami:
                     </p>
                     <p style="margin: 0; font-size: 14px;">
-                      <a href="mailto:arianna@example.com" style="color: #059669; text-decoration: none; font-weight: 600;">arianna@example.com</a>
+                      <a href="mailto:info@vivaplantnutrition.com" style="color: #059669; text-decoration: none; font-weight: 600;">info@vivaplantnutrition.com</a>
                       <span style="color: #D1D5DB; margin: 0 8px;">|</span>
                       <a href="tel:+393331234567" style="color: #059669; text-decoration: none; font-weight: 600;">+39 333 123 4567</a>
                     </p>
@@ -190,10 +215,10 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
           <tr>
             <td style="background-color: #F9FAFB; padding: 25px 30px; text-align: center; border-top: 1px solid #E5E7EB;">
               <p style="margin: 0 0 5px; font-size: 12px; color: #9CA3AF;">
-                Questa email è stata inviata da Plant Nutrition
+                Questa email è stata inviata da Viva Plant Nutrition
               </p>
               <p style="margin: 0; font-size: 12px; color: #9CA3AF;">
-                © 2026 Plant Nutrition. Tutti i diritti riservati.
+                © 2026 Viva Plant Nutrition. Tutti i diritti riservati.
               </p>
             </td>
           </tr>
@@ -239,7 +264,7 @@ ISTRUZIONI PER IL BONIFICO
 ---------------------------
 Per confermare la prenotazione, effettua il bonifico ai seguenti dati:
 
-Beneficiario: Arianna Nutrizionista
+Beneficiario: Arianna Ciervo
 IBAN: IT00 X000 0000 0000 0000 0000 000
 Importo: ${data.price}€
 Causale: Prenotazione ${data.serviceName} - ${data.clientName}
@@ -249,17 +274,20 @@ L'appuntamento sarà confermato entro 24 ore dalla ricezione del bonifico.
 
 PROSSIMI PASSI
 --------------
-- Riceverai un promemoria 24 ore prima dell'appuntamento
 ${data.isFree ? '- Prepara eventuali domande o obiettivi da discutere' : '- Porta con te eventuali referti medici o esami\n- Prepara un diario alimentare degli ultimi giorni (se possibile)'}
 - In caso di necessità, contattami per modificare o cancellare l'appuntamento
 
-CONTATTI
+${data.managementToken ? `GESTISCI APPUNTAMENTO
+---------------------
+Sposta o cancella: https://www.vivaplantnutrition.com/gestisci/${data.managementToken}
+
+` : ''}CONTATTI
 --------
-Email: arianna@example.com
+Email: info@vivaplantnutrition.com
 Telefono: +39 333 123 4567
 
 ---
-Questa email è stata inviata da Plant Nutrition
-© 2026 Plant Nutrition. Tutti i diritti riservati.
+Questa email è stata inviata da Viva Plant Nutrition
+© 2026 Viva Plant Nutrition. Tutti i diritti riservati.
   `;
 }

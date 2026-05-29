@@ -23,6 +23,7 @@ const CONSULTATION_TYPES = [
     title: 'Colloquio Gratuito',
     price: 0,
     labelPrice: 'Gratuito',
+    durationMinutes: 15,
     duration: '15 minuti',
     description: 'Conosciamoci! Ti ascolto, capisco i tuoi obiettivi e ti spiego come posso aiutarti.',
     iconName: 'gift',
@@ -35,6 +36,7 @@ const CONSULTATION_TYPES = [
     title: 'Visita di Controllo',
     price: 50,
     labelPrice: '50€',
+    durationMinutes: 30,
     duration: '30 minuti',
     description: 'Monitoraggio progressi, analisi esami o integrazione.',
     iconName: 'refreshCcw',
@@ -46,6 +48,7 @@ const CONSULTATION_TYPES = [
     title: 'Prima Visita Completa',
     price: 85,
     labelPrice: '85€',
+    durationMinutes: 60,
     duration: '60 min',
     description: 'Anamnesi approfondita, piano nutrizionale su misura, protocollo integratori.',
     iconName: 'star',
@@ -58,6 +61,7 @@ const CONSULTATION_TYPES = [
     title: 'Percorso 3 Mesi',
     price: 237,
     labelPrice: '237€',
+    durationMinutes: 60,
     duration: '3 visite',
     description: '3 consulenze (1 al mese), analisi diario alimentare, supporto email.',
     iconName: 'route',
@@ -69,6 +73,7 @@ const CONSULTATION_TYPES = [
     title: 'Percorso 6 Mesi VIP',
     price: 450,
     labelPrice: '450€',
+    durationMinutes: 60,
     duration: '6 visite + chat',
     description: '6 consulenze, chat WhatsApp diretta, libreria PDF, analisi etichette.',
     iconName: 'sparkles',
@@ -81,8 +86,8 @@ const CONSULTATION_TYPES = [
 const STEPS = [
   { num: 1, label: 'Servizio' },
   { num: 2, label: 'Dati' },
-  { num: 3, label: 'Pagamento' },
-  { num: 4, label: 'Calendario' }
+  { num: 3, label: 'Calendario' },
+  { num: 4, label: 'Pagamento' }
 ];
 
 const PrenotaPageContent = () => {
@@ -142,15 +147,35 @@ const PrenotaPageContent = () => {
     CONSULTATION_TYPES.find(t => t.value === selectedService),
     [selectedService]);
 
+  const isBankTransferAvailable = useMemo(() => {
+    if (!selectedDate) return true;
+    const apptDate = new Date(selectedDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diffDays = Math.ceil((apptDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return diffDays > 5;
+  }, [selectedDate]);
+
   // Redirect protection: prevent direct access to steps without completing previous ones
   useEffect(() => {
-    // Can't access step 2, 3, or 4 without selecting a service first
     if (currentStep > 1 && !selectedService) {
       const params = new URLSearchParams(searchParams.toString());
       params.set('step', '1');
       router.replace(`?${params.toString()}`);
     }
-  }, [currentStep, selectedService, router, searchParams]);
+    if (currentStep > 3 && (!selectedDate || !selectedTime)) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('step', '3');
+      router.replace(`?${params.toString()}`);
+    }
+  }, [currentStep, selectedService, selectedDate, selectedTime, router, searchParams]);
+
+  // Reset bonifico se data non più compatibile
+  useEffect(() => {
+    if (!isBankTransferAvailable && paymentMethod === 'bank_transfer') {
+      setPaymentMethod('stripe');
+    }
+  }, [isBankTransferAvailable, paymentMethod]);
 
   // Memoize available time slots based on selected date
   const availableTimeSlots = useMemo(() => {
@@ -249,13 +274,9 @@ const PrenotaPageContent = () => {
         setIsProcessing(false);
       }
     }
-    // 3 -> 4
+    // 3 -> 4: calendario già compilato, vai al pagamento
     else if (currentStep === 3) {
-      setIsProcessing(true);
-      setTimeout(() => {
-        setIsProcessing(false);
-        setStep(4);
-      }, 500);
+      if (selectedDate && selectedTime) setStep(4);
     }
   };
 
@@ -284,8 +305,10 @@ const PrenotaPageContent = () => {
       finalIsPaid = true;
     }
 
+    let managementToken: string | undefined;
+
     try {
-      await createFullBooking({
+      const result = await createFullBooking({
         name: formData.name, surname: formData.surname, email: formData.email, phone: formData.phone,
         address: formData.address, civicNumber: formData.civicNumber, city: formData.city,
         zipCode: formData.zipCode, country: formData.country, fiscalCode: formData.fiscalCode,
@@ -298,6 +321,7 @@ const PrenotaPageContent = () => {
         status: finalStatus,
         isPaid: finalIsPaid
       });
+      managementToken = result?.appointment?.managementToken;
     } catch (error) {
       console.error('Booking error:', error);
       setIsProcessing(false);
@@ -318,11 +342,12 @@ const PrenotaPageContent = () => {
         time: selectedTime,
         notes: sanitizedNotes,
         paymentMethod: activeService?.price! > 0 ? paymentMethod : 'none',
-        isPaid: finalIsPaid
+        isPaid: finalIsPaid,
+        managementToken,
+        durationMinutes: activeService?.durationMinutes ?? 60,
       })
     }).catch(error => {
       console.error('Failed to send emails:', error);
-      // Non bloccare il flusso se le email falliscono
     });
 
     setTimeout(() => {
@@ -339,7 +364,10 @@ const PrenotaPageContent = () => {
     const firstDay = new Date(year, month, 1).getDay();
     const offset = firstDay === 0 ? 6 : firstDay - 1;
     const days = Array(offset).fill(null);
-    for (let i = 1; i <= daysInMonth; i++) days.push(new Date(year, month, i).toISOString().split('T')[0]);
+    for (let i = 1; i <= daysInMonth; i++) {
+      const pad = (n: number) => String(n).padStart(2, '0');
+      days.push(`${year}-${pad(month + 1)}-${pad(i)}`);
+    }
     return days;
   }, [currentMonthDate]);
 
@@ -376,7 +404,7 @@ const PrenotaPageContent = () => {
           <p className="text-gray-600 mb-6 leading-relaxed">
             Grazie <strong>{formData.name}</strong>.<br />
             {isBankTransfer
-              ? 'Riceverai una mail con l\'IBAN per il bonifico. L\'appuntamento sarà confermato dopo la ricezione.'
+              ? "Riceverai una mail con l'IBAN per il bonifico. L'appuntamento sarà confermato dopo la ricezione."
               : isPaid
                 ? 'Pagamento ricevuto con successo.'
                 : 'Il tuo appuntamento è fissato.'
@@ -640,142 +668,8 @@ const PrenotaPageContent = () => {
           </>
         )}
 
-        {/* --- STEP 3: CONFIRMATION / PAYMENT (NO NOTES) --- */}
+        {/* --- STEP 3: CALENDAR + NOTES --- */}
         {currentStep === 3 && (
-          <>
-          <div className="max-w-xl mx-auto w-full">
-            <div className="animate-fade-in pb-28 md:pb-20 relative">
-              {isProcessing && (
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-3xl">
-                  <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-[var(--brand-title)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="font-bold text-gray-700">Elaborazione in corso...</p>
-                  </div>
-                </div>
-              )}
-              <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
-
-              {activeService?.price! > 0 ? (
-                <>
-                  <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">Checkout Sicuro</h2>
-                  <p className="text-center text-gray-500 mb-8">
-                    Scegli come preferisci pagare il servizio <strong>{activeService?.title}</strong>.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">Riepilogo Prenotazione</h2>
-                  <p className="text-center text-gray-500 mb-8">
-                    Stai richiedendo il servizio <strong>{activeService?.title}</strong>.
-                  </p>
-                </>
-              )}
-
-              {/* PAYMENT LOGIC (Only if price > 0) */}
-              {activeService?.price! > 0 ? (
-                <div className="space-y-4 mb-8">
-                  {/* Stripe */}
-                  <div
-                    onClick={() => setPaymentMethod('stripe')}
-                    className={`flex items-center justify-between p-5 border rounded-2xl cursor-pointer transition-all ${paymentMethod === 'stripe' ? 'border-[var(--brand-title)] bg-green-50 ring-1 ring-[var(--brand-title)]' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'stripe' ? 'border-[var(--brand-title)]' : 'border-gray-300'}`}>
-                        {paymentMethod === 'stripe' && <div className="w-3 h-3 rounded-full bg-[var(--brand-title)]" />}
-                      </div>
-                      <span className="font-bold text-gray-800">Carta di Credito / Debito</span>
-                    </div>
-                    <div className="flex gap-2 opacity-80">
-                      <div className="w-8 h-5 bg-[#1a1f71] rounded flex items-center justify-center text-[5px] text-white">VISA</div>
-                      <div className="w-8 h-5 bg-[#eb001b] rounded flex items-center justify-center text-[5px] text-white">MC</div>
-                    </div>
-                  </div>
-
-                  {/* PayPal */}
-                  <div
-                    onClick={() => setPaymentMethod('paypal')}
-                    className={`flex items-center justify-between p-5 border rounded-2xl cursor-pointer transition-all ${paymentMethod === 'paypal' ? 'border-[#0070ba] bg-blue-50 ring-1 ring-[#0070ba]' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'paypal' ? 'border-[#0070ba]' : 'border-gray-300'}`}>
-                        {paymentMethod === 'paypal' && <div className="w-3 h-3 rounded-full bg-[#0070ba]" />}
-                      </div>
-                      <span className="font-bold text-gray-800">PayPal</span>
-                    </div>
-                    <span className="text-xs font-bold text-[#0070ba] tracking-wider">PAYPAL</span>
-                  </div>
-
-                  {/* Bonifico */}
-                  <div
-                    onClick={() => setPaymentMethod('bank_transfer')}
-                    className={`flex items-center justify-between p-5 border rounded-2xl cursor-pointer transition-all ${paymentMethod === 'bank_transfer' ? 'border-gray-600 bg-gray-50 ring-1 ring-gray-600' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'bank_transfer' ? 'border-gray-600' : 'border-gray-300'}`}>
-                        {paymentMethod === 'bank_transfer' && <div className="w-3 h-3 rounded-full bg-gray-600" />}
-                      </div>
-                      <div>
-                        <span className="font-bold text-gray-800 block">Bonifico Bancario</span>
-                        <span className="text-xs text-gray-500">L'ordine sarà confermato dopo la verifica</span>
-                      </div>
-                    </div>
-                    <Icon name="clock" size={20} className="text-gray-400" />
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-[var(--brand-title)]/10 p-6 rounded-2xl border border-[var(--brand-title)]/30 text-center mb-8">
-                  <Icon name="gift" size={32} className="mx-auto mb-3 text-[var(--brand-title)]" />
-                  <h3 className="font-bold text-gray-800 text-lg mb-1">Nessun costo richiesto</h3>
-                  <p className="text-sm text-gray-600">
-                    Cliccando "Conferma e Scegli Data", accederai al calendario per bloccare il tuo slot gratuito di 15 minuti.
-                  </p>
-                </div>
-              )}
-
-              {activeService?.price! > 0 && (
-                <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
-                  <Icon name="shield" size={12} /> Pagamenti crittografati SSL
-                </p>
-              )}
-
-              {/* Desktop Buttons - inside card */}
-              <div className="hidden md:flex justify-between mt-8 pt-6 border-t border-gray-100">
-                <button onClick={() => setStep(2)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
-                <Button
-                  onClick={nextStep}
-                  disabled={isProcessing}
-                  className="bg-black text-white rounded-xl px-8 py-3 shadow-lg hover:scale-[1.02] transition-transform font-bold text-sm"
-                >
-                  {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? 'Paga e Prenota' : 'Conferma e Scegli Data')}
-                </Button>
-              </div>
-            </div>
-          </div>
-          </div>
-
-          {/* Mobile Sticky Bar - outside card, always in DOM */}
-          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4 z-50">
-            <div className="max-w-xl mx-auto flex justify-between items-center gap-4">
-              <button onClick={() => setStep(2)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">Indietro</button>
-              <Button
-                onClick={nextStep}
-                disabled={isProcessing}
-                className="flex-1 bg-black text-white rounded-xl px-6 py-4 shadow-lg hover:scale-[1.02] transition-transform font-bold text-base"
-              >
-                {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? 'Paga e Prenota' : (
-                  <>
-                    <span className="hidden sm:inline">Conferma e Scegli Data</span>
-                    <span className="sm:hidden">Conferma</span>
-                  </>
-                ))}
-              </Button>
-            </div>
-          </div>
-          </>
-        )}
-
-        {/* --- STEP 4: CALENDAR (NOTES HERE) --- */}
-        {currentStep === 4 && (
           <>
           <div className="animate-fade-in max-w-4xl mx-auto pb-28 md:pb-20">
             <h2 className="text-3xl font-bold mb-2 text-center text-gray-800">
@@ -832,7 +726,7 @@ const PrenotaPageContent = () => {
                   })}
                 </div>
                 <div className="mt-auto pt-4 border-t border-gray-100">
-                  <button onClick={() => setStep(3)} className="hidden md:block text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
+                  <button onClick={() => setStep(2)} className="hidden md:block text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
                 </div>
               </div>
 
@@ -843,11 +737,10 @@ const PrenotaPageContent = () => {
                   {availableTimeSlots.map(slot => {
                     const isAvailable = typeof slot === 'string' ? true : slot.available;
                     const timeValue = typeof slot === 'string' ? slot : slot.time;
-                    
                     return (
-                      <button 
-                        key={timeValue} 
-                        onClick={() => isAvailable && setSelectedTime(timeValue)} 
+                      <button
+                        key={timeValue}
+                        onClick={() => isAvailable && setSelectedTime(timeValue)}
                         disabled={!isAvailable}
                         className={`
                           py-2 rounded-lg text-sm border transition-all font-medium
@@ -863,7 +756,7 @@ const PrenotaPageContent = () => {
                   })}
                 </div>
 
-                {/* NOTE FIELD IN STEP 4 */}
+                {/* NOTE FIELD */}
                 <div className="mt-6 pt-4 border-t border-gray-100">
                   <div className="flex justify-between items-center mb-2">
                     <label className="text-xs font-bold text-gray-700">
@@ -885,33 +778,171 @@ const PrenotaPageContent = () => {
 
                 <div className="hidden md:block mt-6 pt-2">
                   <Button
-                    onClick={handleFinalBooking}
-                    disabled={!selectedDate || !selectedTime || isProcessing}
+                    onClick={nextStep}
+                    disabled={!selectedDate || !selectedTime}
                     className={`w-full rounded-xl py-3 text-white font-bold shadow-lg transition-all ${!selectedDate || !selectedTime
                         ? 'bg-gray-300 cursor-not-allowed'
                         : 'bg-[var(--brand-title)] hover:-translate-y-1 hover:shadow-xl'
                       }`}
                   >
-                    {isProcessing ? 'Conferma in corso...' : 'Conferma Appuntamento'}
+                    {activeService?.price! > 0 ? 'Continua al Pagamento' : 'Conferma Appuntamento'}
                   </Button>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Mobile Sticky Bar - step 4 */}
+          {/* Mobile Sticky Bar - step 3 */}
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4 z-50">
+            <div className="max-w-xl mx-auto flex justify-between items-center gap-4">
+              <button onClick={() => setStep(2)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">Indietro</button>
+              <Button
+                onClick={nextStep}
+                disabled={!selectedDate || !selectedTime}
+                className={`flex-1 rounded-full px-6 py-3 text-sm font-bold transition-all ${!selectedDate || !selectedTime
+                    ? 'opacity-50 cursor-not-allowed bg-gray-300'
+                    : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'
+                  }`}
+              >
+                {activeService?.price! > 0 ? 'Continua al Pagamento' : 'Conferma'}
+              </Button>
+            </div>
+          </div>
+          </>
+        )}
+
+        {/* --- STEP 4: PAYMENT --- */}
+        {currentStep === 4 && (
+          <>
+          <div className="max-w-xl mx-auto w-full">
+            <div className="animate-fade-in pb-28 md:pb-20 relative">
+              {isProcessing && (
+                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-3xl">
+                  <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-[var(--brand-title)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="font-bold text-gray-700">Elaborazione in corso...</p>
+                  </div>
+                </div>
+              )}
+              <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
+
+              {activeService?.price! > 0 ? (
+                <>
+                  <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">Checkout Sicuro</h2>
+                  <p className="text-center text-gray-500 mb-8">
+                    Scegli come preferisci pagare il servizio <strong>{activeService?.title}</strong>.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">Riepilogo Prenotazione</h2>
+                  <p className="text-center text-gray-500 mb-8">
+                    Stai richiedendo il servizio <strong>{activeService?.title}</strong>.
+                  </p>
+                </>
+              )}
+
+              {/* PAYMENT OPTIONS (Only if price > 0) */}
+              {activeService?.price! > 0 ? (
+                <div className="space-y-4 mb-8">
+                  {/* Stripe */}
+                  <div
+                    onClick={() => setPaymentMethod('stripe')}
+                    className={`flex items-center justify-between p-5 border rounded-2xl cursor-pointer transition-all ${paymentMethod === 'stripe' ? 'border-[var(--brand-title)] bg-green-50 ring-1 ring-[var(--brand-title)]' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'stripe' ? 'border-[var(--brand-title)]' : 'border-gray-300'}`}>
+                        {paymentMethod === 'stripe' && <div className="w-3 h-3 rounded-full bg-[var(--brand-title)]" />}
+                      </div>
+                      <span className="font-bold text-gray-800">Carta di Credito / Debito</span>
+                    </div>
+                    <div className="flex gap-2 opacity-80">
+                      <div className="w-8 h-5 bg-[#1a1f71] rounded flex items-center justify-center text-[5px] text-white">VISA</div>
+                      <div className="w-8 h-5 bg-[#eb001b] rounded flex items-center justify-center text-[5px] text-white">MC</div>
+                    </div>
+                  </div>
+
+                  {/* PayPal */}
+                  <div
+                    onClick={() => setPaymentMethod('paypal')}
+                    className={`flex items-center justify-between p-5 border rounded-2xl cursor-pointer transition-all ${paymentMethod === 'paypal' ? 'border-[#0070ba] bg-blue-50 ring-1 ring-[#0070ba]' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'paypal' ? 'border-[#0070ba]' : 'border-gray-300'}`}>
+                        {paymentMethod === 'paypal' && <div className="w-3 h-3 rounded-full bg-[#0070ba]" />}
+                      </div>
+                      <span className="font-bold text-gray-800">PayPal</span>
+                    </div>
+                    <span className="text-xs font-bold text-[#0070ba] tracking-wider">PAYPAL</span>
+                  </div>
+
+                  {/* Bonifico - disabilitato se data entro 5 giorni */}
+                  <div
+                    onClick={() => isBankTransferAvailable && setPaymentMethod('bank_transfer')}
+                    className={`flex items-center justify-between p-5 border rounded-2xl transition-all ${
+                      !isBankTransferAvailable
+                        ? 'opacity-50 cursor-not-allowed border-gray-100 bg-gray-50'
+                        : paymentMethod === 'bank_transfer'
+                        ? 'border-gray-600 bg-gray-50 ring-1 ring-gray-600 cursor-pointer'
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 cursor-pointer'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'bank_transfer' && isBankTransferAvailable ? 'border-gray-600' : 'border-gray-300'}`}>
+                        {paymentMethod === 'bank_transfer' && isBankTransferAvailable && <div className="w-3 h-3 rounded-full bg-gray-600" />}
+                      </div>
+                      <div>
+                        <span className={`font-bold block ${!isBankTransferAvailable ? 'text-gray-400' : 'text-gray-800'}`}>Bonifico Bancario</span>
+                        <span className="text-xs text-gray-500">
+                          {isBankTransferAvailable
+                            ? "L'appuntamento verrà confermato dopo la ricezione del bonifico. Riceverai le istruzioni per email."
+                            : "Non disponibile entro 5 giorni — torna al calendario e scegli una data successiva"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-[var(--brand-title)]/10 p-6 rounded-2xl border border-[var(--brand-title)]/30 text-center mb-8">
+                  <Icon name="gift" size={32} className="mx-auto mb-3 text-[var(--brand-title)]" />
+                  <h3 className="font-bold text-gray-800 text-lg mb-1">Nessun costo richiesto</h3>
+                  <p className="text-sm text-gray-600">
+                    Clicca "Conferma Appuntamento" per bloccare il tuo slot gratuito di 15 minuti.
+                  </p>
+                </div>
+              )}
+
+              {activeService?.price! > 0 && (
+                <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
+                  <Icon name="shield" size={12} /> Pagamenti crittografati SSL
+                </p>
+              )}
+
+              {/* Desktop Buttons */}
+              <div className="hidden md:flex justify-between mt-8 pt-6 border-t border-gray-100">
+                <button onClick={() => setStep(3)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
+                <Button
+                  onClick={handleFinalBooking}
+                  disabled={isProcessing}
+                  className="bg-[var(--brand-title)] text-white rounded-xl px-8 py-3 shadow-lg hover:scale-[1.02] transition-transform font-bold text-sm"
+                >
+                  {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? (paymentMethod === 'bank_transfer' ? 'Prenota e ricevi istruzioni' : 'Paga e Prenota') : 'Conferma Appuntamento')}
+                </Button>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          {/* Mobile Sticky Bar */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4 z-50">
             <div className="max-w-xl mx-auto flex justify-between items-center gap-4">
               <button onClick={() => setStep(3)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">Indietro</button>
               <Button
                 onClick={handleFinalBooking}
-                disabled={!selectedDate || !selectedTime || isProcessing}
-                className={`flex-1 rounded-full px-6 py-3 text-sm font-bold transition-all ${!selectedDate || !selectedTime || isProcessing
-                    ? 'opacity-50 cursor-not-allowed bg-gray-300'
-                    : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'
-                  }`}
+                disabled={isProcessing}
+                className="flex-1 bg-[var(--brand-title)] text-white rounded-xl px-6 py-4 shadow-lg hover:scale-[1.02] transition-transform font-bold text-base"
               >
-                {isProcessing ? 'Conferma in corso...' : 'Conferma Appuntamento'}
+                {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? 'Paga e Prenota' : 'Conferma Appuntamento')}
               </Button>
             </div>
           </div>

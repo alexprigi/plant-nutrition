@@ -97,19 +97,20 @@ enum PaymentMethod {
 }
 
 model Appointment {
-  id             String            @id @default(cuid())
-  subscriptionId String
-  subscription   Subscription      @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
-  clientId       String
-  client         Client            @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  type           AppointmentType
-  date           String
-  time           String
-  status         AppointmentStatus @default(PENDING)
-  notes          String            @default("")
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
-  isDeleted      Boolean           @default(false)
+  id              String            @id @default(cuid())
+  subscriptionId  String
+  subscription    Subscription      @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  clientId        String
+  client          Client            @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  type            AppointmentType
+  date            String
+  time            String
+  status          AppointmentStatus @default(PENDING)
+  notes           String            @default("")
+  managementToken String            @unique @default(cuid())
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  isDeleted       Boolean           @default(false)
 
   @@map("appointments")
 }

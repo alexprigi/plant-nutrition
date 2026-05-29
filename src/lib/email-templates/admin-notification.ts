@@ -11,6 +11,7 @@ interface EmailAdminData {
   notes?: string;
   paymentMethod: string;
   isPaid: boolean;
+  isTest?: boolean;
 }
 
 export function getAdminNotificationEmailHTML(data: EmailAdminData): string {
@@ -33,6 +34,15 @@ export function getAdminNotificationEmailHTML(data: EmailAdminData): string {
   <title>Nuova Prenotazione</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #F5F7F5;">
+  ${data.isTest ? `
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #FEF08A; border-bottom: 2px solid #EAB308;">
+    <tr>
+      <td style="padding: 10px 20px; text-align: center; font-size: 13px; font-weight: bold; color: #854D0E;">
+        ⚠️ EMAIL DI TEST — Non inviata in produzione
+      </td>
+    </tr>
+  </table>
+  ` : ''}
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F5F7F5; padding: 40px 20px;">
     <tr>
       <td align="center">
@@ -176,10 +186,10 @@ export function getAdminNotificationEmailHTML(data: EmailAdminData): string {
           <tr>
             <td style="background-color: #F9FAFB; padding: 25px 30px; text-align: center; border-top: 1px solid #E5E7EB;">
               <p style="margin: 0 0 5px; font-size: 12px; color: #9CA3AF;">
-                Notifica automatica da Plant Nutrition
+                Notifica automatica da Viva Plant Nutrition
               </p>
               <p style="margin: 0; font-size: 12px; color: #9CA3AF;">
-                © 2026 Plant Nutrition. Tutti i diritti riservati.
+                © 2026 Viva Plant Nutrition. Tutti i diritti riservati.
               </p>
             </td>
           </tr>
@@ -229,7 +239,7 @@ Visualizza nel dashboard: https://www.vivaplantnutrition.com/admin
 ${!data.isPaid && data.price > 0 ? '\nATTENZIONE: Il pagamento è ancora in sospeso. Ricordati di verificare quando ricevi il bonifico.\n' : ''}
 
 ---
-Notifica automatica da Plant Nutrition
-© 2026 Plant Nutrition. Tutti i diritti riservati.
+Notifica automatica da Viva Plant Nutrition
+© 2026 Viva Plant Nutrition. Tutti i diritti riservati.
   `;
 }
