@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     // --- NUOVA PRENOTAZIONE ---
     const isFree = (data.price ?? 0) === 0;
-    const isBankTransfer = data.paymentMethod === 'bank_transfer';
+    const isBankTransfer = data.paymentMethod === 'bank_transfer' && !data.isPaid;
 
     const paymentMethodMap: Record<string, string> = {
       stripe: 'Carta di Credito',

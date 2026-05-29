@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import type { AppointmentStatus } from '@prisma/client'
+import { getSubscriptionLabel } from '@/lib/bookingService'
+import type { SubscriptionType } from '@/lib/bookingService'
 
 export async function PATCH(
   request: NextRequest,
@@ -41,6 +43,10 @@ export async function PATCH(
   if (body.isPaid === true) {
     const appointment = await prisma.appointment.findUnique({
       where: { id },
+      include: {
+        client: true,
+        subscription: true,
+      },
     })
 
     if (!appointment) {
@@ -59,6 +65,31 @@ export async function PATCH(
         data: { status: 'CONFIRMED' },
       })
     }
+
+    // Manda email di conferma al cliente
+    const subTypeMap: Record<string, SubscriptionType> = {
+      FREE_CONSULTATION: 'free-consultation',
+      SINGLE_SESSION: 'single-session',
+      BUNDLE_3_MONTHS: 'bundle-3-months',
+      BUNDLE_6_MONTHS: 'bundle-6-months',
+    }
+    fetch(`${process.env.AUTH_URL}/api/send-booking-emails`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        clientName: `${appointment.client.name} ${appointment.client.surname}`,
+        clientEmail: appointment.client.email,
+        clientPhone: appointment.client.phone,
+        serviceName: getSubscriptionLabel(subTypeMap[appointment.subscription.type] ?? 'single-session'),
+        price: appointment.subscription.price,
+        date: appointment.date,
+        time: appointment.time,
+        notes: appointment.notes,
+        paymentMethod: appointment.subscription.paymentMethod.toLowerCase(),
+        isPaid: true,
+        managementToken: appointment.managementToken,
+      }),
+    }).catch(() => {})
 
     return NextResponse.json({ success: true })
   }

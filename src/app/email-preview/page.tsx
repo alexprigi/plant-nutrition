@@ -1,65 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { getClientConfirmationEmailHTML } from '@/lib/email-templates/client-confirmation';
 import { getAdminNotificationEmailHTML } from '@/lib/email-templates/admin-notification';
 
 function withLocalImages(html: string) {
   return html.replaceAll('https://www.vivaplantnutrition.com', 'http://localhost:3000');
 }
-
-const clientConfirmed = withLocalImages(getClientConfirmationEmailHTML({
-  clientName: 'Maria Rossi',
-  serviceName: 'Consulenza Nutrizionale Completa',
-  price: 120,
-  date: '2026-06-15',
-  time: '10:00',
-  notes: 'Sono vegetariana da 2 anni e vorrei ottimizzare la mia alimentazione.',
-  isFree: false,
-  isBankTransfer: false,
-}));
-
-const clientBankTransfer = withLocalImages(getClientConfirmationEmailHTML({
-  clientName: 'Luca Bianchi',
-  serviceName: 'Piano Alimentare Personalizzato',
-  price: 200,
-  date: '2026-06-20',
-  time: '14:30',
-  isFree: false,
-  isBankTransfer: true,
-}));
-
-const clientFree = withLocalImages(getClientConfirmationEmailHTML({
-  clientName: 'Sara Verdi',
-  serviceName: 'Colloquio Gratuito',
-  price: 0,
-  date: '2026-06-10',
-  time: '11:00',
-  isFree: true,
-  isBankTransfer: false,
-}));
-
-const adminNotification = withLocalImages(getAdminNotificationEmailHTML({
-  clientName: 'Maria Rossi',
-  clientEmail: 'maria.rossi@example.com',
-  clientPhone: '+39 333 123 4567',
-  serviceName: 'Consulenza Nutrizionale Completa',
-  price: 120,
-  date: '2026-06-15',
-  time: '10:00',
-  notes: 'Sono vegetariana da 2 anni e vorrei ottimizzare la mia alimentazione.',
-  paymentMethod: 'Carta di credito',
-  isPaid: true,
-}));
-
-const tabs = [
-  { id: 'client-confirmed', label: 'Cliente — Confermata', html: clientConfirmed },
-  { id: 'client-bank', label: 'Cliente — Bonifico', html: clientBankTransfer },
-  { id: 'client-free', label: 'Cliente — Gratuita', html: clientFree },
-  { id: 'admin', label: 'Admin — Notifica', html: adminNotification },
-];
 
 export default function EmailPreviewPage() {
   const router = useRouter();
@@ -71,6 +19,87 @@ export default function EmailPreviewPage() {
   }, [router]);
 
   if (process.env.NODE_ENV !== 'development') return null;
+
+  const tabs = useMemo(() => [
+    {
+      id: 'client-confirmed',
+      label: 'Cliente — Confermata',
+      html: withLocalImages(getClientConfirmationEmailHTML({
+        clientName: 'Maria Rossi',
+        serviceName: 'Prima Visita Completa',
+        price: 85,
+        date: '2026-06-15',
+        time: '10:00',
+        notes: 'Sono vegetariana da 2 anni e vorrei ottimizzare la mia alimentazione.',
+        isFree: false,
+        isBankTransfer: false,
+        managementToken: 'token-di-esempio-123',
+        isTest: true,
+      })),
+    },
+    {
+      id: 'client-bank',
+      label: 'Cliente — Bonifico',
+      html: withLocalImages(getClientConfirmationEmailHTML({
+        clientName: 'Luca Bianchi',
+        serviceName: 'Percorso 3 Mesi',
+        price: 237,
+        date: '2026-07-01',
+        time: '14:30',
+        isFree: false,
+        isBankTransfer: true,
+        managementToken: 'token-di-esempio-456',
+        isTest: true,
+      })),
+    },
+    {
+      id: 'client-free',
+      label: 'Cliente — Gratuita',
+      html: withLocalImages(getClientConfirmationEmailHTML({
+        clientName: 'Sara Verdi',
+        serviceName: 'Colloquio Gratuito',
+        price: 0,
+        date: '2026-06-10',
+        time: '11:00',
+        isFree: true,
+        isBankTransfer: false,
+        managementToken: 'token-di-esempio-789',
+        isTest: true,
+      })),
+    },
+    {
+      id: 'client-bank-confirmed',
+      label: 'Cliente — Bonifico Confermato',
+      html: withLocalImages(getClientConfirmationEmailHTML({
+        clientName: 'Luca Bianchi',
+        serviceName: 'Percorso 3 Mesi',
+        price: 237,
+        date: '2026-07-01',
+        time: '14:30',
+        isFree: false,
+        isBankTransfer: false,
+        managementToken: 'token-di-esempio-456',
+        isTest: true,
+      })),
+    },
+    {
+      id: 'admin',
+      label: 'Admin — Notifica',
+      html: withLocalImages(getAdminNotificationEmailHTML({
+        clientName: 'Maria Rossi',
+        clientEmail: 'maria.rossi@example.com',
+        clientPhone: '+39 333 123 4567',
+        serviceName: 'Prima Visita Completa',
+        price: 85,
+        date: '2026-06-15',
+        time: '10:00',
+        notes: 'Sono vegetariana da 2 anni e vorrei ottimizzare la mia alimentazione.',
+        paymentMethod: 'Carta di credito',
+        isPaid: true,
+        isTest: true,
+      })),
+    },
+  ], []);
 
   const [activeTab, setActiveTab] = useState(tabs[0].id);
   const current = tabs.find(t => t.id === activeTab)!;

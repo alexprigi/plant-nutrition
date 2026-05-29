@@ -56,7 +56,7 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
           <tr>
             <td style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
               <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">
-                ${data.isBankTransfer ? '📋 Richiesta Ricevuta' : '✅ Prenotazione Confermata!'}
+                ${data.isBankTransfer ? '💳 Completa il Pagamento per Confermare' : '✅ Prenotazione Confermata!'}
               </h1>
             </td>
           </tr>
@@ -167,11 +167,14 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                     <ul style="margin: 0; padding-left: 20px; color: #374151; font-size: 14px; line-height: 1.8;">
                       ${data.isFree ? `
                         <li>Prepara eventuali domande o obiettivi da discutere</li>
+                      ` : data.isBankTransfer ? `
+                        <li>Effettua il bonifico con i dati indicati sopra entro <strong>72 ore</strong>, altrimenti la prenotazione verrà annullata automaticamente</li>
+                        <li>Riceverai una email di conferma non appena il pagamento sarà verificato</li>
                       ` : `
                         <li>Porta con te eventuali referti medici o esami</li>
                         <li>Prepara un diario alimentare degli ultimi giorni (se possibile)</li>
                       `}
-                      <li>In caso di necessità, contattami per modificare o cancellare l'appuntamento</li>
+                      ${data.managementToken && !data.isBankTransfer ? `<li>${data.isFree ? 'Puoi cancellare l\'appuntamento' : 'Puoi spostare o cancellare l\'appuntamento'} direttamente dal link qui sotto</li>` : ''}
                     </ul>
                   </td>
                 </tr>
@@ -185,7 +188,7 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                       <p style="margin: 0 0 12px; font-size: 14px; color: #6B7280;">
                         Hai bisogno di modificare l'appuntamento?
                       </p>
-                      <a href="https://www.vivaplantnutrition.com/gestisci/${data.managementToken}" style="display: inline-block; background-color: #ffffff; color: #374151; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #D1D5DB;">
+                      <a href="${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/gestisci/${data.managementToken}" style="display: inline-block; background-color: #ffffff; color: #374151; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #D1D5DB;">
                         Gestisci appuntamento
                       </a>
                     </td>
@@ -274,12 +277,16 @@ L'appuntamento sarà confermato entro 24 ore dalla ricezione del bonifico.
 
 PROSSIMI PASSI
 --------------
-${data.isFree ? '- Prepara eventuali domande o obiettivi da discutere' : '- Porta con te eventuali referti medici o esami\n- Prepara un diario alimentare degli ultimi giorni (se possibile)'}
-- In caso di necessità, contattami per modificare o cancellare l'appuntamento
+${data.isFree
+  ? '- Prepara eventuali domande o obiettivi da discutere'
+  : data.isBankTransfer
+    ? '- Effettua il bonifico entro 72 ore, altrimenti la prenotazione verrà annullata automaticamente\n- Riceverai una email di conferma non appena il pagamento sarà verificato'
+    : '- Porta con te eventuali referti medici o esami\n- Prepara un diario alimentare degli ultimi giorni (se possibile)'}
+${data.managementToken && !data.isBankTransfer ? `- Puoi ${data.isFree ? 'cancellare' : 'spostare o cancellare'} l'appuntamento dal link qui sotto` : ''}
 
 ${data.managementToken ? `GESTISCI APPUNTAMENTO
 ---------------------
-Sposta o cancella: https://www.vivaplantnutrition.com/gestisci/${data.managementToken}
+Sposta o cancella: ${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/gestisci/${data.managementToken}
 
 ` : ''}CONTATTI
 --------
