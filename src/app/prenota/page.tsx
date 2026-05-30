@@ -112,12 +112,12 @@ const PrenotaPageContent = () => {
   // --- NAVIGATION STATE ---
   const stepParam = searchParams.get('step');
   const currentStep = stepParam ? parseInt(stepParam) : 1;
-
   const setStep = (step: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set('step', step.toString());
     router.push(`?${params.toString()}`);
   };
+
 
   // --- FORM DATA ---
   const [formData, setFormData] = useState({
@@ -129,6 +129,8 @@ const PrenotaPageContent = () => {
 
   // Payment State
   const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'paypal' | 'bank_transfer'>('stripe');
+  const [policyAccepted, setPolicyAccepted] = useState(false);
+  const [gdprAccepted, setGdprAccepted] = useState(false);
 
   useEffect(() => {
     setFormData(prev => ({ ...prev, phone: `${phonePrefix} ${phoneNumber}` }));
@@ -319,7 +321,7 @@ const PrenotaPageContent = () => {
         selectedDate, selectedTime, notes: sanitizedNotes,
 
         status: finalStatus,
-        isPaid: finalIsPaid
+        isPaid: finalIsPaid,
       });
       managementToken = result?.appointment?.managementToken;
     } catch (error) {
@@ -637,13 +639,32 @@ const PrenotaPageContent = () => {
                   <p className="text-red-500 text-sm text-center mt-4">{errors.general}</p>
                 )}
 
+                {/* GDPR checkbox */}
+                <div className="mt-6 pt-5 border-t border-gray-100">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={gdprAccepted}
+                      onChange={e => setGdprAccepted(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 rounded accent-[var(--brand-title)] shrink-0 cursor-pointer"
+                    />
+                    <span className="text-xs text-gray-600 leading-relaxed">
+                      Ho letto e accetto la{' '}
+                      <a href="/privacy-policy" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
+                        Privacy Policy
+                      </a>
+                      . Acconsento al trattamento dei miei dati personali per la gestione dell'appuntamento.
+                    </span>
+                  </label>
+                </div>
+
                 {/* Desktop Buttons - inside card */}
-                <div className="hidden md:flex justify-between mt-10 pt-6 border-t border-gray-100">
+                <div className="hidden md:flex justify-between mt-6 pt-4 border-t border-gray-100">
                   <button onClick={() => setStep(1)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
                   <Button
                     onClick={nextStep}
-                    disabled={isProcessing}
-                    className={`rounded-full px-8 py-3 transition-all ${isProcessing ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'}`}
+                    disabled={isProcessing || !gdprAccepted}
+                    className={`rounded-full px-8 py-3 transition-all ${isProcessing || !gdprAccepted ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'}`}
                   >
                     {isProcessing ? 'Validazione...' : 'Continua'}
                   </Button>
@@ -658,8 +679,8 @@ const PrenotaPageContent = () => {
               <button onClick={() => setStep(1)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">Indietro</button>
               <Button
                 onClick={nextStep}
-                disabled={isProcessing}
-                className={`flex-1 rounded-full px-8 py-4 text-base font-bold transition-all ${isProcessing ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'}`}
+                disabled={isProcessing || !gdprAccepted}
+                className={`flex-1 rounded-full px-8 py-4 text-base font-bold transition-all ${isProcessing || !gdprAccepted ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'}`}
               >
                 {isProcessing ? 'Validazione...' : 'Continua'}
               </Button>
@@ -918,13 +939,44 @@ const PrenotaPageContent = () => {
                 </p>
               )}
 
+              {/* Policy checkbox */}
+              <div className="mt-6 pt-5 border-t border-gray-100">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={policyAccepted}
+                    onChange={e => setPolicyAccepted(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 rounded accent-[var(--brand-title)] shrink-0 cursor-pointer"
+                  />
+                  <span className="text-xs text-gray-600 leading-relaxed">
+                    {activeService?.price! > 0 ? (
+                      <>
+                        Ho letto e accetto la{' '}
+                        <a href="/policy-cancellazione" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
+                          policy di cancellazione
+                        </a>
+                        , incluse le condizioni su spostamenti e rimborsi.
+                      </>
+                    ) : (
+                      <>
+                        Ho letto e accetto i{' '}
+                        <a href="/policy-cancellazione" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
+                          termini del servizio
+                        </a>
+                        . Prendo atto che il colloquio gratuito è utilizzabile una sola volta.
+                      </>
+                    )}
+                  </span>
+                </label>
+              </div>
+
               {/* Desktop Buttons */}
-              <div className="hidden md:flex justify-between mt-8 pt-6 border-t border-gray-100">
+              <div className="hidden md:flex justify-between mt-6 pt-4 border-t border-gray-100">
                 <button onClick={() => setStep(3)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
                 <Button
                   onClick={handleFinalBooking}
-                  disabled={isProcessing}
-                  className="bg-[var(--brand-title)] text-white rounded-xl px-8 py-3 shadow-lg hover:scale-[1.02] transition-transform font-bold text-sm"
+                  disabled={isProcessing || !policyAccepted}
+                  className={`rounded-xl px-8 py-3 shadow-lg transition-transform font-bold text-sm ${isProcessing || !policyAccepted ? 'bg-gray-300 text-gray-400 cursor-not-allowed' : 'bg-[var(--brand-title)] text-white hover:scale-[1.02]'}`}
                 >
                   {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? (paymentMethod === 'bank_transfer' ? 'Prenota e ricevi istruzioni' : 'Paga e Prenota') : 'Conferma Appuntamento')}
                 </Button>
@@ -939,10 +991,10 @@ const PrenotaPageContent = () => {
               <button onClick={() => setStep(3)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">Indietro</button>
               <Button
                 onClick={handleFinalBooking}
-                disabled={isProcessing}
-                className="flex-1 bg-[var(--brand-title)] text-white rounded-xl px-6 py-4 shadow-lg hover:scale-[1.02] transition-transform font-bold text-base"
+                disabled={isProcessing || !policyAccepted}
+                className={`flex-1 rounded-xl px-6 py-4 shadow-lg transition-transform font-bold text-base ${isProcessing || !policyAccepted ? 'bg-gray-300 text-gray-400 cursor-not-allowed' : 'bg-[var(--brand-title)] text-white hover:scale-[1.02]'}`}
               >
-                {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? 'Paga e Prenota' : 'Conferma Appuntamento')}
+                {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? (paymentMethod === 'bank_transfer' ? 'Prenota e ricevi istruzioni' : 'Paga e Prenota') : 'Conferma Appuntamento')}
               </Button>
             </div>
           </div>

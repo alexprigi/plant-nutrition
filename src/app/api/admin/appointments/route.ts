@@ -43,6 +43,11 @@ export async function GET() {
     price: appt.subscription.price,
     isPaid: appt.subscription.isPaid,
     paymentMethod: appt.subscription.paymentMethod.toLowerCase(),
+    subscriptionType: appt.subscription.type,
+    totalSessions: appt.subscription.totalSessions,
+    usedSessions: appt.subscription.usedSessions,
+    followUpToken: appt.subscription.followUpToken ?? null,
+    expiresAt: appt.subscription.expiresAt?.toISOString() ?? null,
   }))
 
   return NextResponse.json(result)

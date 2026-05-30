@@ -7,11 +7,16 @@ import {
 import {
   getAdminNotificationEmailHTML,
   getAdminNotificationEmailText,
+  getAdminCancellationEmailHTML,
+  getAdminRescheduleEmailHTML,
+  getClientCancellationEmailHTML,
+  getClientCancellationEmailText,
 } from '@/lib/email-templates/admin-notification';
 import { generateICS, icsToBase64 } from '@/lib/ics';
 
 interface SendBookingEmailsRequest {
-  type?: 'booking' | 'cancellation' | 'reschedule';
+  type?: 'booking' | 'cancellation' | 'cancellation-client' | 'reschedule';
+  isRefundable?: boolean;
   // Client info
   clientName: string;
   clientEmail: string;
@@ -50,14 +55,40 @@ export async function POST(request: NextRequest) {
     const data: SendBookingEmailsRequest = await request.json();
     const type = data.type ?? 'booking';
 
-    // --- CANCELLAZIONE ---
+    // --- CANCELLAZIONE (notifica Arianna) ---
     if (type === 'cancellation') {
       await resend.emails.send({
         from: FROM,
         to: ADMIN_EMAIL,
         subject: `${subjectPrefix}❌ Appuntamento cancellato - ${data.clientName}`,
-        html: `<p>Il cliente <strong>${data.clientName}</strong> (${data.clientEmail}) ha cancellato l'appuntamento del <strong>${data.date ? formatDate(data.date) : ''} alle ${data.time}</strong>.</p>`,
-        text: `Il cliente ${data.clientName} (${data.clientEmail}) ha cancellato l'appuntamento del ${data.date ? formatDate(data.date) : ''} alle ${data.time}.`,
+        html: getAdminCancellationEmailHTML({
+          clientName: data.clientName,
+          clientEmail: data.clientEmail,
+          date: data.date ?? '',
+          time: data.time ?? '',
+          isRefundable: data.isRefundable,
+          isTest: !IS_PROD,
+        }),
+        text: `Il cliente ${data.clientName} ha cancellato l'appuntamento del ${data.date ? formatDate(data.date) : ''} alle ${data.time}.${data.isRefundable ? ' Ha diritto al rimborso completo.' : ''}`,
+      });
+      return NextResponse.json({ success: true }, { status: 200 });
+    }
+
+    // --- CANCELLAZIONE (conferma al cliente) ---
+    if (type === 'cancellation-client') {
+      const cancellationData = {
+        clientName: data.clientName,
+        date: data.date ?? '',
+        time: data.time ?? '',
+        isRefundable: data.isRefundable,
+        isTest: !IS_PROD,
+      };
+      await resend.emails.send({
+        from: FROM,
+        to: data.clientEmail,
+        subject: `${subjectPrefix}Cancellazione confermata`,
+        html: getClientCancellationEmailHTML(cancellationData),
+        text: getClientCancellationEmailText(cancellationData),
       });
       return NextResponse.json({ success: true }, { status: 200 });
     }
@@ -68,8 +99,16 @@ export async function POST(request: NextRequest) {
         from: FROM,
         to: ADMIN_EMAIL,
         subject: `${subjectPrefix}📅 Appuntamento spostato - ${data.clientName}`,
-        html: `<p>Il cliente <strong>${data.clientName}</strong> (${data.clientEmail}) ha spostato l'appuntamento:</p><ul><li><strong>Da:</strong> ${data.oldDate ? formatDate(data.oldDate) : ''} alle ${data.oldTime}</li><li><strong>A:</strong> ${data.newDate ? formatDate(data.newDate) : ''} alle ${data.newTime}</li></ul>`,
-        text: `Il cliente ${data.clientName} (${data.clientEmail}) ha spostato l'appuntamento.\nDa: ${data.oldDate ? formatDate(data.oldDate) : ''} alle ${data.oldTime}\nA: ${data.newDate ? formatDate(data.newDate) : ''} alle ${data.newTime}`,
+        html: getAdminRescheduleEmailHTML({
+          clientName: data.clientName,
+          clientEmail: data.clientEmail,
+          oldDate: data.oldDate ?? '',
+          oldTime: data.oldTime ?? '',
+          newDate: data.newDate ?? '',
+          newTime: data.newTime ?? '',
+          isTest: !IS_PROD,
+        }),
+        text: `Il cliente ${data.clientName} ha spostato l'appuntamento.\nDa: ${data.oldDate ? formatDate(data.oldDate) : ''} alle ${data.oldTime}\nA: ${data.newDate ? formatDate(data.newDate) : ''} alle ${data.newTime}`,
       });
       return NextResponse.json({ success: true }, { status: 200 });
     }

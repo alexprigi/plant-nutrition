@@ -33,6 +33,11 @@ export interface AdminAppointmentView {
   price: number;
   isPaid: boolean;
   paymentMethod: string;
+  subscriptionType: string;
+  totalSessions: number;
+  usedSessions: number;
+  followUpToken: string | null;
+  expiresAt: string | null;
 }
 
 // --- 3. DTO ---
@@ -60,6 +65,7 @@ export interface CreateBookingDTO {
   notes: string;
   isPaid: boolean;
   status: AppointmentStatus;
+  existingSubscriptionId?: string;
 }
 
 // --- 4. HELPERS ---
@@ -127,6 +133,24 @@ export const markSubscriptionAsPaid = async (apptId: string): Promise<boolean> =
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ isPaid: true }),
+  });
+  return response.ok;
+};
+
+export const rescheduleAppointment = async (apptId: string, date: string, time: string): Promise<boolean> => {
+  const response = await fetch(`/api/admin/appointments/${apptId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ reschedule: true, date, time }),
+  });
+  return response.ok;
+};
+
+export const resendFollowUpLink = async (apptId: string): Promise<boolean> => {
+  const response = await fetch(`/api/admin/appointments/${apptId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ resendFollowUp: true }),
   });
   return response.ok;
 };

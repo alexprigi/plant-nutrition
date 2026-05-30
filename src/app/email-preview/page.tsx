@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getClientConfirmationEmailHTML } from '@/lib/email-templates/client-confirmation';
-import { getAdminNotificationEmailHTML } from '@/lib/email-templates/admin-notification';
+import { getAdminNotificationEmailHTML, getAdminCancellationEmailHTML, getAdminRescheduleEmailHTML, getClientCancellationEmailHTML } from '@/lib/email-templates/admin-notification';
+import { getReminderEmailHTML, getExpiredBankTransferEmailHTML } from '@/lib/email-templates/cron-emails';
+import { getFollowUpEmailHTML } from '@/lib/email-templates/follow-up';
 
 function withLocalImages(html: string) {
   return html.replaceAll('https://www.vivaplantnutrition.com', 'http://localhost:3000');
@@ -79,6 +81,104 @@ export default function EmailPreviewPage() {
         isFree: false,
         isBankTransfer: false,
         managementToken: 'token-di-esempio-456',
+        isTest: true,
+      })),
+    },
+    {
+      id: 'reminder',
+      label: 'Cliente — Promemoria (pagato)',
+      html: withLocalImages(getReminderEmailHTML({
+        clientName: 'Maria Rossi',
+        serviceName: 'Prima Visita Completa',
+        date: '2026-06-15',
+        time: '10:00',
+        isFree: false,
+        managementToken: 'token-di-esempio-reminder',
+        isTest: true,
+      })),
+    },
+    {
+      id: 'reminder-free',
+      label: 'Cliente — Promemoria (gratuito)',
+      html: withLocalImages(getReminderEmailHTML({
+        clientName: 'Sara Verdi',
+        serviceName: 'Colloquio Gratuito',
+        date: '2026-06-15',
+        time: '11:00',
+        isFree: true,
+        managementToken: 'token-di-esempio-reminder-free',
+        isTest: true,
+      })),
+    },
+    {
+      id: 'expired-bank',
+      label: 'Cliente — Bonifico Scaduto',
+      html: withLocalImages(getExpiredBankTransferEmailHTML({
+        clientName: 'Luca Bianchi',
+        serviceName: 'Percorso 3 Mesi',
+        date: '2026-07-01',
+        time: '14:30',
+        isTest: true,
+      })),
+    },
+    {
+      id: 'follow-up',
+      label: 'Cliente — Follow-up percorso',
+      html: withLocalImages(getFollowUpEmailHTML({
+        clientName: 'Luca Bianchi',
+        serviceName: 'Percorso 3 Mesi',
+        sessionsRemaining: 2,
+        followUpToken: 'token-follow-up-esempio',
+        // Link: /prenota/follow-up/token-follow-up-esempio
+        isTest: true,
+      })),
+    },
+    {
+      id: 'client-cancellation',
+      label: 'Cliente — Cancellazione (con rimborso)',
+      html: withLocalImages(getClientCancellationEmailHTML({
+        clientName: 'Luca Bianchi',
+        date: '2026-06-15',
+        time: '10:00',
+        isRefundable: true,
+        isTest: true,
+      })),
+    },
+    {
+      id: 'client-cancellation-no-refund',
+      label: 'Cliente — Cancellazione (senza rimborso)',
+      html: withLocalImages(getClientCancellationEmailHTML({
+        clientName: 'Sara Verdi',
+        date: '2026-06-15',
+        time: '11:00',
+        isRefundable: false,
+        isTest: true,
+      })),
+    },
+    {
+      id: 'admin-cancellation',
+      label: 'Admin — Cancellazione',
+      html: withLocalImages(getAdminCancellationEmailHTML({
+        clientName: 'Luca Bianchi',
+        clientEmail: 'luca.bianchi@example.com',
+        clientPhone: '+39 333 987 6543',
+        date: '2026-06-15',
+        time: '10:00',
+        isRefundable: true,
+        isTest: true,
+      })),
+    },
+    {
+      id: 'admin-reschedule',
+      label: 'Admin — Spostamento',
+      html: withLocalImages(getAdminRescheduleEmailHTML({
+        clientName: 'Luca Bianchi',
+        clientEmail: 'luca.bianchi@example.com',
+        clientPhone: '+39 333 987 6543',
+        oldDate: '2026-06-15',
+        oldTime: '10:00',
+        newDate: '2026-06-22',
+        newTime: '14:30',
         isTest: true,
       })),
     },

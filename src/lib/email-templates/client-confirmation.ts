@@ -174,7 +174,7 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                         <li>Porta con te eventuali referti medici o esami</li>
                         <li>Prepara un diario alimentare degli ultimi giorni (se possibile)</li>
                       `}
-                      ${data.managementToken && !data.isBankTransfer ? `<li>${data.isFree ? 'Puoi cancellare l\'appuntamento' : 'Puoi spostare o cancellare l\'appuntamento'} direttamente dal link qui sotto</li>` : ''}
+                      ${data.managementToken && !data.isBankTransfer ? `<li>Puoi spostare o cancellare l'appuntamento direttamente dal link qui sotto</li>` : ''}
                     </ul>
                   </td>
                 </tr>
@@ -194,6 +194,19 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                     </td>
                   </tr>
                 </table>
+              ` : ''}
+
+              <!-- Policy -->
+              ${!data.isFree ? `
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 20px;">
+                <tr>
+                  <td style="text-align: center;">
+                    <p style="margin: 0; font-size: 12px; color: #9CA3AF;">
+                      Consultare la <a href="${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/policy-cancellazione" style="color: #9CA3AF;">policy di cancellazione</a> per info su spostamenti e rimborsi.
+                    </p>
+                  </td>
+                </tr>
+              </table>
               ` : ''}
 
               <!-- Contact Info -->
@@ -282,7 +295,7 @@ ${data.isFree
   : data.isBankTransfer
     ? '- Effettua il bonifico entro 72 ore, altrimenti la prenotazione verrà annullata automaticamente\n- Riceverai una email di conferma non appena il pagamento sarà verificato'
     : '- Porta con te eventuali referti medici o esami\n- Prepara un diario alimentare degli ultimi giorni (se possibile)'}
-${data.managementToken && !data.isBankTransfer ? `- Puoi ${data.isFree ? 'cancellare' : 'spostare o cancellare'} l'appuntamento dal link qui sotto` : ''}
+${data.managementToken && !data.isBankTransfer ? `- Puoi spostare o cancellare l'appuntamento dal link qui sotto` : ''}
 
 ${data.managementToken ? `GESTISCI APPUNTAMENTO
 ---------------------

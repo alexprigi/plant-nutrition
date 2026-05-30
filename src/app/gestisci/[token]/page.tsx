@@ -22,8 +22,11 @@ type AppointmentData = {
   price: number;
   isPaid: boolean;
   isPending: boolean;
+  isFree: boolean;
+  daysUntil: number;
   canReschedule: boolean;
   canCancel: boolean;
+  contactRequired: boolean;
 };
 
 type View = 'loading' | 'error' | 'main' | 'reschedule' | 'confirm-cancel' | 'done-cancel' | 'done-reschedule';
@@ -66,7 +69,8 @@ export default function GestisciPage() {
     const firstDay = new Date(year, month, 1).getDay();
     const offset = firstDay === 0 ? 6 : firstDay - 1;
     const days = Array(offset).fill(null);
-    for (let i = 1; i <= daysInMonth; i++) days.push(new Date(year, month, i).toISOString().split('T')[0]);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    for (let i = 1; i <= daysInMonth; i++) days.push(`${year}-${pad(month + 1)}-${pad(i)}`);
     return days;
   }, [currentMonthDate]);
 
@@ -140,6 +144,7 @@ export default function GestisciPage() {
 
   // --- DONE: CANCELLED ---
   if (view === 'done-cancel') {
+    const wasRefundable = !!(appointment?.isPaid && !appointment?.isFree && (appointment?.daysUntil ?? 0) > 7);
     return (
       <div className="min-h-screen bg-[#F5F7F5] flex items-center justify-center px-4">
         <div className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full text-center border-t-4 border-[var(--brand-title)]">
@@ -147,9 +152,20 @@ export default function GestisciPage() {
             <Icon name="check" size={32} className="text-green-600" />
           </div>
           <h2 className="text-xl font-bold text-gray-800 mb-2">Appuntamento cancellato</h2>
-          <p className="text-gray-500 text-sm mb-6">
-            Il tuo appuntamento è stato cancellato. Se vuoi prenotarne uno nuovo, puoi farlo dal sito.
-          </p>
+          {wasRefundable ? (
+            <>
+              <p className="text-gray-500 text-sm mb-3">
+                Hai diritto al rimborso completo. Contatta Arianna Ciervo per riceverlo:
+              </p>
+              <a href="mailto:info@vivaplantnutrition.com" className="text-sm font-semibold mb-6 block" style={{ color: 'var(--brand-title)' }}>
+                info@vivaplantnutrition.com
+              </a>
+            </>
+          ) : (
+            <p className="text-gray-500 text-sm mb-6">
+              Il tuo appuntamento è stato cancellato. Puoi prenotarne uno nuovo quando vuoi.
+            </p>
+          )}
           <Button href="/prenota" className="bg-[var(--brand-title)] text-white w-full">Prenota un nuovo appuntamento</Button>
         </div>
       </div>
@@ -257,15 +273,17 @@ export default function GestisciPage() {
                   return (
                     <button
                       key={d}
-                      onClick={() => !isPast && !isCurrent && setNewDate(d)}
-                      disabled={isPast || isCurrent}
+                      onClick={() => !isPast && setNewDate(d)}
+                      disabled={isPast}
                       title={isCurrent ? 'Data attuale' : undefined}
                       className={`
                         w-11 h-11 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm transition-all font-medium
-                        ${isPast || isCurrent
+                        ${isPast
                           ? 'text-gray-300 cursor-not-allowed bg-gray-50'
                           : isSel
                           ? 'bg-[var(--brand-title)] text-white font-bold shadow-md scale-110'
+                          : isCurrent
+                          ? 'text-[var(--brand-title)] font-bold ring-2 ring-[var(--brand-title)] ring-offset-1 hover:bg-gray-100'
                           : 'text-gray-700 hover:bg-gray-100'}
                       `}
                     >
@@ -343,6 +361,18 @@ export default function GestisciPage() {
 
         {/* Azioni */}
         <div className="space-y-3">
+          {/* Contatto richiesto: meno di 24h */}
+          {appointment?.contactRequired && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+              <p className="font-bold mb-1">Meno di 24 ore all'appuntamento</p>
+              <p>Non è più possibile modificare autonomamente. Contatta Arianna direttamente:</p>
+              <a href="mailto:info@vivaplantnutrition.com" className="font-semibold underline mt-1 block">
+                info@vivaplantnutrition.com
+              </a>
+            </div>
+          )}
+
+          {/* Spostamento disponibile */}
           {appointment?.canReschedule && (
             <Button
               onClick={() => setView('reschedule')}
@@ -352,12 +382,15 @@ export default function GestisciPage() {
             </Button>
           )}
 
-          {!appointment?.canReschedule && appointment?.status === 'CONFIRMED' && (
-            <div className="text-center text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-xl p-3">
-              Lo spostamento non è più disponibile (meno di 24 ore all'appuntamento).
-            </div>
+          {/* Info fascia 2-7 giorni: solo spostamento, no rimborso */}
+          {appointment?.canReschedule && !appointment?.canCancel && (
+            <p className="text-xs text-gray-400 text-center">
+              In questa fascia è possibile solo spostare l'appuntamento. Per info sul rimborso consulta la{' '}
+              <a href="/policy-cancellazione" target="_blank" className="underline">policy di cancellazione</a>.
+            </p>
           )}
 
+          {/* Cancellazione disponibile */}
           {appointment?.canCancel && (
             <button
               onClick={() => setView('confirm-cancel')}
@@ -367,9 +400,11 @@ export default function GestisciPage() {
             </button>
           )}
 
-          {!appointment?.canCancel && !appointment?.canReschedule && (
-            <p className="text-center text-sm text-gray-400">
-              Per modifiche contatta direttamente Arianna.
+          {/* Info rimborso per cancellazione >7 giorni */}
+          {appointment?.canCancel && appointment?.isPaid && !appointment?.isFree && (appointment?.daysUntil ?? 0) > 7 && (
+            <p className="text-xs text-gray-400 text-center">
+              Hai diritto al rimborso completo. Dopo la cancellazione contatta Arianna a{' '}
+              <a href="mailto:info@vivaplantnutrition.com" className="underline">info@vivaplantnutrition.com</a>.
             </p>
           )}
         </div>

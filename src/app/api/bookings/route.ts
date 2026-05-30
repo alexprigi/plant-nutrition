@@ -87,19 +87,36 @@ export async function POST(request: NextRequest) {
         },
       })
 
-      // 2. Crea subscription
-      const subscription = await tx.subscription.create({
-        data: {
-          clientId: client.id,
-          type: subType,
-          price,
-          isPaid: data.isPaid,
-          paymentMethod: mapPaymentMethod(data.paymentMethod),
-          totalSessions,
-          usedSessions: 1,
-          status: 'ACTIVE' as SubscriptionStatus,
-        },
-      })
+      let subscription
+
+      if (data.existingSubscriptionId) {
+        // Follow-up: usa la subscription esistente
+        subscription = await tx.subscription.update({
+          where: { id: data.existingSubscriptionId },
+          data: { usedSessions: { increment: 1 } },
+        })
+      } else {
+        // Nuova prenotazione: crea subscription
+        const expiresAt = subType === 'BUNDLE_3_MONTHS'
+          ? new Date(Date.now() + 6 * 30 * 24 * 60 * 60 * 1000)
+          : subType === 'BUNDLE_6_MONTHS'
+          ? new Date(Date.now() + 12 * 30 * 24 * 60 * 60 * 1000)
+          : null
+
+        subscription = await tx.subscription.create({
+          data: {
+            clientId: client.id,
+            type: subType,
+            price,
+            isPaid: data.isPaid,
+            paymentMethod: mapPaymentMethod(data.paymentMethod),
+            totalSessions,
+            usedSessions: 1,
+            status: 'ACTIVE' as SubscriptionStatus,
+            ...(expiresAt && { expiresAt }),
+          },
+        })
+      }
 
       // 3. Crea appointment
       const appointment = await tx.appointment.create({
