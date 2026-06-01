@@ -91,7 +91,7 @@ export default function FollowUpBookingPage() {
 
   useEffect(() => {
     if (!selectedDate) return;
-    fetch(`/api/bookings?date=${selectedDate}`)
+    fetch(`/api/bookings?date=${selectedDate}&duration=30`)
       .then(r => r.json())
       .then(data => {
         if (!data.slots) return;

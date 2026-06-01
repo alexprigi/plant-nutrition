@@ -142,9 +142,32 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// Converte HH:MM in minuti dall'inizio della giornata
+function timeToMinutes(time: string): number {
+  const [h, m] = time.split(':').map(Number)
+  return h * 60 + m
+}
+
+// Restituisce tutti gli slot HH:MM occupati dalla finestra [startTime, startTime + durationMinutes)
+function getSlotsInWindow(startTime: string, durationMinutes: number): string[] {
+  const allSlots = [
+    '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
+    '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
+    '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
+    '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00',
+  ]
+  const start = timeToMinutes(startTime)
+  const end = start + durationMinutes
+  return allSlots.filter(s => {
+    const t = timeToMinutes(s)
+    return t >= start && t < end
+  })
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const date = searchParams.get('date')
+  const durationMinutes = parseInt(searchParams.get('duration') ?? '30', 10)
 
   if (!date) {
     return NextResponse.json({ error: 'Data richiesta' }, { status: 400 })
@@ -200,10 +223,14 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       date,
-      slots: allSlots.map(time => ({
-        time,
-        available: isSlotOpen(time) && !isSlotBlockedByBlock(time) && !bookedTimes.has(time),
-      })),
+      slots: allSlots.map(time => {
+        // Tutti gli slot nella finestra [time, time+duration) devono essere aperti e non bloccati
+        const window = getSlotsInWindow(time, durationMinutes)
+        const available = window.every(s =>
+          isSlotOpen(s) && !isSlotBlockedByBlock(s) && !bookedTimes.has(s)
+        )
+        return { time, available }
+      }),
     })
   }
 
@@ -219,9 +246,11 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     date,
-    slots: allSlots.map((time) => ({
-      time,
-      available: !bookedTimes.has(time) && !isSlotBlocked(time),
-    })),
+    slots: allSlots.map((time) => {
+      // Tutti gli slot nella finestra [time, time+duration) devono essere liberi
+      const window = getSlotsInWindow(time, durationMinutes)
+      const available = window.every(s => !bookedTimes.has(s) && !isSlotBlocked(s))
+      return { time, available }
+    }),
   })
 }

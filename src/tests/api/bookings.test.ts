@@ -116,6 +116,41 @@ describe('POST /api/bookings', () => {
   })
 })
 
+const makeGetRequestWithDuration = (date: string, duration: number) =>
+  new NextRequest(`http://localhost/api/bookings?date=${date}&duration=${duration}`)
+
+describe('GET /api/bookings — duration check', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockPrisma.availabilityBlock.findMany.mockResolvedValue([])
+  })
+
+  it('blocks slot if appointment occupies next slot within duration', async () => {
+    // Appuntamento alle 10:00 — con durata 60min, lo slot delle 09:30 deve essere bloccato
+    mockPrisma.appointment.findMany.mockResolvedValue([{ time: '10:00' } as any])
+    const res = await GET(makeGetRequestWithDuration('2026-06-03', 60))
+    const data = await res.json()
+    const slot0930 = data.slots.find((s: any) => s.time === '09:30')
+    const slot0900 = data.slots.find((s: any) => s.time === '09:00')
+    expect(slot0930.available).toBe(false) // 09:30 + 60min = 10:30, copre 10:00
+    expect(slot0900.available).toBe(true)  // 09:00 + 60min = 10:00, non copre 10:00 (end esclusivo)
+  })
+
+  it('blocks slot if availability block overlaps within duration', async () => {
+    // Blocco 12:00-13:00 — con durata 60min, lo slot delle 11:30 deve essere bloccato
+    mockPrisma.appointment.findMany.mockResolvedValue([])
+    mockPrisma.availabilityBlock.findMany.mockResolvedValue([
+      { id: 'blk_1', date: '2026-06-03', type: 'BLOCK', startTime: '12:00', endTime: '13:00', note: '' },
+    ] as any)
+    const res = await GET(makeGetRequestWithDuration('2026-06-03', 60))
+    const data = await res.json()
+    const slot1130 = data.slots.find((s: any) => s.time === '11:30')
+    const slot1300 = data.slots.find((s: any) => s.time === '13:00')
+    expect(slot1130.available).toBe(false)
+    expect(slot1300.available).toBe(true)
+  })
+})
+
 describe('GET /api/bookings', () => {
   beforeEach(() => {
     vi.clearAllMocks()

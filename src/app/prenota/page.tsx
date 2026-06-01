@@ -214,7 +214,8 @@ const PrenotaPageContent = () => {
   useEffect(() => {
     if (!selectedDate) return;
     setIsLoadingSlots(true);
-    fetch(`/api/bookings?date=${selectedDate}`)
+    const duration = activeService?.durationMinutes ?? 30;
+    fetch(`/api/bookings?date=${selectedDate}&duration=${duration}`)
       .then(r => r.json())
       .then(data => {
         if (!data.slots) return;
@@ -276,6 +277,8 @@ const PrenotaPageContent = () => {
       notes: formData.notes
     });
     setPhoneNumber(`${Math.floor(300 + Math.random() * 90)}${Math.floor(1000000 + Math.random() * 9000000)}`);
+    setGdprAccepted(true);
+    setPolicyAccepted(true);
   };
 
   // --- LOGIC ---
