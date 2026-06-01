@@ -21,23 +21,39 @@ export type AppointmentStatus =
 // --- 2. ENTITIES ---
 
 export interface AdminAppointmentView {
+  // Appointment
   id: string;
   date: string;
   time: string;
   status: AppointmentStatus;
   notes: string;
+  managementToken: string;
+  rescheduleCount: number;
+  createdAt: string;
+  updatedAt: string;
+  // Client
   clientName: string;
   clientEmail: string;
   clientPhone: string;
+  clientAddress: string;
+  clientCity: string;
+  clientFiscalCode: string;
+  clientCreatedAt: string;
+  // Client
+  clientId: string;
+  // Subscription
+  subscriptionId: string;
   serviceName: string;
+  subscriptionType: string;
+  subscriptionStatus: string;
   price: number;
   isPaid: boolean;
   paymentMethod: string;
-  subscriptionType: string;
   totalSessions: number;
   usedSessions: number;
   followUpToken: string | null;
   expiresAt: string | null;
+  subscriptionCreatedAt: string;
 }
 
 // --- 3. DTO ---

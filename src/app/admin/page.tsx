@@ -31,16 +31,24 @@ type BundleView = {
   clientPhone: string;
   serviceName: string;
   subscriptionType: string;
+  subscriptionId: string;
   totalSessions: number;
   usedSessions: number;
   sessionsRemaining: number;
   isPaid: boolean;
+  paymentMethod: string;
+  price: number;
   expiresAt: string | null;
+  subscriptionCreatedAt: string;
   followUpToken: string | null;
   lastApptId: string;
   lastApptDate: string | null;
   nextApptDate: string | null;
+  completedDates: string[];
   hasFollowUpPending: boolean;
+  clientAddress: string;
+  clientFiscalCode: string;
+  clientCreatedAt: string;
 };
 
 const AdminPage = () => {
@@ -51,7 +59,10 @@ const AdminPage = () => {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('upcoming');
   const [search, setSearch] = useState('');
   const [dateFilter, setDateFilter] = useState('');
-  const [clientModal, setClientModal] = useState<string | null>(null); // clientEmail
+  const [showCompletedBundles, setShowCompletedBundles] = useState(false);
+  const [sortOrder, setSortOrder] = useState<'date-asc' | 'date-desc' | 'name-asc' | 'expiry-asc' | 'next-asc'>('date-asc');
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+  const toggleExpand = (id: string) => setExpandedCards(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
 
   // Reschedule modal state
   const [rescheduleModal, setRescheduleModal] = useState<{ apptId: string; clientName: string } | null>(null);
@@ -82,6 +93,9 @@ const AdminPage = () => {
   };
 
   const today = new Date().toISOString().split('T')[0];
+  const tomorrowDate = new Date();
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+  const tomorrow = `${tomorrowDate.getFullYear()}-${String(tomorrowDate.getMonth() + 1).padStart(2, '0')}-${String(tomorrowDate.getDate()).padStart(2, '0')}`;
 
   const filtered = useMemo(() => {
     let list = [...appointments];
@@ -104,38 +118,43 @@ const AdminPage = () => {
     switch (activeFilter) {
       case 'upcoming':
         list = list.filter(a => (a.status === 'confirmed' || a.status === 'pending') && a.date >= today);
-        list.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
         break;
       case 'pending':
         list = list.filter(a => a.status === 'pending');
-        list.sort((a, b) => a.date.localeCompare(b.date));
         break;
       case 'completed':
         list = list.filter(a => a.status === 'completed');
-        list.sort((a, b) => b.date.localeCompare(a.date));
         break;
       case 'cancelled':
         list = list.filter(a => a.status === 'cancelled');
-        list.sort((a, b) => b.date.localeCompare(a.date));
-        break;
-      case 'all':
-        list.sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
         break;
     }
+
+    // Sort globale
+    const lastName = (name: string) => name.split(' ').slice(-1)[0];
+    if (sortOrder === 'name-asc') {
+      list.sort((a, b) => lastName(a.clientName).localeCompare(lastName(b.clientName)));
+    } else if (sortOrder === 'date-desc') {
+      list.sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
+    } else {
+      // date-asc default
+      list.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+    }
+
     return list;
-  }, [appointments, activeFilter, search, dateFilter, today]);
+  }, [appointments, activeFilter, search, dateFilter, today, sortOrder]);
 
   // Vista percorsi raggruppata per cliente
   const bundles = useMemo<BundleView[]>(() => {
-    const bundleAppts = appointments.filter(a => isBundle(a.subscriptionType));
+    const bundleAppts = appointments.filter(a => isBundle(a.subscriptionType) && a.isPaid && a.subscriptionStatus === 'active');
     const grouped = new Map<string, AdminAppointmentView[]>();
     bundleAppts.forEach(a => {
-      const key = `${a.clientEmail}__${a.subscriptionType}`;
+      const key = `${a.clientEmail}__${a.subscriptionId}`;
       if (!grouped.has(key)) grouped.set(key, []);
       grouped.get(key)!.push(a);
     });
 
-    return Array.from(grouped.entries()).map(([, appts]) => {
+    const result = Array.from(grouped.entries()).map(([, appts]) => {
       const sorted = [...appts].sort((a, b) => b.date.localeCompare(a.date));
       const first = sorted[0];
       const completed = appts.filter(a => a.status === 'completed');
@@ -144,6 +163,9 @@ const AdminPage = () => {
       const nextAppt = upcoming.sort((a, b) => a.date.localeCompare(b.date))[0] ?? null;
       const sessionsRemaining = first.totalSessions - first.usedSessions;
       const hasFollowUpPending = sessionsRemaining > 0 && !nextAppt;
+      const completedDates = completed
+        .sort((a, b) => a.date.localeCompare(b.date))
+        .map(a => a.date);
 
       return {
         clientEmail: first.clientEmail,
@@ -151,32 +173,49 @@ const AdminPage = () => {
         clientPhone: first.clientPhone,
         serviceName: first.serviceName,
         subscriptionType: first.subscriptionType,
+        subscriptionId: first.subscriptionId,
         totalSessions: first.totalSessions,
         usedSessions: first.usedSessions,
         sessionsRemaining,
         isPaid: first.isPaid,
+        paymentMethod: first.paymentMethod,
+        price: first.price,
         expiresAt: first.expiresAt,
+        subscriptionCreatedAt: first.subscriptionCreatedAt,
         followUpToken: first.followUpToken,
         lastApptId: lastAppt?.id ?? first.id,
         lastApptDate: lastAppt?.date ?? null,
         nextApptDate: nextAppt?.date ?? null,
+        completedDates,
         hasFollowUpPending,
+        clientAddress: first.clientAddress,
+        clientFiscalCode: first.clientFiscalCode,
+        clientCreatedAt: first.clientCreatedAt,
       };
-    }).sort((a, b) => {
-      // Prima i percorsi con follow-up in attesa
+    });
+
+    return result.sort((a, b) => {
+      if (sortOrder === 'expiry-asc') {
+        if (!a.expiresAt && !b.expiresAt) return 0;
+        if (!a.expiresAt) return 1;
+        if (!b.expiresAt) return -1;
+        return a.expiresAt.localeCompare(b.expiresAt);
+      }
+      const lastName = (name: string) => name.split(' ').slice(-1)[0];
+      if (sortOrder === 'name-asc') return lastName(a.clientName).localeCompare(lastName(b.clientName));
+      if (sortOrder === 'next-asc') {
+        if (!a.nextApptDate && !b.nextApptDate) return lastName(a.clientName).localeCompare(lastName(b.clientName));
+        if (!a.nextApptDate) return 1;
+        if (!b.nextApptDate) return -1;
+        return a.nextApptDate.localeCompare(b.nextApptDate);
+      }
+      // default: follow-up pending prima, poi cognome
       if (a.hasFollowUpPending && !b.hasFollowUpPending) return -1;
       if (!a.hasFollowUpPending && b.hasFollowUpPending) return 1;
-      return a.clientName.localeCompare(b.clientName);
+      return lastName(a.clientName).localeCompare(lastName(b.clientName));
     });
-  }, [appointments, today]);
+  }, [appointments, today, sortOrder]);
 
-  // Dati cliente selezionato per il modal
-  const clientAppointments = useMemo(() => {
-    if (!clientModal) return [];
-    return appointments
-      .filter(a => a.clientEmail === clientModal)
-      .sort((a, b) => b.date.localeCompare(a.date));
-  }, [clientModal, appointments]);
 
   const handleStatusChange = async (id: string, newStatus: any) => {
     if (!confirm(`Vuoi cambiare lo stato in: ${newStatus}?`)) return;
@@ -196,6 +235,17 @@ const AdminPage = () => {
       loadData();
     } else {
       alert('Errore durante lo spostamento.');
+    }
+  };
+
+  const handleCancelBundle = async (subscriptionId: string, clientName: string) => {
+    if (!confirm(`Annullare l'intero percorso di ${clientName}? Tutti gli appuntamenti futuri verranno cancellati.`)) return;
+    const res = await fetch(`/api/admin/subscriptions/${subscriptionId}/cancel`, { method: 'POST' });
+    if (res.ok) {
+      alert('Percorso annullato.');
+      loadData();
+    } else {
+      alert('Errore durante l\'annullamento.');
     }
   };
 
@@ -227,13 +277,29 @@ const AdminPage = () => {
     }
   };
 
+  const applyFilters = (list: typeof appointments) => {
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      list = list.filter(a =>
+        a.clientName.toLowerCase().includes(q) ||
+        a.clientEmail.toLowerCase().includes(q) ||
+        a.clientPhone.toLowerCase().includes(q)
+      );
+    }
+    if (dateFilter) list = list.filter(a => a.date === dateFilter);
+    return list;
+  };
+
   const tabs: { id: FilterTab; label: string; count?: number }[] = [
-    { id: 'upcoming', label: 'Prossimi', count: appointments.filter(a => (a.status === 'confirmed' || a.status === 'pending') && a.date >= today).length },
-    { id: 'pending', label: 'Da confermare', count: appointments.filter(a => a.status === 'pending').length },
-    { id: 'bundles', label: 'Percorsi', count: bundles.filter(b => b.hasFollowUpPending).length || undefined },
-    { id: 'completed', label: 'Svolti' },
-    { id: 'cancelled', label: 'Cancellati' },
-    { id: 'all', label: 'Tutti' },
+    { id: 'upcoming', label: 'Prossimi', count: applyFilters(appointments.filter(a => (a.status === 'confirmed' || a.status === 'pending') && a.date >= today)).length || undefined },
+    { id: 'pending', label: 'Da confermare', count: applyFilters(appointments.filter(a => a.status === 'pending')).length || undefined },
+    { id: 'bundles', label: 'Percorsi', count: bundles.filter(b =>
+      (showCompletedBundles || b.sessionsRemaining > 0) &&
+      (!search.trim() || b.clientName.toLowerCase().includes(search.toLowerCase()) || b.clientEmail.toLowerCase().includes(search.toLowerCase()))
+    ).length || undefined },
+    { id: 'completed', label: 'Svolti', count: applyFilters(appointments.filter(a => a.status === 'completed')).length || undefined },
+    { id: 'cancelled', label: 'Cancellati', count: applyFilters(appointments.filter(a => a.status === 'cancelled')).length || undefined },
+    { id: 'all', label: 'Tutti', count: applyFilters(appointments).length || undefined },
   ];
 
   if (status === 'loading' || status === 'unauthenticated') {
@@ -301,7 +367,11 @@ const AdminPage = () => {
           {tabs.map(tab => (
             <button
               key={tab.id}
-              onClick={() => setActiveFilter(tab.id)}
+              onClick={() => {
+                setActiveFilter(tab.id);
+                if (tab.id === 'bundles' && (sortOrder === 'date-asc' || sortOrder === 'date-desc')) setSortOrder('name-asc');
+                if (tab.id !== 'bundles' && (sortOrder === 'expiry-asc' || sortOrder === 'next-asc')) setSortOrder('date-asc');
+              }}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
                 activeFilter === tab.id
                   ? 'bg-[var(--brand-title)] text-white'
@@ -336,6 +406,20 @@ const AdminPage = () => {
               <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">✕</button>
             )}
           </div>
+          <div className="flex gap-2 items-center">
+            <button
+              onClick={() => setDateFilter(dateFilter === today ? '' : today)}
+              className={`px-3 py-2.5 rounded-xl text-sm font-medium border transition-colors ${dateFilter === today ? 'bg-[var(--brand-title)] text-white border-[var(--brand-title)]' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+            >
+              Oggi
+            </button>
+            <button
+              onClick={() => setDateFilter(dateFilter === tomorrow ? '' : tomorrow)}
+              className={`px-3 py-2.5 rounded-xl text-sm font-medium border transition-colors ${dateFilter === tomorrow ? 'bg-[var(--brand-title)] text-white border-[var(--brand-title)]' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+            >
+              Domani
+            </button>
+          </div>
           <div className="relative">
             <input
               type="date"
@@ -347,28 +431,58 @@ const AdminPage = () => {
               <button onClick={() => setDateFilter('')} className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-gray-400 hover:bg-gray-600 text-white rounded-full text-xs flex items-center justify-center leading-none">✕</button>
             )}
           </div>
+          <select
+            value={sortOrder}
+            onChange={e => setSortOrder(e.target.value as typeof sortOrder)}
+            className="py-2.5 px-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[var(--brand-title)] text-gray-900"
+          >
+            {activeFilter !== 'bundles' && <option value="date-asc">Data ↑</option>}
+            {activeFilter !== 'bundles' && <option value="date-desc">Data ↓</option>}
+            <option value="name-asc">Cognome A→Z</option>
+            {activeFilter === 'bundles' && <option value="next-asc">Prossima visita ↑</option>}
+            {activeFilter === 'bundles' && <option value="expiry-asc">Scadenza ↑</option>}
+          </select>
         </div>
 
         {/* Vista Percorsi */}
         {activeFilter === 'bundles' && (
           <div className="space-y-4">
+            {/* Toggle completati */}
+            <div className="flex items-center gap-3 flex-wrap mb-2">
+              <p className="text-sm text-gray-500 mr-auto">
+                {bundles.filter(b => b.sessionsRemaining > 0).length} percorsi attivi
+                {bundles.filter(b => b.sessionsRemaining === 0).length > 0 && ` · ${bundles.filter(b => b.sessionsRemaining === 0).length} completati`}
+              </p>
+              {bundles.some(b => b.sessionsRemaining === 0) && (
+                <button
+                  onClick={() => setShowCompletedBundles(v => !v)}
+                  className="text-xs text-gray-500 hover:text-gray-800 underline"
+                >
+                  {showCompletedBundles ? 'Nascondi completati' : 'Mostra completati'}
+                </button>
+              )}
+            </div>
             {isLoading ? (
               <div className="text-center py-10 text-gray-500">Caricamento in corso...</div>
             ) : bundles.length === 0 ? (
               <div className="bg-white p-10 rounded-2xl text-center text-gray-400">Nessun percorso trovato.</div>
             ) : (
               bundles.filter(b =>
-                !search.trim() ||
+                (showCompletedBundles || b.sessionsRemaining > 0) &&
+                (!search.trim() ||
                 b.clientName.toLowerCase().includes(search.toLowerCase()) ||
-                b.clientEmail.toLowerCase().includes(search.toLowerCase())
+                b.clientEmail.toLowerCase().includes(search.toLowerCase()))
               ).map(b => {
                 const daysToExpiry = b.expiresAt
                   ? Math.ceil((new Date(b.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
                   : null;
                 const expiryWarning = daysToExpiry !== null && daysToExpiry <= 30 && b.sessionsRemaining > 0;
 
+                const bundleKey = `${b.clientEmail}__${b.subscriptionId}`;
+                const isExpanded = expandedCards.has(bundleKey);
                 return (
-                  <div key={`${b.clientEmail}__${b.subscriptionType}`} className={`bg-white rounded-xl p-6 shadow-sm border border-gray-100 border-l-4 ${b.hasFollowUpPending ? 'border-l-orange-400' : 'border-l-blue-400'}`}>
+                  <div key={bundleKey} className={`bg-white rounded-xl shadow-sm border border-gray-100 border-l-4 ${b.hasFollowUpPending ? 'border-l-orange-400' : 'border-l-blue-400'}`}>
+                    <div className="p-6">
                     <div className="flex flex-col md:flex-row gap-6">
 
                       {/* Info cliente */}
@@ -382,10 +496,19 @@ const AdminPage = () => {
                             <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-md">SCADE TRA {daysToExpiry}GG</span>
                           )}
                         </div>
-                        <p className="text-sm text-[var(--brand-title)] font-medium mb-3">{b.serviceName}</p>
+                        <div className="flex items-center gap-2 flex-wrap mb-3">
+                          <p className="text-sm text-[var(--brand-title)] font-medium">{b.serviceName}</p>
+                          <span className="text-xs text-gray-500">{b.price}€</span>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${b.isPaid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                            {b.isPaid ? 'PAGATO' : 'DA PAGARE'}
+                          </span>
+                          <span className="text-xs text-gray-400">
+                            {b.paymentMethod === 'bank_transfer' ? 'Bonifico' : b.paymentMethod === 'stripe' ? 'Carta' : b.paymentMethod === 'paypal' ? 'PayPal' : b.paymentMethod === 'none' ? 'Gratuito' : b.paymentMethod}
+                          </span>
+                        </div>
 
                         {/* Barra sessioni */}
-                        <div className="mb-2">
+                        <div className="mb-3">
                           <div className="flex gap-1 mb-1">
                             {Array.from({ length: b.totalSessions }).map((_, i) => (
                               <div key={i} className={`h-2.5 flex-1 rounded-full ${i < b.usedSessions ? 'bg-blue-500' : 'bg-blue-100'}`} />
@@ -396,12 +519,42 @@ const AdminPage = () => {
                           </p>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2 mt-3 text-xs text-gray-500">
-                          {b.lastApptDate && <div>Ultima visita: <strong className="text-gray-700">{formatDate(b.lastApptDate)}</strong></div>}
-                          {b.nextApptDate && <div>Prossima: <strong className="text-green-700">{formatDate(b.nextApptDate)}</strong></div>}
-                          {!b.nextApptDate && b.sessionsRemaining > 0 && <div className="text-orange-600 font-medium">Nessuna visita schedulata</div>}
-                          {b.expiresAt && <div>Scadenza: <strong className={expiryWarning ? 'text-red-600' : 'text-gray-700'}>{formatDate(b.expiresAt)}</strong></div>}
+                        {/* Info sempre visibili */}
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+                          {b.nextApptDate && <span>Prossima: <strong className="text-green-700">{formatDate(b.nextApptDate)}</strong></span>}
+                          {!b.nextApptDate && b.sessionsRemaining > 0 && <span className="text-orange-600 font-medium">Nessuna visita schedulata</span>}
+                          {b.lastApptDate && <span>Ultima: <strong className="text-gray-700">{formatDate(b.lastApptDate)}</strong></span>}
+                          <span>Scade: <strong className={expiryWarning ? 'text-red-600' : 'text-gray-700'}>{b.expiresAt ? formatDate(b.expiresAt) : 'Non impostata'}</strong></span>
                         </div>
+
+                        {/* Dettagli espandibili */}
+                        {isExpanded && (
+                          <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-500">
+                              <div>Acquistato il: <strong className="text-gray-700">{formatDate(b.subscriptionCreatedAt)}</strong></div>
+                              <div>Prima prenotazione: <strong className="text-gray-700">{formatDate(b.clientCreatedAt)}</strong></div>
+                              <div>Indirizzo: <strong className="text-gray-700">{b.clientAddress}</strong></div>
+                              <div>Cod. Fiscale: <strong className="text-gray-700">{b.clientFiscalCode}</strong></div>
+                            </div>
+                            {b.completedDates.length > 0 && (
+                              <div>
+                                <p className="text-xs text-gray-500 mb-1">Sessioni svolte:</p>
+                                <div className="flex flex-wrap gap-1">
+                                  {b.completedDates.map((d, i) => (
+                                    <span key={d} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">#{i + 1} {formatDate(d)}</span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        <button
+                          onClick={() => toggleExpand(bundleKey)}
+                          className="mt-3 text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1"
+                        >
+                          {isExpanded ? '▲ Nascondi dettagli' : '▼ Mostra dettagli'}
+                        </button>
                       </div>
 
                       {/* Azioni */}
@@ -411,15 +564,21 @@ const AdminPage = () => {
                             Invia link follow-up
                           </Button>
                         )}
-                        <button onClick={() => setClientModal(b.clientEmail)} className="text-xs text-blue-600 hover:underline">
+                        <a href={`/admin/clienti/${appointments.find(a => a.clientEmail === b.clientEmail)?.clientId}`} className="w-full text-center text-xs px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
                           Scheda completa
-                        </button>
+                        </a>
+                        {b.sessionsRemaining > 0 && (
+                          <button onClick={() => handleCancelBundle(b.subscriptionId, b.clientName)} className="w-full text-center text-xs px-3 py-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors">
+                            Annulla percorso
+                          </button>
+                        )}
                         <div className="flex gap-2 justify-center mt-1">
-                          <a href={`tel:${b.clientPhone}`} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 text-gray-600"><Icon name="phone" size={16} /></a>
-                          <a href={`mailto:${b.clientEmail}`} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 text-gray-600"><Icon name="mail" size={16} /></a>
+                          <a href={`tel:${b.clientPhone}`} className="flex-1 text-center py-2 bg-gray-100 rounded-lg hover:bg-gray-200 text-gray-600 text-xs transition-colors">📞</a>
+                          <a href={`mailto:${b.clientEmail}`} className="flex-1 text-center py-2 bg-gray-100 rounded-lg hover:bg-gray-200 text-gray-600 text-xs transition-colors">✉️</a>
                         </div>
                       </div>
 
+                    </div>
                     </div>
                   </div>
                 );
@@ -435,13 +594,16 @@ const AdminPage = () => {
           ) : filtered.length === 0 ? (
             <div className="bg-white p-10 rounded-2xl text-center text-gray-400">Nessun appuntamento trovato.</div>
           ) : (
-            filtered.map(appt => (
-              <div key={appt.id} className={`bg-white text-gray-900 rounded-xl p-6 shadow-sm transition-all hover:shadow-md border border-gray-100 border-l-4 ${
+            filtered.map(appt => {
+              const isExpanded = expandedCards.has(appt.id);
+              return (
+              <div key={appt.id} className={`bg-white text-gray-900 rounded-xl shadow-sm transition-all hover:shadow-md border border-gray-100 border-l-4 ${
                 appt.status === 'pending' ? 'border-l-yellow-400' :
                 appt.status === 'cancelled' ? 'border-l-red-300' :
                 appt.status === 'completed' ? 'border-l-gray-300' :
                 'border-l-[var(--brand-title)]'
               }`}>
+                <div className="p-6">
                 <div className="flex flex-col md:flex-row justify-between gap-6">
 
                   {/* Data e ora */}
@@ -460,7 +622,12 @@ const AdminPage = () => {
                       <span className="font-medium text-[var(--brand-title)] text-sm">{appt.serviceName}</span>
                       {appt.price > 0 && (
                         <span className={`text-xs px-2 py-0.5 rounded-full ${appt.isPaid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                          {appt.isPaid ? 'PAGATO' : `DA PAGARE (${appt.price}€)`}
+                          {appt.isPaid ? `PAGATO (${appt.price}€)` : `DA PAGARE (${appt.price}€)`}
+                        </span>
+                      )}
+                      {appt.price > 0 && (
+                        <span className="text-xs text-gray-400">
+                          {appt.paymentMethod === 'bank_transfer' ? 'Bonifico' : appt.paymentMethod === 'stripe' ? 'Carta' : appt.paymentMethod === 'paypal' ? 'PayPal' : appt.paymentMethod === 'none' ? 'Gratuito' : ''}
                         </span>
                       )}
                       {/* Info sessioni per percorsi */}
@@ -474,11 +641,39 @@ const AdminPage = () => {
                       <div className="flex items-center gap-1"><Icon name="mail" size={14} /> {appt.clientEmail}</div>
                       <div className="flex items-center gap-1"><Icon name="phone" size={14} /> {appt.clientPhone}</div>
                     </div>
+                    {appt.status === 'pending' && appt.paymentMethod === 'bank_transfer' && (() => {
+                      const msLeft = Math.max(0, 72 * 60 * 60 * 1000 - (Date.now() - new Date(appt.createdAt).getTime()));
+                      const hoursLeft = Math.floor(msLeft / (1000 * 60 * 60));
+                      const minutesLeft = Math.floor((msLeft % (1000 * 60 * 60)) / (1000 * 60));
+                      const isUrgent = hoursLeft <= 12;
+                      const label = msLeft > 0
+                        ? `Bonifico atteso — scade tra ${hoursLeft}h ${minutesLeft}m`
+                        : 'Scaduto — verrà cancellato al prossimo cron';
+                      return (
+                        <div className={`mt-2 px-3 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1.5 ${isUrgent ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'}`}>
+                          <Icon name="clock" size={12} />
+                          {label}
+                        </div>
+                      );
+                    })()}
                     {appt.notes && (
                       <div className="bg-yellow-50 p-2 rounded-lg text-sm text-yellow-800 mt-2">
                         <strong>Note:</strong> {appt.notes}
                       </div>
                     )}
+                    {isExpanded && (
+                      <div className="mt-3 pt-3 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-500">
+                        <div>Indirizzo: <strong className="text-gray-700">{appt.clientAddress}</strong></div>
+                        <div>Cod. Fiscale: <strong className="text-gray-700">{appt.clientFiscalCode}</strong></div>
+                        <div>Prima prenotazione: <strong className="text-gray-700">{formatDate(appt.clientCreatedAt)}</strong></div>
+                      </div>
+                    )}
+                    <button
+                      onClick={() => toggleExpand(appt.id)}
+                      className="mt-2 text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1"
+                    >
+                      {isExpanded ? '▲ Nascondi dettagli' : '▼ Mostra dettagli'}
+                    </button>
                   </div>
 
                   {/* Azioni */}
@@ -509,20 +704,24 @@ const AdminPage = () => {
                       </Button>
                     )}
                     {appt.status !== 'cancelled' && appt.status !== 'completed' && (
-                      <button onClick={() => handleStatusChange(appt.id, 'cancelled')} className="text-red-500 text-xs hover:underline mt-1">
+                      <button onClick={() => handleStatusChange(appt.id, 'cancelled')} className="w-full text-center text-xs px-3 py-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors mt-1">
                         Annulla
                       </button>
                     )}
-                    <div className="flex gap-2 justify-center mt-1">
-                      <a href={`tel:${appt.clientPhone}`} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 text-gray-600"><Icon name="phone" size={16} /></a>
-                      <a href={`mailto:${appt.clientEmail}`} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 text-gray-600"><Icon name="mail" size={16} /></a>
-                      <button onClick={() => setClientModal(appt.clientEmail)} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 text-gray-600" title="Scheda cliente"><Icon name="userSingle" size={16} /></button>
+                    <a href={`/admin/clienti/${appt.clientId}`} className="w-full text-center text-xs px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors mt-1">
+                      Scheda completa
+                    </a>
+                    <div className="flex gap-2 mt-1">
+                      <a href={`tel:${appt.clientPhone}`} className="flex-1 text-center py-2 bg-gray-100 rounded-lg hover:bg-gray-200 text-gray-600 text-xs transition-colors">📞</a>
+                      <a href={`mailto:${appt.clientEmail}`} className="flex-1 text-center py-2 bg-gray-100 rounded-lg hover:bg-gray-200 text-gray-600 text-xs transition-colors">✉️</a>
                     </div>
                   </div>
 
                 </div>
+                </div>
               </div>
-            ))
+              );
+            })
           )}
         </div>}
       </div>
@@ -579,94 +778,6 @@ const AdminPage = () => {
         </div>
       </div>
     )}
-    {/* Modal scheda cliente */}
-    {clientModal && clientAppointments.length > 0 && (() => {
-      const first = clientAppointments[0];
-      const totalSessions = first.totalSessions;
-      const usedSessions = first.usedSessions;
-      const sessionsRemaining = totalSessions - usedSessions;
-      const bundle = isBundle(first.subscriptionType);
-      const completed = clientAppointments.filter(a => a.status === 'completed').length;
-      const cancelled = clientAppointments.filter(a => a.status === 'cancelled').length;
-      const upcoming = clientAppointments.filter(a => (a.status === 'confirmed' || a.status === 'pending') && a.date >= today).length;
-
-      return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-100">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900">{first.clientName}</h2>
-                  <p className="text-sm text-gray-500 mt-0.5">{first.clientEmail}</p>
-                  <p className="text-sm text-gray-500">{first.clientPhone}</p>
-                </div>
-                <button onClick={() => setClientModal(null)} className="p-2 hover:bg-gray-100 rounded-full text-gray-400">✕</button>
-              </div>
-            </div>
-
-            {/* Stats cliente */}
-            <div className="p-6 border-b border-gray-100">
-              <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="bg-gray-50 rounded-xl p-3 text-center">
-                  <div className="text-xl font-bold text-gray-900">{upcoming}</div>
-                  <div className="text-xs text-gray-500 mt-0.5">Prossimi</div>
-                </div>
-                <div className="bg-gray-50 rounded-xl p-3 text-center">
-                  <div className="text-xl font-bold text-gray-900">{completed}</div>
-                  <div className="text-xs text-gray-500 mt-0.5">Svolti</div>
-                </div>
-                <div className="bg-gray-50 rounded-xl p-3 text-center">
-                  <div className="text-xl font-bold text-gray-900">{cancelled}</div>
-                  <div className="text-xs text-gray-500 mt-0.5">Cancellati</div>
-                </div>
-              </div>
-
-              {bundle && (
-                <div className="bg-blue-50 rounded-xl p-4">
-                  <div className="text-xs font-bold text-blue-700 uppercase mb-2">Percorso</div>
-                  <div className="text-sm font-medium text-blue-900 mb-2">{first.serviceName}</div>
-                  <div className="flex gap-1 mb-2">
-                    {Array.from({ length: totalSessions }).map((_, i) => (
-                      <div key={i} className={`h-2 flex-1 rounded-full ${i < usedSessions ? 'bg-blue-500' : 'bg-blue-200'}`} />
-                    ))}
-                  </div>
-                  <div className="text-xs text-blue-700">
-                    {usedSessions} di {totalSessions} sessioni usate — <strong>{sessionsRemaining} rimast{sessionsRemaining === 1 ? 'a' : 'e'}</strong>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Storico appuntamenti */}
-            <div className="p-6">
-              <h3 className="text-sm font-bold text-gray-700 uppercase mb-3">Storico appuntamenti</h3>
-              <div className="space-y-2">
-                {clientAppointments.map(a => (
-                  <div key={a.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{formatDate(a.date)} — {a.time}</div>
-                      <div className="text-xs text-gray-500">{a.serviceName}</div>
-                    </div>
-                    {getStatusBadge(a.status)}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="p-6 pt-0">
-              <div className="flex gap-2">
-                <a href={`mailto:${first.clientEmail}`} className="flex-1 text-center py-2.5 bg-gray-100 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors">
-                  Scrivi email
-                </a>
-                <a href={`tel:${first.clientPhone}`} className="flex-1 text-center py-2.5 bg-gray-100 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors">
-                  Chiama
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    })()}
     </>
   );
 };

@@ -65,6 +65,45 @@ describe('POST /api/bookings', () => {
 
     expect(capturedSubData.type).toBe('FREE_CONSULTATION')
     expect(capturedSubData.price).toBe(0)
+    expect(capturedSubData.usedSessions).toBe(0)
+  })
+
+  it('creates subscription with usedSessions=0', async () => {
+    let capturedSubData: any
+
+    mockPrisma.$transaction.mockImplementation(async (fn: any) => {
+      const mockSub = { create: vi.fn().mockImplementation(async ({ data }: any) => { capturedSubData = data; return { id: 'sub_1' } }) }
+      return fn({
+        client: { upsert: vi.fn().mockResolvedValue({ id: 'cli_1' }) },
+        subscription: mockSub,
+        appointment: { create: vi.fn().mockResolvedValue({ id: 'appt_1' }) },
+      })
+    })
+
+    await POST(makePostRequest(baseDTO))
+    expect(capturedSubData.usedSessions).toBe(0)
+  })
+
+  it('does not increment usedSessions on follow-up booking', async () => {
+    mockPrisma.$transaction.mockImplementation(async (fn: any) =>
+      fn({
+        client: { upsert: vi.fn().mockResolvedValue({ id: 'cli_1' }) },
+        subscription: {
+          findUnique: vi.fn().mockResolvedValue({ id: 'sub_existing', usedSessions: 1, totalSessions: 3 }),
+          update: vi.fn(),
+        },
+        appointment: { create: vi.fn().mockResolvedValue({ id: 'appt_1' }) },
+      })
+    )
+
+    const res = await POST(makePostRequest({ ...baseDTO, existingSubscriptionId: 'sub_existing' }))
+    expect(res.status).toBe(201)
+
+    // update non deve essere chiamato sulla subscription (no incremento)
+    const txCall = (mockPrisma.$transaction as any).mock.calls[0][0]
+    const fakeTx = { client: { upsert: vi.fn().mockResolvedValue({ id: 'cli_1' }) }, subscription: { findUnique: vi.fn().mockResolvedValue({ id: 'sub_existing' }), update: vi.fn() }, appointment: { create: vi.fn().mockResolvedValue({ id: 'appt_1' }) } }
+    await txCall(fakeTx)
+    expect(fakeTx.subscription.update).not.toHaveBeenCalled()
   })
 
   it('returns 500 on database error', async () => {

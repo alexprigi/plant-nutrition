@@ -90,11 +90,12 @@ export async function POST(request: NextRequest) {
       let subscription
 
       if (data.existingSubscriptionId) {
-        // Follow-up: usa la subscription esistente
-        subscription = await tx.subscription.update({
+        // Follow-up: usa la subscription esistente senza incrementare usedSessions
+        // (viene incrementato solo quando Arianna segna la sessione come svolta)
+        subscription = await tx.subscription.findUnique({
           where: { id: data.existingSubscriptionId },
-          data: { usedSessions: { increment: 1 } },
         })
+        if (!subscription) throw new Error('Subscription not found')
       } else {
         // Nuova prenotazione: crea subscription
         const expiresAt = subType === 'BUNDLE_3_MONTHS'
@@ -111,7 +112,7 @@ export async function POST(request: NextRequest) {
             isPaid: data.isPaid,
             paymentMethod: mapPaymentMethod(data.paymentMethod),
             totalSessions,
-            usedSessions: 1,
+            usedSessions: 0,
             status: 'ACTIVE' as SubscriptionStatus,
             ...(expiresAt && { expiresAt }),
           },

@@ -141,7 +141,16 @@ const PrenotaPageContent = () => {
   const [selectedTime, setSelectedTime] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [currentMonthDate, setCurrentMonthDate] = useState(new Date());
+  const [currentMonthDate, setCurrentMonthDate] = useState(() => {
+    const now = new Date();
+    // Se nel mese corrente non ci sono più giorni disponibili, apri il mese successivo
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const hasRemainingDays = now.getDate() < daysInMonth;
+    if (!hasRemainingDays) {
+      return new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    }
+    return now;
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [eligibilityError, setEligibilityError] = useState<string>('');
 

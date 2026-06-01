@@ -40,7 +40,8 @@ export async function GET(request: NextRequest) {
 
   // Logica per fascia temporale
   const inRestrictedZone = daysUntil <= 7 && daysUntil > 1
-  const rescheduleBlocked = inRestrictedZone && appointment.rescheduleCountRestricted >= 1
+  const maxReschedulesReached = appointment.rescheduleCount >= 3
+  const rescheduleBlocked = maxReschedulesReached || (inRestrictedZone && appointment.rescheduleCountRestricted >= 1)
   const canReschedule = hoursUntil > 24 && !isPending && !rescheduleBlocked
   const canCancel = isPending || isFree || daysUntil > 7
   const contactRequired = !isPending && !isFree && (hoursUntil <= 24 || rescheduleBlocked)
@@ -154,6 +155,10 @@ export async function POST(request: NextRequest) {
 
     const currentDaysUntil = hoursUntil / 24
     const isRestricted = currentDaysUntil <= 7 && currentDaysUntil > 1
+
+    if (appointment.rescheduleCount >= 3) {
+      return NextResponse.json({ error: 'Hai raggiunto il limite massimo di spostamenti. Contatta Arianna.' }, { status: 403 })
+    }
 
     if (isRestricted && appointment.rescheduleCountRestricted >= 1) {
       return NextResponse.json({ error: 'Hai già spostato l\'appuntamento una volta in questa fascia. Contatta Arianna.' }, { status: 403 })

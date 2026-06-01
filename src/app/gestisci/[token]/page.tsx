@@ -42,7 +42,12 @@ export default function GestisciPage() {
   // Reschedule state
   const [newDate, setNewDate] = useState('');
   const [newTime, setNewTime] = useState('');
-  const [currentMonthDate, setCurrentMonthDate] = useState(new Date());
+  const [currentMonthDate, setCurrentMonthDate] = useState(() => {
+    const now = new Date();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    if (now.getDate() >= daysInMonth) return new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    return now;
+  });
 
   useEffect(() => {
     fetch(`/api/appointments/manage?token=${token}`)
