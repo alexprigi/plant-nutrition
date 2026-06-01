@@ -131,3 +131,22 @@ enum AppointmentStatus {
   CANCELLED
   COMPLETED
 }
+
+// Blocchi di indisponibilità impostati da Arianna
+model AvailabilityBlock {
+  id        String              @id @default(cuid())
+  date      String              // YYYY-MM-DD
+  type      AvailabilityType    @default(BLOCK)
+  startTime String?             // HH:MM — null = giorno intero
+  endTime   String?             // HH:MM — null = giorno intero
+  note      String              @default("")
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  @@map("availability_blocks")
+}
+
+enum AvailabilityType {
+  BLOCK  // blocca slot su giorno lavorativo
+  OPEN   // apre un giorno weekend
+}

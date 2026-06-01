@@ -158,6 +158,25 @@ const PrenotaPageContent = () => {
     CONSULTATION_TYPES.find(t => t.value === selectedService),
     [selectedService]);
 
+  const [openWeekendDates, setOpenWeekendDates] = useState<Set<string>>(new Set());
+
+  // Carica i weekend aperti per il mese corrente
+  useEffect(() => {
+    const year = currentMonthDate.getFullYear();
+    const month = currentMonthDate.getMonth();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const from = `${year}-${pad(month + 1)}-01`;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const to = `${year}-${pad(month + 1)}-${pad(daysInMonth)}`;
+    fetch(`/api/admin/availability?from=${from}&to=${to}`)
+      .then(r => r.json())
+      .then((blocks: { date: string; type: string }[]) => {
+        if (!Array.isArray(blocks)) return;
+        setOpenWeekendDates(new Set(blocks.filter(b => b.type === 'OPEN').map(b => b.date)));
+      })
+      .catch(() => {});
+  }, [currentMonthDate]);
+
   const isBankTransferAvailable = useMemo(() => {
     if (!selectedDate) return true;
     const apptDate = new Date(selectedDate);
@@ -189,25 +208,50 @@ const PrenotaPageContent = () => {
   }, [isBankTransferAvailable, paymentMethod]);
 
   // Memoize available time slots based on selected date
+  const [slotAvailability, setSlotAvailability] = useState<Record<string, boolean>>({});
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+
+  useEffect(() => {
+    if (!selectedDate) return;
+    setIsLoadingSlots(true);
+    fetch(`/api/bookings?date=${selectedDate}`)
+      .then(r => r.json())
+      .then(data => {
+        if (!data.slots) return;
+        const map: Record<string, boolean> = {};
+        data.slots.forEach((s: { time: string; available: boolean }) => {
+          map[s.time] = s.available;
+        });
+        setSlotAvailability(map);
+      })
+      .catch(() => {})
+      .finally(() => setIsLoadingSlots(false));
+  }, [selectedDate]);
+
   const availableTimeSlots = useMemo(() => {
     if (!selectedDate) return TIME_SLOTS;
-    
-    const isToday = selectedDate === new Date().toISOString().split('T')[0];
-    if (!isToday) return TIME_SLOTS;
-    
+
+    const today = new Date().toISOString().split('T')[0];
+    const isToday = selectedDate === today;
     const now = new Date();
     const fourHoursFromNow = new Date(now.getTime() + 4 * 60 * 60 * 1000);
-    
+
     return TIME_SLOTS.map(slot => {
-      const [hours, minutes] = slot.split(':').map(Number);
-      const slotTime = new Date();
-      slotTime.setHours(hours, minutes, 0, 0);
-      return {
-        time: slot,
-        available: slotTime >= fourHoursFromNow
-      };
+      // Blocco 4h per oggi
+      let available = true;
+      if (isToday) {
+        const [hours, minutes] = slot.split(':').map(Number);
+        const slotTime = new Date();
+        slotTime.setHours(hours, minutes, 0, 0);
+        available = slotTime >= fourHoursFromNow;
+      }
+      // Applica disponibilità dall'API (blocchi Arianna + slot già prenotati)
+      if (Object.keys(slotAvailability).length > 0) {
+        available = available && (slotAvailability[slot] ?? true);
+      }
+      return { time: slot, available };
     });
-  }, [selectedDate]);
+  }, [selectedDate, slotAvailability]);
 
   // --- DEV HELPER ---
   const fillRandomData = () => {
@@ -735,8 +779,9 @@ const PrenotaPageContent = () => {
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
                     const isPast = new Date(d) < today;
+                    const isWeekend = (new Date(d).getDay() === 0 || new Date(d).getDay() === 6) && !openWeekendDates.has(d);
                     const noSlots = !hasAvailableSlots(d);
-                    const isDisabled = isPast || noSlots;
+                    const isDisabled = isPast || noSlots || isWeekend;
                     return (
                       <button
                         key={d}

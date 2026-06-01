@@ -151,27 +151,77 @@ export async function GET(request: NextRequest) {
   }
 
   const allSlots = [
-    '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-    '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+    '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
+    '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
+    '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
+    '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00',
   ]
 
-  // Recupera slot già prenotati per quella data (esclusi cancellati)
-  const bookedAppointments = await prisma.appointment.findMany({
-    where: {
-      date,
-      isDeleted: false,
-      status: { notIn: ['CANCELLED'] },
-    },
-    select: { time: true },
-  })
+  // Recupera slot già prenotati e blocchi di disponibilità in parallelo
+  const [bookedAppointments, availabilityBlocks] = await Promise.all([
+    prisma.appointment.findMany({
+      where: {
+        date,
+        isDeleted: false,
+        status: { notIn: ['CANCELLED'] },
+      },
+      select: { time: true },
+    }),
+    prisma.availabilityBlock.findMany({
+      where: { date },
+    }),
+  ])
 
   const bookedTimes = new Set(bookedAppointments.map((a) => a.time))
+
+  // Weekend: aperto solo se almeno un blocco OPEN lo copre
+  const dayOfWeek = new Date(date).getDay()
+  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+  const openBlocks = availabilityBlocks.filter(b => b.type === 'OPEN')
+  const blockBlocks = availabilityBlocks.filter(b => b.type === 'BLOCK')
+
+  if (isWeekend && openBlocks.length === 0) {
+    return NextResponse.json({
+      date,
+      slots: allSlots.map(time => ({ time, available: false })),
+    })
+  }
+
+  if (isWeekend) {
+    // Uno slot è disponibile se coperto da almeno un OPEN e non coperto da BLOCK
+    const isSlotOpen = (time: string) =>
+      openBlocks.some(b =>
+        !b.startTime || !b.endTime || (time >= b.startTime && time < b.endTime)
+      )
+    const isSlotBlockedByBlock = (time: string) =>
+      blockBlocks.some(b =>
+        !b.startTime || !b.endTime || (time >= b.startTime && time < b.endTime)
+      )
+
+    return NextResponse.json({
+      date,
+      slots: allSlots.map(time => ({
+        time,
+        available: isSlotOpen(time) && !isSlotBlockedByBlock(time) && !bookedTimes.has(time),
+      })),
+    })
+  }
+
+  const blocks = blockBlocks
+
+  const isSlotBlocked = (time: string): boolean => {
+    for (const block of blocks) {
+      if (!block.startTime || !block.endTime) return true
+      if (time >= block.startTime && time < block.endTime) return true
+    }
+    return false
+  }
 
   return NextResponse.json({
     date,
     slots: allSlots.map((time) => ({
       time,
-      available: !bookedTimes.has(time),
+      available: !bookedTimes.has(time) && !isSlotBlocked(time),
     })),
   })
 }

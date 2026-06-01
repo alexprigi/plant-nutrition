@@ -87,19 +87,41 @@ export default function FollowUpBookingPage() {
     return days;
   }, [currentMonthDate]);
 
+  const [slotAvailability, setSlotAvailability] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    if (!selectedDate) return;
+    fetch(`/api/bookings?date=${selectedDate}`)
+      .then(r => r.json())
+      .then(data => {
+        if (!data.slots) return;
+        const map: Record<string, boolean> = {};
+        data.slots.forEach((s: { time: string; available: boolean }) => { map[s.time] = s.available; });
+        setSlotAvailability(map);
+      })
+      .catch(() => {});
+  }, [selectedDate]);
+
   const availableTimeSlots = useMemo(() => {
     if (!selectedDate) return TIME_SLOTS;
     const today = new Date().toISOString().split('T')[0];
-    if (selectedDate !== today) return TIME_SLOTS;
+    const isToday = selectedDate === today;
     const now = new Date();
     const fourHoursFromNow = new Date(now.getTime() + 4 * 60 * 60 * 1000);
-    return TIME_SLOTS.filter(slot => {
-      const [hours, minutes] = slot.split(':').map(Number);
-      const slotTime = new Date();
-      slotTime.setHours(hours, minutes, 0, 0);
-      return slotTime >= fourHoursFromNow;
+    return TIME_SLOTS.map(slot => {
+      let available = true;
+      if (isToday) {
+        const [hours, minutes] = slot.split(':').map(Number);
+        const slotTime = new Date();
+        slotTime.setHours(hours, minutes, 0, 0);
+        available = slotTime >= fourHoursFromNow;
+      }
+      if (Object.keys(slotAvailability).length > 0) {
+        available = available && (slotAvailability[slot] ?? true);
+      }
+      return { time: slot, available };
     });
-  }, [selectedDate]);
+  }, [selectedDate, slotAvailability]);
 
   const handleConfirm = async () => {
     if (!data || !selectedDate || !selectedTime) return;
@@ -261,14 +283,15 @@ export default function FollowUpBookingPage() {
                 if (!d) return <div key={i} />;
                 const isSel = d === selectedDate;
                 const isPast = new Date(d) < today;
+                const isWeekend = new Date(d).getDay() === 0 || new Date(d).getDay() === 6;
                 return (
                   <button
                     key={d}
-                    onClick={() => !isPast && setSelectedDate(d)}
-                    disabled={isPast}
+                    onClick={() => !isPast && !isWeekend && setSelectedDate(d)}
+                    disabled={isPast || isWeekend}
                     className={`
                       w-11 h-11 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm transition-all font-medium
-                      ${isPast ? 'text-gray-300 cursor-not-allowed bg-gray-50'
+                      ${isPast || isWeekend ? 'text-gray-300 cursor-not-allowed bg-gray-50'
                         : isSel ? 'bg-[var(--brand-title)] text-white font-bold shadow-md scale-110'
                         : 'text-gray-700 hover:bg-gray-100'}
                     `}
@@ -284,20 +307,27 @@ export default function FollowUpBookingPage() {
           <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex flex-col">
             <h3 className="font-bold text-gray-900 mb-4 text-center">Orari disponibili</h3>
             <div className="grid grid-cols-3 gap-2 max-h-56 overflow-y-auto pr-1 mb-4">
-              {availableTimeSlots.map(slot => (
-                <button
-                  key={slot}
-                  onClick={() => setSelectedTime(slot)}
-                  className={`
-                    py-2 rounded-lg text-sm border transition-all font-medium
-                    ${selectedTime === slot
-                      ? 'bg-[var(--brand-title)] text-white border-[var(--brand-title)] shadow-md'
-                      : 'text-gray-600 border-gray-200 hover:border-[var(--brand-title)] hover:text-[var(--brand-title)]'}
-                  `}
-                >
-                  {slot}
-                </button>
-              ))}
+              {availableTimeSlots.map(slot => {
+                const time = typeof slot === 'string' ? slot : slot.time;
+                const available = typeof slot === 'string' ? true : slot.available;
+                return (
+                  <button
+                    key={time}
+                    onClick={() => available && setSelectedTime(time)}
+                    disabled={!available}
+                    className={`
+                      py-2 rounded-lg text-sm border transition-all font-medium
+                      ${!available
+                        ? 'text-gray-300 border-gray-100 cursor-not-allowed bg-gray-50'
+                        : selectedTime === time
+                        ? 'bg-[var(--brand-title)] text-white border-[var(--brand-title)] shadow-md'
+                        : 'text-gray-600 border-gray-200 hover:border-[var(--brand-title)] hover:text-[var(--brand-title)]'}
+                    `}
+                  >
+                    {time}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="mt-auto pt-4 border-t border-gray-100">

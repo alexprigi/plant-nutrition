@@ -274,16 +274,17 @@ export default function GestisciPage() {
                   if (!d) return <div key={i} />;
                   const isSel = d === newDate;
                   const isPast = new Date(d) <= today;
+                  const isWeekend = new Date(d).getDay() === 0 || new Date(d).getDay() === 6;
                   const isCurrent = d === appointment?.date;
                   return (
                     <button
                       key={d}
-                      onClick={() => !isPast && setNewDate(d)}
-                      disabled={isPast}
+                      onClick={() => !isPast && !isWeekend && setNewDate(d)}
+                      disabled={isPast || isWeekend}
                       title={isCurrent ? 'Data attuale' : undefined}
                       className={`
                         w-11 h-11 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm transition-all font-medium
-                        ${isPast
+                        ${isPast || isWeekend
                           ? 'text-gray-300 cursor-not-allowed bg-gray-50'
                           : isSel
                           ? 'bg-[var(--brand-title)] text-white font-bold shadow-md scale-110'

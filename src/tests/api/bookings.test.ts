@@ -117,7 +117,10 @@ describe('POST /api/bookings', () => {
 })
 
 describe('GET /api/bookings', () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockPrisma.availabilityBlock.findMany.mockResolvedValue([])
+  })
 
   it('returns 400 when date is missing', async () => {
     const res = await GET(makeGetRequest())
@@ -132,7 +135,7 @@ describe('GET /api/bookings', () => {
 
     expect(res.status).toBe(200)
     expect(data.date).toBe('2026-05-01')
-    expect(data.slots).toHaveLength(14)
+    expect(data.slots).toHaveLength(25)
     expect(data.slots[0]).toHaveProperty('available', true)
   })
 
@@ -144,5 +147,33 @@ describe('GET /api/bookings', () => {
     const slot = data.slots.find((s: any) => s.time === '09:00')
 
     expect(slot.available).toBe(false)
+  })
+
+  it('marks availability-blocked slots as unavailable', async () => {
+    mockPrisma.appointment.findMany.mockResolvedValue([])
+    mockPrisma.availabilityBlock.findMany.mockResolvedValue([
+      { id: 'blk_1', date: '2026-05-01', type: 'BLOCK', startTime: '12:00', endTime: '14:00', note: '' },
+    ] as any)
+
+    const res = await GET(makeGetRequest('2026-05-01'))
+    const data = await res.json()
+
+    const blocked = data.slots.find((s: any) => s.time === '12:00')
+    const free = data.slots.find((s: any) => s.time === '11:30')
+
+    expect(blocked.available).toBe(false)
+    expect(free.available).toBe(true)
+  })
+
+  it('marks all slots unavailable when full-day block exists', async () => {
+    mockPrisma.appointment.findMany.mockResolvedValue([])
+    mockPrisma.availabilityBlock.findMany.mockResolvedValue([
+      { id: 'blk_1', date: '2026-05-01', type: 'BLOCK', startTime: null, endTime: null, note: 'Ferie' },
+    ] as any)
+
+    const res = await GET(makeGetRequest('2026-05-01'))
+    const data = await res.json()
+
+    expect(data.slots.every((s: any) => !s.available)).toBe(true)
   })
 })

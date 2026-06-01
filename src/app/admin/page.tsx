@@ -321,6 +321,13 @@ const AdminPage = () => {
           <div className="flex items-center gap-3">
             <span className="text-sm text-gray-500">Ciao, {session?.user?.name}</span>
             <Link
+              href="/admin/disponibilita"
+              className="p-2 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors"
+              title="Disponibilità"
+            >
+              <Icon name="calendar" size={18} className="text-gray-600" />
+            </Link>
+            <Link
               href="/admin/settings"
               className="p-2 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors"
               title="Impostazioni"
