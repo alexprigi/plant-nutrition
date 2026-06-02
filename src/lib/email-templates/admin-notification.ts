@@ -388,6 +388,48 @@ export function getAdminNotificationEmailHTML(data: EmailAdminData): string {
   `;
 }
 
+export interface EmailAdminExpiredBankTransferData {
+  clientName: string;
+  clientEmail: string;
+  clientPhone?: string;
+  serviceName: string;
+  date: string;
+  time: string;
+  isTest?: boolean;
+}
+
+export function getAdminExpiredBankTransferEmailHTML(data: EmailAdminExpiredBankTransferData): string {
+  const formattedDate = new Date(data.date).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const content = `
+    <p style="margin: 0 0 20px; font-size: 16px; color: #374151;">Ciao Arianna,</p>
+    <p style="margin: 0 0 25px; font-size: 16px; color: #374151;">
+      La prenotazione di <strong>${data.clientName}</strong> per <strong>${data.serviceName}</strong> è stata annullata automaticamente per mancato pagamento del bonifico entro 72 ore.
+    </p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #FEF3C7; border-radius: 12px; margin: 0 0 20px; border: 2px solid #FCD34D;">
+      <tr><td style="padding: 20px;">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          ${clientRow('Cliente', data.clientName)}
+          ${clientRow('Email', data.clientEmail, `mailto:${data.clientEmail}`)}
+          ${data.clientPhone ? clientRow('Telefono', data.clientPhone, `tel:${data.clientPhone}`) : ''}
+          ${clientRow('Servizio', data.serviceName)}
+          ${clientRow('Data', formattedDate)}
+          ${clientRow('Orario', data.time)}
+        </table>
+      </td></tr>
+    </table>
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #FEF2F2; border-radius: 12px; border-left: 4px solid #EF4444;">
+      <tr><td style="padding: 16px;">
+        <p style="margin: 0; font-size: 14px; color: #991B1B;">⚠️ Lo slot è stato liberato automaticamente. Il cliente ha ricevuto email di notifica.</p>
+      </td></tr>
+    </table>`;
+  return adminLayout(content, 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)', '⏰ Bonifico Scaduto — Prenotazione Annullata', data.isTest);
+}
+
+export function getAdminExpiredBankTransferEmailText(data: EmailAdminExpiredBankTransferData): string {
+  const formattedDate = new Date(data.date).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  return `BONIFICO SCADUTO — PRENOTAZIONE ANNULLATA\n\nCiao Arianna,\n\nLa prenotazione di ${data.clientName} per ${data.serviceName} del ${formattedDate} alle ${data.time} è stata annullata automaticamente per mancato pagamento del bonifico entro 72 ore.\n\nEmail cliente: ${data.clientEmail}${data.clientPhone ? `\nTelefono: ${data.clientPhone}` : ''}\n\nLo slot è stato liberato automaticamente. Il cliente ha ricevuto email di notifica.\n\nVisualizza nel dashboard: https://www.vivaplantnutrition.com/admin\n\n---\nNotifica automatica da Viva Plant Nutrition`;
+}
+
 export function getAdminNotificationEmailText(data: EmailAdminData): string {
   const formattedDate = new Date(data.date).toLocaleDateString('it-IT', {
     weekday: 'long',

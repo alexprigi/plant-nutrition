@@ -17,7 +17,8 @@ Sito web professionale per Arianna Ciervo, nutrizionista specializzata in alimen
     /ui                # Button, Card, ecc.
   /lib                 # Utilities e servizi
     constants.ts       # Liste paesi, prefissi telefonici
-    bookingService.ts  # Logica prenotazioni (attualmente localStorage)
+    bookingService.ts  # Logica prenotazioni
+    prisma.ts          # Client Prisma
     email.ts           # Servizio email (Resend)
     /email-templates   # Template email HTML
 /public
@@ -30,11 +31,13 @@ Sito web professionale per Arianna Ciervo, nutrizionista specializzata in alimen
 
 **Funzionante e Setup:**
 - Email tramite Resend (configurato e funzionante)
-- Sistema prenotazioni con localStorage
+- Sistema prenotazioni con Prisma/PostgreSQL
 - Tutte le pagine pubbliche (servizi, chi sono, contatti, prenota, ecc.)
+- Chat/chatbot - funzionante (pattern matching client-side, italiano)
 
-**Da Non Toccare (Work in Progress):**
-- Chat/chatbot - non è ancora finito il setup, lasciare stare per ora
+**Work in Progress (non completate):**
+- `/ricette` - sezione ricette non ancora pronta
+- `/blog` - sezione blog non ancora pronta
 
 ### Convenzioni Codice
 
@@ -46,15 +49,15 @@ Sito web professionale per Arianna Ciervo, nutrizionista specializzata in alimen
 
 ### Storage e Dati
 
-**IMPORTANTE**: Attualmente il progetto usa **localStorage** per salvare:
+**IMPORTANTE**: Il progetto usa **Prisma + PostgreSQL** per salvare:
 - Clienti
 - Prenotazioni (bookings)
 - Appuntamenti (appointments)
 - Subscription/pacchetti
 
-Vedi `src/lib/bookingService.ts` per tutta la logica.
+Vedi `src/lib/prisma.ts` per il client Prisma e `prisma/schema.prisma` per lo schema.
 
-**Nota**: Esiste un piano futuro per migrare a database SQL (vedi `MIGRATION-TO-DATABASE.md`), ma per ora continuare a usare localStorage.
+**Nota**: La migrazione da localStorage a database è completata. Non usare localStorage per dati applicativi.
 
 ### Immagini
 
@@ -106,7 +109,7 @@ Tutte in `/src/app/api/`:
 
 ## Specifiche Tecniche
 
-Per dettagli tecnici approfonditi (stack completo, dipendenze, schema dati localStorage, configurazioni), consulta [Spec.md](Spec.md).
+Per dettagli tecnici approfonditi (stack completo, dipendenze, schema database, configurazioni), consulta [Spec.md](Spec.md).
 
 **IMPORTANTE**: Leggi Spec.md SOLO se hai bisogno di informazioni tecniche dettagliate per completare un task specifico. Non caricarlo di default per risparmiare context.
 
@@ -124,7 +127,7 @@ npm run lint:fix     # ESLint auto-fix
 - Il sito è in **italiano**
 - Target audience: persone interessate a nutrizione plant-based
 - GDPR compliance: importante per gestione dati clienti e foto
-- No database per ora: tutto in localStorage (cambierà in futuro)
+- Database: Prisma + PostgreSQL (migrazione da localStorage completata)
 
 ## Domande Frequenti
 
@@ -132,15 +135,15 @@ npm run lint:fix     # ESLint auto-fix
 A: No, a meno che l'utente non lo richieda esplicitamente.
 
 **Q: Devo migrare a database?**
-A: No, per ora continuare con localStorage. Esiste un piano (MIGRATION-TO-DATABASE.md) ma non è priorità.
+A: Già fatto. Il progetto usa Prisma + PostgreSQL. Non usare localStorage per dati applicativi.
 
 **Q: Posso modificare la chat/chatbot?**
-A: No, è work in progress. Non toccare per ora.
+A: Sì, il chatbot è funzionante. Vedi `src/components/ChatWidget.tsx`.
 
 **Q: Come aggiungo una nuova immagine?**
 A: Leggi IMAGE-SETUP.md prima. Ottimizza, salva in /public/images/[categoria], usa next/image component.
 
 ---
 
-**Ultimo aggiornamento**: 2026-04-04
+**Ultimo aggiornamento**: 2026-06-01
 **Versione**: 1.0

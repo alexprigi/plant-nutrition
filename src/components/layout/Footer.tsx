@@ -67,7 +67,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <li><Link href="/chi-sono" style={{ color: 'var(--color-main)' }}>Chi Sono</Link></li>
               <li><Link href="/servizi" style={{ color: 'var(--color-main)' }}>Servizi</Link></li>
-              <li><Link href="/blog" style={{ color: 'var(--color-main)' }}>Blog</Link></li>
+              {/* <li><Link href="/blog" style={{ color: 'var(--color-main)' }}>Blog</Link></li> */}{/* WIP */}
               <li><Link href="/contatti" style={{ color: 'var(--color-main)' }}>Contatti</Link></li>
             </ul>
           </div>

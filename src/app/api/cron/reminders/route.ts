@@ -9,6 +9,10 @@ import {
   getExpiredBankTransferEmailHTML,
   getExpiredBankTransferEmailText,
 } from '@/lib/email-templates/cron-emails'
+import {
+  getAdminExpiredBankTransferEmailHTML,
+  getAdminExpiredBankTransferEmailText,
+} from '@/lib/email-templates/admin-notification'
 
 const FROM = 'Viva Plant Nutrition <info@vivaplantnutrition.com>'
 const ADMIN_EMAIL = 'info@vivaplantnutrition.com'
@@ -135,9 +139,25 @@ export async function GET(request: NextRequest) {
       await resend.emails.send({
         from: FROM,
         to: ADMIN_EMAIL,
-        subject: `${subjectPrefix}⚠️ Prenotazione scaduta — ${clientName}`,
-        html: `<p>La prenotazione di <strong>${clientName}</strong> per <strong>${serviceName}</strong> del <strong>${appt.date} alle ${appt.time}</strong> è stata annullata automaticamente per mancato pagamento del bonifico.</p>`,
-        text: `La prenotazione di ${clientName} per ${serviceName} del ${appt.date} alle ${appt.time} è stata annullata automaticamente per mancato pagamento del bonifico.`,
+        subject: `${subjectPrefix}⏰ Bonifico scaduto — ${clientName}`,
+        html: getAdminExpiredBankTransferEmailHTML({
+          clientName,
+          clientEmail: appt.client.email,
+          clientPhone: appt.client.phone ?? undefined,
+          serviceName,
+          date: appt.date,
+          time: appt.time,
+          isTest: !IS_PROD,
+        }),
+        text: getAdminExpiredBankTransferEmailText({
+          clientName,
+          clientEmail: appt.client.email,
+          clientPhone: appt.client.phone ?? undefined,
+          serviceName,
+          date: appt.date,
+          time: appt.time,
+          isTest: !IS_PROD,
+        }),
       })
 
       results.expired++
