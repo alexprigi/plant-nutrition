@@ -76,7 +76,7 @@ export default function ChiSono() {
                 }}
               >
                 <Image
-                  src="/images/professional/arianna-portrait.png"
+                  src="/images/professional/arianna-portrait.webp"
                   alt="Arianna Ciervo - Nutrizionista Vegana"
                   fill
                   className="object-cover"

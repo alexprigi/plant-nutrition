@@ -134,11 +134,11 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                       <table width="100%" cellpadding="5" cellspacing="0" style="font-size: 14px;">
                         <tr>
                           <td style="color: #92400E; font-weight: 600;">Beneficiario:</td>
-                          <td style="color: #78350F;">Arianna Nutrizionista</td>
+                          <td style="color: #78350F;">Arianna Ciervo</td>
                         </tr>
                         <tr>
                           <td style="color: #92400E; font-weight: 600;">IBAN:</td>
-                          <td style="color: #78350F; font-family: monospace;">IT00 X000 0000 0000 0000 0000 000</td>
+                          <td style="color: #78350F; font-family: monospace;">DE14 1001 1001 2175 0735 33</td>
                         </tr>
                         <tr>
                           <td style="color: #92400E; font-weight: 600;">Importo:</td>
@@ -281,7 +281,7 @@ ISTRUZIONI PER IL BONIFICO
 Per confermare la prenotazione, effettua il bonifico ai seguenti dati:
 
 Beneficiario: Arianna Ciervo
-IBAN: IT00 X000 0000 0000 0000 0000 000
+IBAN: DE14 1001 1001 2175 0735 33
 Importo: ${data.price}€
 Causale: Prenotazione ${data.serviceName} - ${data.clientName}
 

@@ -462,7 +462,7 @@ const PrenotaPageContent = () => {
           <p className="text-gray-600 mb-6 leading-relaxed">
             Grazie <strong>{formData.name}</strong>.<br />
             {isBankTransfer
-              ? "Riceverai una mail con l'IBAN per il bonifico. L'appuntamento sarà confermato dopo la ricezione."
+              ? "Usa i dati qui sotto per completare il pagamento. Riceverai anche una mail con le istruzioni."
               : isPaid
                 ? 'Pagamento ricevuto con successo.'
                 : 'Il tuo appuntamento è fissato.'
@@ -471,6 +471,16 @@ const PrenotaPageContent = () => {
             Data: <span className="font-bold text-gray-800">{new Date(selectedDate).toLocaleDateString('it-IT')}</span><br />
             Ora: <span className="font-bold text-gray-800">{selectedTime}</span>
           </p>
+          {isBankTransfer && (
+            <div className="text-left bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-sm">
+              <p className="font-semibold text-amber-800 mb-2">💳 Dati per il bonifico</p>
+              <p className="text-amber-700">Beneficiario: <strong>Arianna Ciervo</strong></p>
+              <p className="text-amber-700">IBAN: <span className="font-mono font-semibold">DE14 1001 1001 2175 0735 33</span></p>
+              <p className="text-amber-700">Importo: <strong>{activeService?.price}€</strong></p>
+              <p className="text-amber-700">Causale: <strong>{activeService?.title} - {formData.name} {formData.surname}</strong></p>
+              <p className="text-amber-700 mt-2 text-xs">Entro 72 ore, altrimenti la prenotazione verrà annullata automaticamente.</p>
+            </div>
+          )}
           <Button href="/" className="w-full bg-[var(--brand-title)] text-white">Torna alla Home</Button>
         </div>
       </div>

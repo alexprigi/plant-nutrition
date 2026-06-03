@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -11,37 +12,44 @@ import Icon from '@/components/icons/Icon';
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [loadedSlides, setLoadedSlides] = useState<Set<number>>(new Set([0]));
   
   const heroImages = [
     {
-      src: '/images/hero/nutritionist-hero.png',
+      src: '/images/hero/nutritionist-hero.webp',
       alt: 'Arianna Ciervo - Nutrizionista Vegana'
     },
     {
-      src: '/images/hero/vegan-food-colorful.png',
+      src: '/images/hero/vegan-food-colorful.webp',
       alt: 'Alimentazione Vegana Colorata e Nutriente'
     },
     {
-      src: '/images/hero/arianna-consultation.png',
+      src: '/images/hero/arianna-consultation.webp',
       alt: 'Consulenza Nutrizionale Personalizzata'
     },
     {
-      src: '/images/hero/plant-based-ingredients.png',
+      src: '/images/hero/plant-based-ingredients.webp',
       alt: 'Ingredienti Vegetali Freschi'
     },
     {
-      src: '/images/hero/arianna-pregnant.png',
+      src: '/images/hero/arianna-pregnant.webp',
       alt: 'Nutrizione in Gravidanza'
     }
   ];
 
+  // Preload slide successiva quando currentSlide cambia
+  useEffect(() => {
+    const next = (currentSlide + 1) % heroImages.length;
+    setLoadedSlides(prev => new Set([...prev, next]));
+  }, [currentSlide, heroImages.length]);
+
   // Auto-play slider (si ferma quando hover)
   useEffect(() => {
-    if (isHovered) return; // Pausa quando il mouse è sopra
-    
+    if (isHovered) return;
+
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 5000); // Cambia immagine ogni 5 secondi
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [heroImages.length, isHovered]);
@@ -81,13 +89,15 @@ export default function Home() {
                   zIndex: currentSlide === index ? 1 : 0
                 }}
               >
-                <img
+                <Image
                   src={image.src}
                   alt={image.alt}
-                  className="w-full h-full object-cover"
-                  style={{
-                    objectPosition: index === 0 ? '65% center' : 'center center'
-                  }}
+                  fill
+                  className="object-cover"
+                  style={{ objectPosition: index === 0 ? '65% center' : 'center center' }}
+                  priority={index === 0}
+                  loading={index === 0 ? undefined : (loadedSlides.has(index) ? 'eager' : 'lazy')}
+                  sizes="100vw"
                 />
               </div>
             ))}
@@ -372,11 +382,13 @@ export default function Home() {
                 <div className="relative">
                   {/* Foto reale dello studio/cucina */}
                   <div className="image-box-hover w-full h-[500px] rounded-2xl shadow-xl relative overflow-hidden">
-                    <img 
-                      src="/images/studio-arianna.png" 
-                      alt="Studio professionale di Arianna con piante e setup per consulenze online" 
-                      className="w-full h-full object-cover"
+                    <Image
+                      src="/images/studio-arianna.webp"
+                      alt="Studio professionale di Arianna con piante e setup per consulenze online"
+                      fill
+                      className="object-cover"
                       style={{ objectPosition: '70% center' }}
+                      sizes="(max-width: 1024px) 100vw, 50vw"
                     />
                   </div>
 

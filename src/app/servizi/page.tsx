@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Icon from '@/components/icons/Icon';
@@ -178,11 +179,13 @@ export default function Servizi() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
               {/* Immagine */}
               <div className="relative h-[400px] lg:h-auto">
-                <img 
-                  src="/images/professional/arianna-pregnant.jpg" 
-                  alt="Arianna durante la gravidanza - Specializzazione nutrizione materno-infantile" 
-                  className="w-full h-full object-cover"
+                <Image
+                  src="/images/professional/arianna-pregnant.webp"
+                  alt="Arianna durante la gravidanza - Specializzazione nutrizione materno-infantile"
+                  fill
+                  className="object-cover"
                   style={{ objectPosition: 'center 30%' }}
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                 />
                 <div className="absolute bottom-0 left-0 right-0 p-6" style={{
                   background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)'
