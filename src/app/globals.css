@@ -18,6 +18,7 @@
   }
 }
 @import "tailwindcss";
+@source "../../src/**/*.{tsx,ts,jsx,js}";
 
 
 @theme {

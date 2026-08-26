@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useMemo, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 
 import Button from '@/components/ui/Button';
 import { createFullBooking, checkEligibility, AppointmentStatus } from '@/lib/bookingService';
@@ -17,82 +19,85 @@ const TIME_SLOTS = [
   '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00'
 ];
 
-const CONSULTATION_TYPES = [
-  {
-    value: 'free-consultation',
-    title: 'Colloquio Gratuito',
-    price: 0,
-    labelPrice: 'Gratuito',
-    durationMinutes: 15,
-    duration: '15 minuti',
-    description: 'Conosciamoci! Ti ascolto, capisco i tuoi obiettivi e ti spiego come posso aiutarti.',
-    iconName: 'gift',
-    iconColor: '#EA580C', iconBg: '#FFF7ED',
-    badge: 'SENZA IMPEGNO', badgeColor: 'var(--brand-title)',
-    bgStyle: { background: 'linear-gradient(to bottom right, #FEF3C7 0%, #FFFBEB 100%)', borderColor: '#FCD34D' }
-  },
-  {
-    value: 'follow-up',
-    title: 'Visita di Controllo',
-    price: 50,
-    labelPrice: '50€',
-    durationMinutes: 30,
-    duration: '30 minuti',
-    description: 'Monitoraggio progressi, analisi esami o integrazione.',
-    iconName: 'refreshCcw',
-    iconColor: '#059669', iconBg: '#ECFDF5',
-    bgStyle: { background: 'white', borderColor: '#E5E7EB' }
-  },
-  {
-    value: 'first-visit',
-    title: 'Prima Visita Completa',
-    price: 85,
-    labelPrice: '85€',
-    durationMinutes: 60,
-    duration: '60 min',
-    description: 'Anamnesi approfondita, piano nutrizionale su misura, protocollo integratori.',
-    iconName: 'star',
-    iconColor: '#CA8A04', iconBg: '#FEF9C3',
-    badge: 'PER INIZIARE', badgeColor: 'var(--brand-title)',
-    bgStyle: { background: 'linear-gradient(to bottom right, #D1FAE5 0%, #ECFDF5 100%)', borderColor: '#34D399' }
-  },
-  {
-    value: 'plan-3-months',
-    title: 'Percorso 3 Mesi',
-    price: 237,
-    labelPrice: '237€',
-    durationMinutes: 60,
-    duration: '3 visite',
-    description: '3 consulenze (1 al mese), analisi diario alimentare, supporto email.',
-    iconName: 'route',
-    iconColor: '#EA580C', iconBg: '#FFF7ED',
-    bgStyle: { background: 'white', borderColor: '#E5E7EB' }
-  },
-  {
-    value: 'plan-6-months',
-    title: 'Percorso 6 Mesi VIP',
-    price: 450,
-    labelPrice: '450€',
-    durationMinutes: 60,
-    duration: '6 visite + chat',
-    description: '6 consulenze, chat WhatsApp diretta, libreria PDF, analisi etichette.',
-    iconName: 'sparkles',
-    iconColor: '#D97706', iconBg: '#FFFBEB',
-    badge: 'RISPARMIA 60€', badgeColor: '#059669',
-    bgStyle: { background: 'linear-gradient(to bottom right, #FFF7ED 0%, #FFFBEB 100%)', borderColor: '#FDBA74' }
-  },
-];
-
-const STEPS = [
-  { num: 1, label: 'Servizio' },
-  { num: 2, label: 'Dati' },
-  { num: 3, label: 'Calendario' },
-  { num: 4, label: 'Pagamento' }
-];
-
 const PrenotaPageContent = () => {
+  const t = useTranslations('prenota');
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const CONSULTATION_TYPES = useMemo(() => [
+    {
+      value: 'free-consultation',
+      title: t('servizi.colloquio-gratuito-titolo'),
+      price: 0,
+      labelPrice: t('servizi.colloquio-gratuito-prezzo'),
+      durationMinutes: 15,
+      duration: t('servizi.colloquio-gratuito-durata'),
+      description: t('servizi.colloquio-gratuito-desc'),
+      iconName: 'gift',
+      iconColor: '#EA580C', iconBg: '#FFF7ED',
+      badge: t('servizi.colloquio-gratuito-badge'), badgeColor: 'var(--brand-title)',
+      bgStyle: { background: 'linear-gradient(to bottom right, #FEF3C7 0%, #FFFBEB 100%)', borderColor: '#FCD34D' }
+    },
+    {
+      value: 'follow-up',
+      title: t('servizi.controllo-titolo'),
+      price: 50,
+      labelPrice: '50€',
+      durationMinutes: 30,
+      duration: t('servizi.controllo-durata'),
+      description: t('servizi.controllo-desc'),
+      iconName: 'refreshCcw',
+      iconColor: '#059669', iconBg: '#ECFDF5',
+      bgStyle: { background: 'white', borderColor: '#E5E7EB' }
+    },
+    {
+      value: 'first-visit',
+      title: t('servizi.prima-visita-titolo'),
+      price: 85,
+      labelPrice: '85€',
+      durationMinutes: 60,
+      duration: t('servizi.prima-visita-durata'),
+      description: t('servizi.prima-visita-desc'),
+      iconName: 'star',
+      iconColor: '#CA8A04', iconBg: '#FEF9C3',
+      badge: t('servizi.prima-visita-badge'), badgeColor: 'var(--brand-title)',
+      bgStyle: { background: 'linear-gradient(to bottom right, #D1FAE5 0%, #ECFDF5 100%)', borderColor: '#34D399' }
+    },
+    {
+      value: 'plan-3-months',
+      title: t('servizi.tre-mesi-titolo'),
+      price: 237,
+      labelPrice: '237€',
+      durationMinutes: 60,
+      duration: t('servizi.tre-mesi-durata'),
+      description: t('servizi.tre-mesi-desc'),
+      iconName: 'route',
+      iconColor: '#EA580C', iconBg: '#FFF7ED',
+      bgStyle: { background: 'white', borderColor: '#E5E7EB' }
+    },
+    {
+      value: 'plan-6-months',
+      title: t('servizi.sei-mesi-titolo'),
+      price: 450,
+      labelPrice: '450€',
+      durationMinutes: 60,
+      duration: t('servizi.sei-mesi-durata'),
+      description: t('servizi.sei-mesi-desc'),
+      iconName: 'sparkles',
+      iconColor: '#D97706', iconBg: '#FFFBEB',
+      badge: t('servizi.sei-mesi-badge'), badgeColor: '#059669',
+      bgStyle: { background: 'linear-gradient(to bottom right, #FFF7ED 0%, #FFFBEB 100%)', borderColor: '#FDBA74' }
+    },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ], [locale]);
+
+  const STEPS = [
+    { num: 1, label: t('step1-label') },
+    { num: 2, label: t('step2-label') },
+    { num: 3, label: t('step3-label') },
+    { num: 4, label: t('step4-label') },
+  ];
 
   // Hide footer on mobile for this page
   useEffect(() => {
@@ -118,7 +123,6 @@ const PrenotaPageContent = () => {
     router.push(`?${params.toString()}`);
   };
 
-
   // --- FORM DATA ---
   const [formData, setFormData] = useState({
     name: '', surname: '', email: '', phone: '', notes: '',
@@ -143,7 +147,6 @@ const PrenotaPageContent = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [currentMonthDate, setCurrentMonthDate] = useState(() => {
     const now = new Date();
-    // Se nel mese corrente non ci sono più giorni disponibili, apri il mese successivo
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const hasRemainingDays = now.getDate() < daysInMonth;
     if (!hasRemainingDays) {
@@ -155,12 +158,11 @@ const PrenotaPageContent = () => {
   const [eligibilityError, setEligibilityError] = useState<string>('');
 
   const activeService = useMemo(() =>
-    CONSULTATION_TYPES.find(t => t.value === selectedService),
-    [selectedService]);
+    CONSULTATION_TYPES.find(s => s.value === selectedService),
+    [selectedService, CONSULTATION_TYPES]);
 
   const [openWeekendDates, setOpenWeekendDates] = useState<Set<string>>(new Set());
 
-  // Carica i weekend aperti per il mese corrente
   useEffect(() => {
     const year = currentMonthDate.getFullYear();
     const month = currentMonthDate.getMonth();
@@ -200,14 +202,12 @@ const PrenotaPageContent = () => {
     }
   }, [currentStep, selectedService, selectedDate, selectedTime, router, searchParams]);
 
-  // Reset bonifico se data non più compatibile
   useEffect(() => {
     if (!isBankTransferAvailable && paymentMethod === 'bank_transfer') {
       setPaymentMethod('stripe');
     }
   }, [isBankTransferAvailable, paymentMethod]);
 
-  // Memoize available time slots based on selected date
   const [slotAvailability, setSlotAvailability] = useState<Record<string, boolean>>({});
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
 
@@ -238,7 +238,6 @@ const PrenotaPageContent = () => {
     const fourHoursFromNow = new Date(now.getTime() + 4 * 60 * 60 * 1000);
 
     return TIME_SLOTS.map(slot => {
-      // Blocco 4h per oggi
       let available = true;
       if (isToday) {
         const [hours, minutes] = slot.split(':').map(Number);
@@ -246,7 +245,6 @@ const PrenotaPageContent = () => {
         slotTime.setHours(hours, minutes, 0, 0);
         available = slotTime >= fourHoursFromNow;
       }
-      // Applica disponibilità dall'API (blocchi Arianna + slot già prenotati)
       if (Object.keys(slotAvailability).length > 0) {
         available = available && (slotAvailability[slot] ?? true);
       }
@@ -262,7 +260,7 @@ const PrenotaPageContent = () => {
     const randomCities = ['Milano', 'Roma', 'Torino', 'Firenze', 'Bologna', 'Napoli', 'Verona'];
     const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];
     const randomSurname = randomSurnames[Math.floor(Math.random() * randomSurnames.length)];
-    
+
     setFormData({
       name: randomName,
       surname: randomSurname,
@@ -283,27 +281,22 @@ const PrenotaPageContent = () => {
 
   // --- LOGIC ---
   const nextStep = async () => {
-    // 1 -> 2
     if (currentStep === 1) {
       if (selectedService) setStep(2);
-    }
-    // 2 -> 3
-    else if (currentStep === 2) {
+    } else if (currentStep === 2) {
       setIsProcessing(true);
-      
-      // Check eligibility for free consultation BEFORE validation
+
       if (selectedService === 'free-consultation' && formData.email) {
         const check = await checkEligibility(formData.email);
         if (!check.eligible) {
-          setEligibilityError('Risulta che hai già usufruito del colloquio gratuito. Per proseguire il tuo percorso, ti invitiamo a prenotare una Visita di Controllo.');
+          setEligibilityError(t('step1.colloquio-gia-usato-testo'));
           setIsProcessing(false);
-          setStep(1); // Torna allo Step 1 per mostrare l'errore
+          setStep(1);
           return;
         }
       }
-      
+
       try {
-        // Call backend validation API
         const response = await fetch('/api/validate-booking', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -318,7 +311,6 @@ const PrenotaPageContent = () => {
           return;
         }
 
-        // Update form data with sanitized values from backend
         if (result.sanitized) {
           setFormData(prev => ({ ...prev, ...result.sanitized }));
         }
@@ -328,12 +320,10 @@ const PrenotaPageContent = () => {
         setStep(3);
       } catch (error) {
         console.error('Validation error:', error);
-        setErrors({ general: 'Errore durante la validazione. Riprova.' });
+        setErrors({ general: t('step2.errore-validazione') });
         setIsProcessing(false);
       }
-    }
-    // 3 -> 4: calendario già compilato, vai al pagamento
-    else if (currentStep === 3) {
+    } else if (currentStep === 3) {
       if (selectedDate && selectedTime) setStep(4);
     }
   };
@@ -342,13 +332,11 @@ const PrenotaPageContent = () => {
     if (!selectedDate || !selectedTime) return;
     setIsProcessing(true);
 
-    // Sanitize notes (trim whitespace, remove HTML tags)
     const sanitizedNotes = formData.notes
       .trim()
       .replace(/<[^>]*>/g, '')
       .substring(0, 500);
 
-    // Status Logic
     let finalStatus: AppointmentStatus = 'pending';
     let finalIsPaid: boolean = false;
 
@@ -386,7 +374,6 @@ const PrenotaPageContent = () => {
       return;
     }
 
-    // Send confirmation emails
     fetch('/api/send-booking-emails', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -429,14 +416,13 @@ const PrenotaPageContent = () => {
     return days;
   }, [currentMonthDate]);
 
-  // Helper to check if date has available time slots
   const hasAvailableSlots = (date: string) => {
     const today = new Date().toISOString().split('T')[0];
     if (date !== today) return true;
-    
+
     const now = new Date();
     const fourHoursFromNow = new Date(now.getTime() + 4 * 60 * 60 * 1000);
-    
+
     return TIME_SLOTS.some(slot => {
       const [hours, minutes] = slot.split(':').map(Number);
       const slotTime = new Date();
@@ -444,6 +430,8 @@ const PrenotaPageContent = () => {
       return slotTime >= fourHoursFromNow;
     });
   };
+
+  const calendarDayLabels = t.raw('step3.giorni') as string[];
 
   // --- SUCCESS VIEW ---
   if (isSuccess) {
@@ -457,31 +445,31 @@ const PrenotaPageContent = () => {
             <Icon name={isBankTransfer ? "clock" : "check"} size={40} style={{ color: 'var(--brand-title)' }} />
           </div>
           <h2 className="text-3xl font-bold mb-2 text-gray-800">
-            {isBankTransfer ? 'Richiesta Ricevuta' : 'Tutto Confermato!'}
+            {isBankTransfer ? t('successo.titolo-bonifico') : t('successo.titolo-confermato')}
           </h2>
           <p className="text-gray-600 mb-6 leading-relaxed">
-            Grazie <strong>{formData.name}</strong>.<br />
+            {t('successo.grazie', { nome: formData.name })}<br />
             {isBankTransfer
-              ? "Usa i dati qui sotto per completare il pagamento. Riceverai anche una mail con le istruzioni."
+              ? t('successo.testo-bonifico')
               : isPaid
-                ? 'Pagamento ricevuto con successo.'
-                : 'Il tuo appuntamento è fissato.'
+                ? t('successo.testo-pagato')
+                : t('successo.testo-fissato')
             }
             <br /><br />
-            Data: <span className="font-bold text-gray-800">{new Date(selectedDate).toLocaleDateString('it-IT')}</span><br />
-            Ora: <span className="font-bold text-gray-800">{selectedTime}</span>
+            {t('successo.data')} <span className="font-bold text-gray-800">{new Date(selectedDate).toLocaleDateString(locale)}</span><br />
+            {t('successo.ora')} <span className="font-bold text-gray-800">{selectedTime}</span>
           </p>
           {isBankTransfer && (
             <div className="text-left bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-sm">
-              <p className="font-semibold text-amber-800 mb-2">💳 Dati per il bonifico</p>
-              <p className="text-amber-700">Beneficiario: <strong>Arianna Ciervo</strong></p>
+              <p className="font-semibold text-amber-800 mb-2">{t('successo.bonifico-titolo')}</p>
+              <p className="text-amber-700">{t('successo.bonifico-beneficiario')} <strong>Arianna Ciervo</strong></p>
               <p className="text-amber-700">IBAN: <span className="font-mono font-semibold">DE14 1001 1001 2175 0735 33</span></p>
-              <p className="text-amber-700">Importo: <strong>{activeService?.price}€</strong></p>
-              <p className="text-amber-700">Causale: <strong>{activeService?.title} - {formData.name} {formData.surname}</strong></p>
-              <p className="text-amber-700 mt-2 text-xs">Entro 72 ore, altrimenti la prenotazione verrà annullata automaticamente.</p>
+              <p className="text-amber-700">{t('successo.bonifico-importo')} <strong>{activeService?.price}€</strong></p>
+              <p className="text-amber-700">{t('successo.bonifico-causale')} <strong>{activeService?.title} - {formData.name} {formData.surname}</strong></p>
+              <p className="text-amber-700 mt-2 text-xs">{t('successo.bonifico-scadenza')}</p>
             </div>
           )}
-          <Button href="/" className="w-full bg-[var(--brand-title)] text-white">Torna alla Home</Button>
+          <Button href="/" className="w-full bg-[var(--brand-title)] text-white">{t('successo.torna-home')}</Button>
         </div>
       </div>
     );
@@ -524,15 +512,15 @@ const PrenotaPageContent = () => {
         {currentStep === 1 && (
           <div className="max-w-4xl mx-auto">
             <div className="animate-fade-in">
-              <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">Come posso aiutarti?</h1>
-              <p className="text-center text-gray-500 mb-8">Scegli il percorso più adatto alle tue esigenze.</p>
+              <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">{t('step1.titolo')}</h1>
+              <p className="text-center text-gray-500 mb-8">{t('step1.sottotitolo')}</p>
 
               {eligibilityError && (
                 <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
                   <div className="flex items-start gap-3">
                     <Icon name="alert" size={20} className="text-red-600 mt-0.5" />
                     <div>
-                      <h4 className="font-bold text-red-800 mb-1">Colloquio già utilizzato</h4>
+                      <h4 className="font-bold text-red-800 mb-1">{t('step1.colloquio-gia-usato-titolo')}</h4>
                       <p className="text-sm text-red-700">{eligibilityError}</p>
                     </div>
                   </div>
@@ -581,7 +569,7 @@ const PrenotaPageContent = () => {
             <div className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4 z-50">
               <div className="max-w-4xl mx-auto text-center">
                 <Button onClick={nextStep} disabled={!selectedService || !!eligibilityError} className={`w-full rounded-full px-12 py-4 text-base font-bold ${!selectedService || !!eligibilityError ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] hover:shadow-xl'} text-white transition-all`}>
-                  Continua
+                  {t('step1.continua')}
                 </Button>
               </div>
             </div>
@@ -589,19 +577,19 @@ const PrenotaPageContent = () => {
             {/* Desktop Button */}
             <div className="hidden md:block text-center mt-8">
               <Button onClick={nextStep} disabled={!selectedService || !!eligibilityError} className={`rounded-full px-12 py-3 ${!selectedService || !!eligibilityError ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] hover:shadow-xl'} text-white`}>
-                Continua
+                {t('step1.continua')}
               </Button>
             </div>
           </div>
         )}
 
-        {/* --- STEP 2: USER DATA (NO NOTES) --- */}
+        {/* --- STEP 2: USER DATA --- */}
         {currentStep === 2 && (
           <>
           <div className="max-w-xl mx-auto w-full">
             <div className="animate-fade-in pb-28 md:pb-20">
               <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
-                <h2 className="text-2xl font-bold mb-8 text-center text-gray-900">I tuoi dati</h2>
+                <h2 className="text-2xl font-bold mb-8 text-center text-gray-900">{t('step2.titolo')}</h2>
 
                 {/* DEV ONLY: Auto-fill button */}
                 {process.env.NODE_ENV === 'development' && (
@@ -619,25 +607,25 @@ const PrenotaPageContent = () => {
               <div className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Nome*</label>
-                    <input type="text" name="given-name" autoComplete="given-name" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.name ? 'border-red-500' : 'border-gray-300'}`} placeholder="Il tuo nome" />
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.nome-label')}</label>
+                    <input type="text" name="given-name" autoComplete="given-name" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.name ? 'border-red-500' : 'border-gray-300'}`} placeholder={t('step2.nome-placeholder')} />
                     {errors.name && <p className="text-red-500 text-xs mt-1 ml-1">{errors.name}</p>}
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Cognome*</label>
-                    <input type="text" name="family-name" autoComplete="family-name" value={formData.surname} onChange={e => setFormData({ ...formData, surname: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.surname ? 'border-red-500' : 'border-gray-300'}`} placeholder="Il tuo cognome" />
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.cognome-label')}</label>
+                    <input type="text" name="family-name" autoComplete="family-name" value={formData.surname} onChange={e => setFormData({ ...formData, surname: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.surname ? 'border-red-500' : 'border-gray-300'}`} placeholder={t('step2.cognome-placeholder')} />
                     {errors.surname && <p className="text-red-500 text-xs mt-1 ml-1">{errors.surname}</p>}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Email*</label>
-                  <input type="email" name="email" autoComplete="email" inputMode="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.email ? 'border-red-500' : 'border-gray-300'}`} placeholder="La tua email" />
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.email-label')}</label>
+                  <input type="email" name="email" autoComplete="email" inputMode="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.email ? 'border-red-500' : 'border-gray-300'}`} placeholder={t('step2.email-placeholder')} />
                   {errors.email && <p className="text-red-500 text-xs mt-1 ml-1">{errors.email}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Telefono*</label>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.telefono-label')}</label>
                   <div className="flex items-center gap-2">
                     <div className="relative shrink-0">
                       <select value={phonePrefix} onChange={(e) => setPhonePrefix(e.target.value)} className={`h-[50px] px-3 pr-8 bg-white text-gray-900 border rounded-xl outline-none appearance-none cursor-pointer text-sm min-w-[5.5rem] w-auto ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}>
@@ -647,43 +635,43 @@ const PrenotaPageContent = () => {
                       </select>
                       <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none text-gray-500"><Icon name="chevronRight" size={14} style={{ transform: 'rotate(90deg)' }} /></div>
                     </div>
-                    <input type="tel" name="tel-national" autoComplete="tel-national" inputMode="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value.replace(/[^0-9+\s\-().]/g, ''))} className={`flex-1 min-w-0 h-[50px] px-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.phone ? 'border-red-500' : 'border-gray-300'}`} placeholder="Numero di telefono" />
+                    <input type="tel" name="tel-national" autoComplete="tel-national" inputMode="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value.replace(/[^0-9+\s\-().]/g, ''))} className={`flex-1 min-w-0 h-[50px] px-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.phone ? 'border-red-500' : 'border-gray-300'}`} placeholder={t('step2.telefono-placeholder')} />
                   </div>
                   {errors.phone && <p className="text-red-500 text-xs mt-1 ml-1">{errors.phone}</p>}
                 </div>
 
                 <div className="pt-4 border-t border-gray-100">
-                  <h3 className="text-sm font-bold text-gray-800 mb-3">Indirizzo e Fatturazione</h3>
+                  <h3 className="text-sm font-bold text-gray-800 mb-3">{t('step2.fatturazione-titolo')}</h3>
                   <div className="grid grid-cols-1 gap-4">
                     <div className="grid grid-cols-3 gap-4">
                       <div className="col-span-2">
-                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Indirizzo*</label>
-                        <input type="text" name="street-address" autoComplete="street-address" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.address ? 'border-red-500' : 'border-gray-300'}`} placeholder="Via o Piazza" />
+                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.indirizzo-label')}</label>
+                        <input type="text" name="street-address" autoComplete="street-address" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.address ? 'border-red-500' : 'border-gray-300'}`} placeholder={t('step2.indirizzo-placeholder')} />
                         {errors.address && <p className="text-red-500 text-xs mt-1 ml-1">{errors.address}</p>}
                       </div>
                       <div className="sm:col-span-1">
-                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">N. Civico*</label>
-                        <input type="text" name="address-line2" autoComplete="address-line2" inputMode="text" value={formData.civicNumber} onChange={e => setFormData({ ...formData, civicNumber: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.civicNumber ? 'border-red-500' : 'border-gray-300'}`} placeholder="Numero" />
+                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.civico-label')}</label>
+                        <input type="text" name="address-line2" autoComplete="address-line2" inputMode="text" value={formData.civicNumber} onChange={e => setFormData({ ...formData, civicNumber: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.civicNumber ? 'border-red-500' : 'border-gray-300'}`} placeholder={t('step2.civico-placeholder')} />
                         {errors.civicNumber && <p className="text-red-500 text-xs mt-1 ml-1">{errors.civicNumber}</p>}
                       </div>
                     </div>
 
                     <div className="grid grid-cols-3 gap-4">
                       <div className="col-span-1">
-                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">CAP*</label>
-                        <input type="text" name="postal-code" autoComplete="postal-code" inputMode="numeric" value={formData.zipCode} onChange={e => setFormData({ ...formData, zipCode: e.target.value.replace(/\D/g, '') })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.zipCode ? 'border-red-500' : 'border-gray-300'}`} placeholder="Codice postale" />
+                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.cap-label')}</label>
+                        <input type="text" name="postal-code" autoComplete="postal-code" inputMode="numeric" value={formData.zipCode} onChange={e => setFormData({ ...formData, zipCode: e.target.value.replace(/\D/g, '') })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.zipCode ? 'border-red-500' : 'border-gray-300'}`} placeholder={t('step2.cap-placeholder')} />
                         {errors.zipCode && <p className="text-red-500 text-xs mt-1 ml-1">{errors.zipCode}</p>}
                       </div>
                       <div className="col-span-2">
-                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Città*</label>
-                        <input type="text" name="address-level2" autoComplete="address-level2" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.city ? 'border-red-500' : 'border-gray-300'}`} placeholder="La tua città" />
+                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.citta-label')}</label>
+                        <input type="text" name="address-level2" autoComplete="address-level2" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.city ? 'border-red-500' : 'border-gray-300'}`} placeholder={t('step2.citta-placeholder')} />
                         {errors.city && <p className="text-red-500 text-xs mt-1 ml-1">{errors.city}</p>}
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Nazione*</label>
+                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.nazione-label')}</label>
                         <div className="relative">
                           <select value={formData.country} onChange={e => setFormData({ ...formData, country: e.target.value })} className="w-full p-3 pr-8 bg-white text-gray-900 border border-gray-300 rounded-xl outline-none focus:border-[var(--brand-title)] appearance-none cursor-pointer">
                             {COUNTRIES.map(c => <option key={c} value={c}>{COUNTRY_FLAGS[c] ? `${COUNTRY_FLAGS[c]} ${c}` : c}</option>)}
@@ -692,8 +680,8 @@ const PrenotaPageContent = () => {
                         </div>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">Cod. Fiscale*</label>
-                        <input type="text" name="fiscal-code" autoComplete="off" autoCapitalize="characters" value={formData.fiscalCode} onChange={e => setFormData({ ...formData, fiscalCode: e.target.value.toUpperCase() })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.fiscalCode ? 'border-red-500' : 'border-gray-300'}`} placeholder="Codice fiscale" />
+                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.cf-label')}</label>
+                        <input type="text" name="fiscal-code" autoComplete="off" autoCapitalize="characters" value={formData.fiscalCode} onChange={e => setFormData({ ...formData, fiscalCode: e.target.value.toUpperCase() })} className={`w-full p-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.fiscalCode ? 'border-red-500' : 'border-gray-300'}`} placeholder={t('step2.cf-placeholder')} />
                         {errors.fiscalCode && <p className="text-red-500 text-xs mt-1 ml-1">{errors.fiscalCode}</p>}
                       </div>
                     </div>
@@ -715,40 +703,40 @@ const PrenotaPageContent = () => {
                       className="mt-0.5 w-4 h-4 rounded accent-[var(--brand-title)] shrink-0 cursor-pointer"
                     />
                     <span className="text-xs text-gray-600 leading-relaxed">
-                      Ho letto e accetto la{' '}
+                      {t('step2.gdpr-testo')}{' '}
                       <a href="/privacy-policy" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
-                        Privacy Policy
+                        {t('step2.gdpr-link')}
                       </a>
-                      . Acconsento al trattamento dei miei dati personali per la gestione dell'appuntamento.
+                      {t('step2.gdpr-consenso')}
                     </span>
                   </label>
                 </div>
 
-                {/* Desktop Buttons - inside card */}
+                {/* Desktop Buttons */}
                 <div className="hidden md:flex justify-between mt-6 pt-4 border-t border-gray-100">
-                  <button onClick={() => setStep(1)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
+                  <button onClick={() => setStep(1)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">{t('step2.indietro')}</button>
                   <Button
                     onClick={nextStep}
                     disabled={isProcessing || !gdprAccepted}
                     className={`rounded-full px-8 py-3 transition-all ${isProcessing || !gdprAccepted ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'}`}
                   >
-                    {isProcessing ? 'Validazione...' : 'Continua'}
+                    {isProcessing ? t('step2.validazione') : t('step2.continua')}
                   </Button>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Mobile Sticky Bar - outside card, always in DOM */}
+          {/* Mobile Sticky Bar */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4 z-50">
             <div className="max-w-xl mx-auto flex justify-between items-center gap-4">
-              <button onClick={() => setStep(1)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">Indietro</button>
+              <button onClick={() => setStep(1)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">{t('step2.indietro')}</button>
               <Button
                 onClick={nextStep}
                 disabled={isProcessing || !gdprAccepted}
                 className={`flex-1 rounded-full px-8 py-4 text-base font-bold transition-all ${isProcessing || !gdprAccepted ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'}`}
               >
-                {isProcessing ? 'Validazione...' : 'Continua'}
+                {isProcessing ? t('step2.validazione') : t('step2.continua')}
               </Button>
             </div>
           </div>
@@ -760,17 +748,16 @@ const PrenotaPageContent = () => {
           <>
           <div className="animate-fade-in max-w-4xl mx-auto pb-28 md:pb-20">
             <h2 className="text-3xl font-bold mb-2 text-center text-gray-800">
-              {activeService?.price! > 0 ? 'Scegli la data della Prima Visita' : 'Scegli la data'}
+              {activeService?.price! > 0 ? t('step3.titolo-pagamento') : t('step3.titolo-gratuito')}
             </h2>
 
             {(selectedService === 'plan-3-months' || selectedService === 'plan-6-months') ? (
               <p className="text-center text-blue-600 font-medium mb-8 max-w-lg mx-auto bg-blue-50 p-3 rounded-lg border border-blue-100">
-                📅 Seleziona ora la data per il <strong>primo incontro</strong>. <br />
-                Le visite successive le pianificheremo comodamente insieme.
+                📅 {t('step3.nota-percorso')}
               </p>
             ) : (
               <p className="text-center text-gray-500 mb-8 max-w-lg mx-auto">
-                Scegli il momento migliore per la nostra chiacchierata.
+                {t('step3.nota-chiacchierata')}
               </p>
             )}
 
@@ -779,11 +766,11 @@ const PrenotaPageContent = () => {
               <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex flex-col">
                 <div className="flex justify-between mb-6 items-center">
                   <button onClick={() => setCurrentMonthDate(new Date(currentMonthDate.setMonth(currentMonthDate.getMonth() - 1)))} className="hover:bg-gray-100 p-2 rounded-full text-gray-600 transition-colors"><Icon name="chevronLeft" /></button>
-                  <span className="font-bold capitalize text-lg text-gray-900">{currentMonthDate.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })}</span>
+                  <span className="font-bold capitalize text-lg text-gray-900">{currentMonthDate.toLocaleDateString(locale, { month: 'long', year: 'numeric' })}</span>
                   <button onClick={() => setCurrentMonthDate(new Date(currentMonthDate.setMonth(currentMonthDate.getMonth() + 1)))} className="hover:bg-gray-100 p-2 rounded-full text-gray-600 transition-colors"><Icon name="chevronRight" /></button>
                 </div>
                 <div className="grid grid-cols-7 gap-2 text-center mb-2">
-                  {['L', 'M', 'M', 'G', 'V', 'S', 'D'].map((d, i) => <span key={i} className="text-xs font-bold text-gray-400">{d}</span>)}
+                  {calendarDayLabels.map((d, i) => <span key={i} className="text-xs font-bold text-gray-400">{d}</span>)}
                 </div>
                 <div className="grid grid-cols-7 gap-2">
                   {calendarDays.map((d, i) => {
@@ -814,13 +801,13 @@ const PrenotaPageContent = () => {
                   })}
                 </div>
                 <div className="mt-auto pt-4 border-t border-gray-100">
-                  <button onClick={() => setStep(2)} className="hidden md:block text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
+                  <button onClick={() => setStep(2)} className="hidden md:block text-gray-500 hover:text-black text-sm font-medium transition-colors">{t('step3.indietro')}</button>
                 </div>
               </div>
 
               {/* SLOTS UI */}
               <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex flex-col">
-                <h3 className="font-bold text-gray-900 mb-4 text-center">Orari disponibili</h3>
+                <h3 className="font-bold text-gray-900 mb-4 text-center">{t('step3.orari-disponibili')}</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-auto max-h-80 overflow-y-auto pr-2 custom-scrollbar">
                   {availableTimeSlots.map(slot => {
                     const isAvailable = typeof slot === 'string' ? true : slot.available;
@@ -848,7 +835,7 @@ const PrenotaPageContent = () => {
                 <div className="mt-6 pt-4 border-t border-gray-100">
                   <div className="flex justify-between items-center mb-2">
                     <label className="text-xs font-bold text-gray-700">
-                      Messaggio per Arianna (opzionale)
+                      {t('step3.messaggio-label')}
                     </label>
                     <span className={`text-xs ${formData.notes.length > 500 ? 'text-red-500 font-bold' : 'text-gray-400'}`}>
                       {formData.notes.length}/500
@@ -860,7 +847,7 @@ const PrenotaPageContent = () => {
                     onChange={e => setFormData({ ...formData, notes: e.target.value })}
                     maxLength={500}
                     className={`w-full p-3 bg-gray-50 border rounded-xl text-sm outline-none focus:border-[var(--brand-title)] resize-none ${formData.notes.length > 500 ? 'border-red-500' : 'border-gray-200'}`}
-                    placeholder="Intolleranze, ritardi, domande..."
+                    placeholder={t('step3.messaggio-placeholder')}
                   />
                 </div>
 
@@ -873,7 +860,7 @@ const PrenotaPageContent = () => {
                         : 'bg-[var(--brand-title)] hover:-translate-y-1 hover:shadow-xl'
                       }`}
                   >
-                    {activeService?.price! > 0 ? 'Continua al Pagamento' : 'Conferma Appuntamento'}
+                    {activeService?.price! > 0 ? t('step3.continua-pagamento') : t('step3.conferma')}
                   </Button>
                 </div>
               </div>
@@ -883,7 +870,7 @@ const PrenotaPageContent = () => {
           {/* Mobile Sticky Bar - step 3 */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4 z-50">
             <div className="max-w-xl mx-auto flex justify-between items-center gap-4">
-              <button onClick={() => setStep(2)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">Indietro</button>
+              <button onClick={() => setStep(2)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">{t('step3.indietro')}</button>
               <Button
                 onClick={nextStep}
                 disabled={!selectedDate || !selectedTime}
@@ -892,7 +879,7 @@ const PrenotaPageContent = () => {
                     : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'
                   }`}
               >
-                {activeService?.price! > 0 ? 'Continua al Pagamento' : 'Conferma'}
+                {activeService?.price! > 0 ? t('step3.continua-pagamento') : t('step3.conferma')}
               </Button>
             </div>
           </div>
@@ -908,7 +895,7 @@ const PrenotaPageContent = () => {
                 <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-3xl">
                   <div className="text-center">
                     <div className="w-16 h-16 border-4 border-[var(--brand-title)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="font-bold text-gray-700">Elaborazione in corso...</p>
+                    <p className="font-bold text-gray-700">{t('elaborazione')}</p>
                   </div>
                 </div>
               )}
@@ -916,21 +903,21 @@ const PrenotaPageContent = () => {
 
               {activeService?.price! > 0 ? (
                 <>
-                  <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">Checkout Sicuro</h2>
+                  <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">{t('step4.titolo-pagamento')}</h2>
                   <p className="text-center text-gray-500 mb-8">
-                    Scegli come preferisci pagare il servizio <strong>{activeService?.title}</strong>.
+                    {t('step4.sottotitolo-pagamento', { servizio: activeService?.title })}
                   </p>
                 </>
               ) : (
                 <>
-                  <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">Riepilogo Prenotazione</h2>
+                  <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">{t('step4.titolo-gratuito')}</h2>
                   <p className="text-center text-gray-500 mb-8">
-                    Stai richiedendo il servizio <strong>{activeService?.title}</strong>.
+                    {t('step4.sottotitolo-gratuito', { servizio: activeService?.title })}
                   </p>
                 </>
               )}
 
-              {/* PAYMENT OPTIONS (Only if price > 0) */}
+              {/* PAYMENT OPTIONS */}
               {activeService?.price! > 0 ? (
                 <div className="space-y-4 mb-8">
                   {/* Stripe */}
@@ -942,7 +929,7 @@ const PrenotaPageContent = () => {
                       <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'stripe' ? 'border-[var(--brand-title)]' : 'border-gray-300'}`}>
                         {paymentMethod === 'stripe' && <div className="w-3 h-3 rounded-full bg-[var(--brand-title)]" />}
                       </div>
-                      <span className="font-bold text-gray-800">Carta di Credito / Debito</span>
+                      <span className="font-bold text-gray-800">{t('step4.carta-label')}</span>
                     </div>
                     <div className="flex gap-2 opacity-80">
                       <div className="w-8 h-5 bg-[#1a1f71] rounded flex items-center justify-center text-[5px] text-white">VISA</div>
@@ -959,12 +946,12 @@ const PrenotaPageContent = () => {
                       <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'paypal' ? 'border-[#0070ba]' : 'border-gray-300'}`}>
                         {paymentMethod === 'paypal' && <div className="w-3 h-3 rounded-full bg-[#0070ba]" />}
                       </div>
-                      <span className="font-bold text-gray-800">PayPal</span>
+                      <span className="font-bold text-gray-800">{t('step4.paypal-label')}</span>
                     </div>
                     <span className="text-xs font-bold text-[#0070ba] tracking-wider">PAYPAL</span>
                   </div>
 
-                  {/* Bonifico - disabilitato se data entro 5 giorni */}
+                  {/* Bonifico */}
                   <div
                     onClick={() => isBankTransferAvailable && setPaymentMethod('bank_transfer')}
                     className={`flex items-center justify-between p-5 border rounded-2xl transition-all ${
@@ -980,11 +967,11 @@ const PrenotaPageContent = () => {
                         {paymentMethod === 'bank_transfer' && isBankTransferAvailable && <div className="w-3 h-3 rounded-full bg-gray-600" />}
                       </div>
                       <div>
-                        <span className={`font-bold block ${!isBankTransferAvailable ? 'text-gray-400' : 'text-gray-800'}`}>Bonifico Bancario</span>
+                        <span className={`font-bold block ${!isBankTransferAvailable ? 'text-gray-400' : 'text-gray-800'}`}>{t('step4.bonifico-label')}</span>
                         <span className="text-xs text-gray-500">
                           {isBankTransferAvailable
-                            ? "L'appuntamento verrà confermato dopo la ricezione del bonifico. Riceverai le istruzioni per email."
-                            : "Non disponibile entro 5 giorni — torna al calendario e scegli una data successiva"}
+                            ? t('step4.bonifico-info')
+                            : t('step4.bonifico-non-disponibile')}
                         </span>
                       </div>
                     </div>
@@ -993,16 +980,16 @@ const PrenotaPageContent = () => {
               ) : (
                 <div className="bg-[var(--brand-title)]/10 p-6 rounded-2xl border border-[var(--brand-title)]/30 text-center mb-8">
                   <Icon name="gift" size={32} className="mx-auto mb-3 text-[var(--brand-title)]" />
-                  <h3 className="font-bold text-gray-800 text-lg mb-1">Nessun costo richiesto</h3>
+                  <h3 className="font-bold text-gray-800 text-lg mb-1">{t('step4.gratuito-titolo')}</h3>
                   <p className="text-sm text-gray-600">
-                    Clicca "Conferma Appuntamento" per bloccare il tuo slot gratuito di 15 minuti.
+                    {t('step4.gratuito-testo')}
                   </p>
                 </div>
               )}
 
               {activeService?.price! > 0 && (
                 <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
-                  <Icon name="shield" size={12} /> Pagamenti crittografati SSL
+                  <Icon name="shield" size={12} /> {t('step4.ssl-testo')}
                 </p>
               )}
 
@@ -1018,19 +1005,19 @@ const PrenotaPageContent = () => {
                   <span className="text-xs text-gray-600 leading-relaxed">
                     {activeService?.price! > 0 ? (
                       <>
-                        Ho letto e accetto la{' '}
-                        <a href="/policy-cancellazione" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
-                          policy di cancellazione
+                        {t('step4.policy-pagamento')}{' '}
+                        <a href="/cancellation-policy" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
+                          {t('step4.policy-link')}
                         </a>
-                        , incluse le condizioni su spostamenti e rimborsi.
+                        {t('step4.policy-testo')}
                       </>
                     ) : (
                       <>
-                        Ho letto e accetto i{' '}
-                        <a href="/policy-cancellazione" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
-                          termini del servizio
+                        {t('step4.termini-testo')}{' '}
+                        <a href="/cancellation-policy" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
+                          {t('step4.termini-link')}
                         </a>
-                        . Prendo atto che il colloquio gratuito è utilizzabile una sola volta.
+                        {t('step4.termini-nota')}
                       </>
                     )}
                   </span>
@@ -1039,13 +1026,17 @@ const PrenotaPageContent = () => {
 
               {/* Desktop Buttons */}
               <div className="hidden md:flex justify-between mt-6 pt-4 border-t border-gray-100">
-                <button onClick={() => setStep(3)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">Indietro</button>
+                <button onClick={() => setStep(3)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors">{t('step4.indietro')}</button>
                 <Button
                   onClick={handleFinalBooking}
                   disabled={isProcessing || !policyAccepted}
                   className={`rounded-xl px-8 py-3 shadow-lg transition-transform font-bold text-sm ${isProcessing || !policyAccepted ? 'bg-gray-300 text-gray-400 cursor-not-allowed' : 'bg-[var(--brand-title)] text-white hover:scale-[1.02]'}`}
                 >
-                  {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? (paymentMethod === 'bank_transfer' ? 'Prenota e ricevi istruzioni' : 'Paga e Prenota') : 'Conferma Appuntamento')}
+                  {isProcessing
+                    ? t('step4.elaborazione')
+                    : activeService?.price! > 0
+                      ? (paymentMethod === 'bank_transfer' ? t('step4.prenota-bonifico') : t('step4.paga-prenota'))
+                      : t('step4.conferma')}
                 </Button>
               </div>
             </div>
@@ -1055,13 +1046,17 @@ const PrenotaPageContent = () => {
           {/* Mobile Sticky Bar */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4 z-50">
             <div className="max-w-xl mx-auto flex justify-between items-center gap-4">
-              <button onClick={() => setStep(3)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">Indietro</button>
+              <button onClick={() => setStep(3)} className="text-gray-500 hover:text-black text-sm font-medium transition-colors px-4 py-3">{t('step4.indietro')}</button>
               <Button
                 onClick={handleFinalBooking}
                 disabled={isProcessing || !policyAccepted}
                 className={`flex-1 rounded-xl px-6 py-4 shadow-lg transition-transform font-bold text-base ${isProcessing || !policyAccepted ? 'bg-gray-300 text-gray-400 cursor-not-allowed' : 'bg-[var(--brand-title)] text-white hover:scale-[1.02]'}`}
               >
-                {isProcessing ? 'Elaborazione...' : (activeService?.price! > 0 ? (paymentMethod === 'bank_transfer' ? 'Prenota e ricevi istruzioni' : 'Paga e Prenota') : 'Conferma Appuntamento')}
+                {isProcessing
+                  ? t('step4.elaborazione')
+                  : activeService?.price! > 0
+                    ? (paymentMethod === 'bank_transfer' ? t('step4.prenota-bonifico') : t('step4.paga-prenota'))
+                    : t('step4.conferma')}
               </Button>
             </div>
           </div>
@@ -1079,7 +1074,7 @@ const PrenotaPage = () => {
       <div className="min-h-screen bg-[#F5F7F5] flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-[var(--brand-title)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="font-bold text-gray-700">Caricamento...</p>
+          <p className="font-bold text-gray-700">Loading...</p>
         </div>
       </div>
     }>

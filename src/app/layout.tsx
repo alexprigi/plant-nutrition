@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
-import PublicShell from "@/components/layout/PublicShell";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -22,11 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it">
-      <body
-        className={`${nunito.variable} antialiased`}
-      >
+      <body className={`${nunito.variable} antialiased`} suppressHydrationWarning>
         <Providers>
-          <PublicShell>{children}</PublicShell>
+          {children}
         </Providers>
       </body>
     </html>

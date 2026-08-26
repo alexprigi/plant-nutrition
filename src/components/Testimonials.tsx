@@ -263,7 +263,7 @@ export default function Testimonials() {
               {/* <Icon name="sparkles" size={28} animated={true} /> */}
             </p>
             <a
-              href="/prenota"
+              href="/booking"
               className="inline-flex items-center justify-center px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold transition-all duration-200 text-base sm:text-lg shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95"
               style={{ background: 'var(--brand-title)', color: 'white' }}
             >

@@ -202,7 +202,7 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                 <tr>
                   <td style="text-align: center;">
                     <p style="margin: 0; font-size: 12px; color: #9CA3AF;">
-                      Consultare la <a href="${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/policy-cancellazione" style="color: #9CA3AF;">policy di cancellazione</a> per info su spostamenti e rimborsi.
+                      Consultare la <a href="${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/cancellation-policy" style="color: #9CA3AF;">policy di cancellazione</a> per info su spostamenti e rimborsi.
                     </p>
                   </td>
                 </tr>

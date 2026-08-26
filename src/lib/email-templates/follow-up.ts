@@ -10,7 +10,7 @@ const BASE_STYLE = `font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 
 
 export function getFollowUpEmailHTML(data: FollowUpEmailData): string {
   const appUrl = process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com';
-  const bookingUrl = `${appUrl}/prenota/follow-up/${data.followUpToken}`;
+  const bookingUrl = `${appUrl}/booking/follow-up/${data.followUpToken}`;
 
   return `
 <!DOCTYPE html>
@@ -102,7 +102,7 @@ Ciao ${data.clientName},
 
 Ottimo lavoro! Hai ancora ${data.sessionsRemaining} ${data.sessionsRemaining === 1 ? 'sessione rimasta' : 'sessioni rimaste'} nel tuo ${data.serviceName}.
 
-Prenota il prossimo appuntamento: ${appUrl}/prenota/follow-up/${data.followUpToken}
+Prenota il prossimo appuntamento: ${appUrl}/booking/follow-up/${data.followUpToken}
 
 Questo link è personale e valido solo per te.
 

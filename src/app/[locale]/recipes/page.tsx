@@ -213,7 +213,7 @@ export default function Ricette() {
                   </div>
 
                   <Button
-                    href={`/ricette/${recipe.id}`}
+                    href={`/recipes/${recipe.id}`}
                     className="w-full"
                     style={{ background: 'var(--brand-title)', color: 'white' }}
                   >

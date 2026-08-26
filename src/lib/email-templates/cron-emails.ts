@@ -147,7 +147,7 @@ export function getReminderEmailHTML(data: ReminderEmailData): string {
                     <a href="${appUrl}/gestisci/${data.managementToken}" style="display: inline-block; background-color: #ffffff; color: #374151; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #D1D5DB;">
                       Sposta o cancella l'appuntamento
                     </a>
-                    ${!data.isFree ? `<p style="margin: 12px 0 0; font-size: 11px; color: #9CA3AF;">Consulta la <a href="${appUrl}/policy-cancellazione" style="color: #9CA3AF;">policy di cancellazione</a> per info su rimborsi.</p>` : ''}
+                    ${!data.isFree ? `<p style="margin: 12px 0 0; font-size: 11px; color: #9CA3AF;">Consulta la <a href="${appUrl}/cancellation-policy" style="color: #9CA3AF;">policy di cancellazione</a> per info su rimborsi.</p>` : ''}
                   </td>
                 </tr>
               </table>
@@ -246,7 +246,7 @@ export function getExpiredBankTransferEmailHTML(data: ExpiredBankTransferEmailDa
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td align="center">
-                    <a href="${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/prenota" style="display: inline-block; background-color: #10B981; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 15px;">
+                    <a href="${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/booking" style="display: inline-block; background-color: #10B981; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 15px;">
                       Prenota di nuovo
                     </a>
                   </td>
@@ -275,7 +275,7 @@ Servizio: ${data.serviceName}
 Data: ${formatDate(data.date)}
 Orario: ${data.time}
 
-Se vuoi, puoi effettuare una nuova prenotazione: ${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/prenota
+Se vuoi, puoi effettuare una nuova prenotazione: ${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/booking
 
 ---
 Viva Plant Nutrition

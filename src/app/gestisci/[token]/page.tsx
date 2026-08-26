@@ -171,7 +171,7 @@ export default function GestisciPage() {
               Il tuo appuntamento è stato cancellato. Puoi prenotarne uno nuovo quando vuoi.
             </p>
           )}
-          <Button href="/prenota" className="bg-[var(--brand-title)] text-white w-full">Prenota un nuovo appuntamento</Button>
+          <Button href="/booking" className="bg-[var(--brand-title)] text-white w-full">Prenota un nuovo appuntamento</Button>
         </div>
       </div>
     );
@@ -392,7 +392,7 @@ export default function GestisciPage() {
           {appointment?.canReschedule && !appointment?.canCancel && (
             <p className="text-xs text-gray-400 text-center">
               In questa fascia è possibile solo spostare l'appuntamento. Per info sul rimborso consulta la{' '}
-              <a href="/policy-cancellazione" target="_blank" className="underline">policy di cancellazione</a>.
+              <a href="/cancellation-policy" target="_blank" className="underline">policy di cancellazione</a>.
             </p>
           )}
 

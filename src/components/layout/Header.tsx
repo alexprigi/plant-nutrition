@@ -1,12 +1,23 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect, useRef, type MouseEvent } from 'react';
 import { usePathname } from 'next/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
+import { useTranslations, useLocale } from 'next-intl';
+
+const VISIBLE_LOCALES = ['it', 'de'] as const;
+
+const LocaleFlag: Record<string, string> = {
+  it: '🇮🇹',
+  de: '🇩🇪',
+};
 
 const Header = () => {
+  const t = useTranslations('navigazione');
+  const locale = useLocale();
   const pathname = usePathname();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isBtnPressed, setIsBtnPressed] = useState(false);
@@ -36,24 +47,26 @@ const Header = () => {
   }, []);
 
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Chi Sono', href: '/chi-sono' },
-    { name: 'Servizi', href: '/servizi' },
-    // { name: 'Ricette', href: '/ricette' }, // WIP
-    // { name: 'Blog', href: '/blog' }, // WIP
-    { name: 'Contatti', href: '/contatti' },
+    { name: t('home'), href: '/' as const },
+    { name: t('chi-sono'), href: '/about' as const },
+    { name: t('servizi'), href: '/services' as const },
+    { name: t('contatti'), href: '/contact' as const },
   ];
 
   const handleHomeClick = (event: MouseEvent<HTMLAnchorElement>) => {
     setIsMenuOpen(false);
-
-    if (pathname !== '/') {
-      return;
-    }
-
+    const localizedHome = `/${locale}`;
+    if (pathname !== localizedHome && pathname !== '/') return;
     event.preventDefault();
     setIsVisible(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const switchLocale = (newLocale: string) => {
+    // Rimuove il prefisso locale corrente dal pathname
+    const pathWithoutLocale = pathname.replace(/^\/(it|de|en)/, '') || '/';
+    router.push(pathWithoutLocale, { locale: newLocale });
+    setIsMenuOpen(false);
   };
 
   return (
@@ -63,24 +76,8 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" onClick={handleHomeClick} className="flex items-center gap-1">
-              <Image
-                src="/images/logo_icon.png"
-                alt=""
-                width={588}
-                height={670}
-                className="h-14 w-auto object-contain"
-                style={{ mixBlendMode: 'multiply' }}
-                priority
-              />
-              <Image
-                src="/images/logo_text.png"
-                alt="Viva Plant Nutrition"
-                width={591}
-                height={315}
-                className="h-12 w-auto object-contain"
-                style={{ mixBlendMode: 'multiply' }}
-                priority
-              />
+              <Image src="/images/logo_icon.png" alt="" width={588} height={670} className="h-14 w-auto object-contain" style={{ mixBlendMode: 'multiply' }} priority />
+              <Image src="/images/logo_text.png" alt="Viva Plant Nutrition" width={591} height={315} className="h-12 w-auto object-contain" style={{ mixBlendMode: 'multiply' }} priority />
             </Link>
           </div>
 
@@ -99,15 +96,29 @@ const Header = () => {
             ))}
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden md:flex">
+          {/* Desktop Right: CTA + Selettore Lingua */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Selettore lingua */}
+            <div className="flex items-center gap-1">
+              {VISIBLE_LOCALES.map((loc) => (
+                <button
+                  key={loc}
+                  onClick={() => switchLocale(loc)}
+                  className={`text-xl px-1 py-0.5 rounded transition-all duration-150 ${locale === loc ? 'opacity-100 scale-110' : 'opacity-40 hover:opacity-70'}`}
+                  title={loc.toUpperCase()}
+                >
+                  {LocaleFlag[loc]}
+                </button>
+              ))}
+            </div>
+
             <Link
-              href="/prenota"
+              href="/booking"
               className="px-5 py-2 lg:px-6 lg:py-2 rounded-full font-medium text-base lg:text-base transition-all duration-200 btn-lift whitespace-nowrap hover:bg-[var(--text-dark-green)] active:scale-95"
               style={{ background: 'var(--brand-title)', color: 'white' }}
             >
-              <span className="hidden lg:inline">Prenota Consulenza</span>
-              <span className="lg:hidden">Prenota</span>
+              <span className="hidden lg:inline">{t('prenota')}</span>
+              <span className="lg:hidden">{t('prenota-breve')}</span>
             </Link>
           </div>
 
@@ -124,7 +135,7 @@ const Header = () => {
               onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-main)')}
               onMouseLeave={e => (e.currentTarget.style.color = isBtnPressed ? 'var(--color-main)' : 'var(--brand-title)')}
             >
-              <span className="sr-only">Apri menu</span>
+              <span className="sr-only">{t('apri-menu')}</span>
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
@@ -148,13 +159,27 @@ const Header = () => {
                 </Link>
               ))}
               <Link
-                href="/prenota"
+                href="/booking"
                 className="px-6 py-2 rounded-full font-medium transition-all duration-150 text-center mt-4 btn-lift active:scale-95"
                 style={{ background: 'var(--button-bg)', color: 'var(--foreground)' }}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Prenota Consulenza
+                {t('prenota')}
               </Link>
+
+              {/* Selettore lingua mobile */}
+              <div className="flex items-center gap-3 mt-2 pt-2 border-t" style={{ borderColor: 'var(--color-main-light)' }}>
+                {VISIBLE_LOCALES.map((loc) => (
+                  <button
+                    key={loc}
+                    onClick={() => switchLocale(loc)}
+                    className={`text-sm px-3 py-1.5 rounded-lg font-semibold transition-all ${locale === loc ? 'ring-2 ring-[var(--brand-title)]' : 'opacity-50'}`}
+                    style={{ color: 'var(--brand-title)', background: 'var(--bg-section-light)' }}
+                  >
+                    {LocaleFlag[loc]} {loc.toUpperCase()}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}

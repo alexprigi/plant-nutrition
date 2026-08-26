@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/icons/Icon';
 
@@ -34,6 +35,8 @@ type View = 'loading' | 'error' | 'calendar' | 'success';
 
 export default function FollowUpBookingPage() {
   const { token } = useParams<{ token: string }>();
+  const t = useTranslations('prenota');
+  const locale = useLocale();
 
   const [view, setView] = useState<View>('loading');
   const [data, setData] = useState<FollowUpData | null>(null);
@@ -61,14 +64,14 @@ export default function FollowUpBookingPage() {
           setData({
             subscriptionId: res.subscriptionId,
             sessionsRemaining: res.sessionsRemaining,
-            serviceName: res.serviceType === 'follow-up' ? 'Visita di Controllo' : res.serviceType,
+            serviceName: res.serviceType === 'follow-up' ? t('servizi.controllo-titolo') : res.serviceType,
             client: res.client,
           });
           setView('calendar');
         }
       })
       .catch(() => {
-        setErrorMsg('Errore di connessione. Riprova più tardi.');
+        setErrorMsg(t('caricamento'));
         setView('error');
       });
   }, [token]);
@@ -148,7 +151,6 @@ export default function FollowUpBookingPage() {
 
       const result = await res.json();
 
-      // Email conferma
       fetch('/api/send-booking-emails', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -170,17 +172,14 @@ export default function FollowUpBookingPage() {
 
       setView('success');
     } catch {
-      setErrorMsg('Errore durante la prenotazione. Riprova.');
+      setErrorMsg(t('step2.errore-validazione'));
       setView('error');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const formattedDate = (dateStr: string) =>
-    new Date(dateStr).toLocaleDateString('it-IT', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-    });
+  const calendarDayLabels = t.raw('step3.giorni') as string[];
 
   // --- LOADING ---
   if (view === 'loading') {
@@ -188,7 +187,7 @@ export default function FollowUpBookingPage() {
       <div className="min-h-screen bg-[#F5F7F5] flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-[var(--brand-title)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-medium">Caricamento...</p>
+          <p className="text-gray-600 font-medium">{t('caricamento')}</p>
         </div>
       </div>
     );
@@ -202,9 +201,9 @@ export default function FollowUpBookingPage() {
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="alert" size={32} className="text-red-500" />
           </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Link non valido</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">{t('step1.colloquio-gia-usato-titolo')}</h2>
           <p className="text-gray-500 text-sm mb-6">{errorMsg}</p>
-          <Button href="/" className="bg-[var(--brand-title)] text-white w-full">Torna alla Home</Button>
+          <Button href="/" className="bg-[var(--brand-title)] text-white w-full">{t('successo.torna-home')}</Button>
         </div>
       </div>
     );
@@ -218,15 +217,15 @@ export default function FollowUpBookingPage() {
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="check" size={32} className="text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Appuntamento confermato!</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">{t('successo.titolo-confermato')}</h2>
           <p className="text-gray-500 text-sm mb-2">
-            Ciao <strong>{data?.client.name}</strong>, il tuo appuntamento è stato prenotato.
+            {t('successo.grazie', { nome: data?.client.name ?? '' })}
           </p>
           <p className="font-bold text-gray-800 mb-6">
-            {formattedDate(selectedDate)} alle {selectedTime}
+            {new Date(selectedDate).toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} — {selectedTime}
           </p>
-          <p className="text-sm text-gray-400 mb-6">Riceverai una email di conferma a breve.</p>
-          <Button href="/" className="bg-[var(--brand-title)] text-white w-full">Torna alla Home</Button>
+          <p className="text-sm text-gray-400 mb-6">{t('successo.testo-fissato')}</p>
+          <Button href="/" className="bg-[var(--brand-title)] text-white w-full">{t('successo.torna-home')}</Button>
         </div>
       </div>
     );
@@ -242,13 +241,12 @@ export default function FollowUpBookingPage() {
 
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Prenota la prossima sessione</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('step3.titolo-pagamento')}</h1>
           <p className="text-gray-500">
-            Ciao <strong>{data?.client.name}</strong> —{' '}
+            {data?.client.name} —{' '}
             <span className="text-[var(--brand-title)] font-medium">
-              {data?.sessionsRemaining} {data?.sessionsRemaining === 1 ? 'sessione rimasta' : 'sessioni rimaste'}
-            </span>{' '}
-            nel tuo percorso.
+              {data?.sessionsRemaining} {t('step3.orari-disponibili').toLowerCase()}
+            </span>
           </p>
         </div>
 
@@ -264,7 +262,7 @@ export default function FollowUpBookingPage() {
                 <Icon name="chevronLeft" />
               </button>
               <span className="font-bold capitalize text-lg text-gray-900">
-                {currentMonthDate.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })}
+                {currentMonthDate.toLocaleDateString(locale, { month: 'long', year: 'numeric' })}
               </span>
               <button
                 onClick={() => setCurrentMonthDate(new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth() + 1, 1))}
@@ -274,7 +272,7 @@ export default function FollowUpBookingPage() {
               </button>
             </div>
             <div className="grid grid-cols-7 gap-2 text-center mb-2">
-              {['L', 'M', 'M', 'G', 'V', 'S', 'D'].map((d, i) => (
+              {calendarDayLabels.map((d, i) => (
                 <span key={i} className="text-xs font-bold text-gray-400">{d}</span>
               ))}
             </div>
@@ -305,7 +303,7 @@ export default function FollowUpBookingPage() {
 
           {/* Orari + note + conferma */}
           <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex flex-col">
-            <h3 className="font-bold text-gray-900 mb-4 text-center">Orari disponibili</h3>
+            <h3 className="font-bold text-gray-900 mb-4 text-center">{t('step3.orari-disponibili')}</h3>
             <div className="grid grid-cols-3 gap-2 max-h-56 overflow-y-auto pr-1 mb-4">
               {availableTimeSlots.map(slot => {
                 const time = typeof slot === 'string' ? slot : slot.time;
@@ -332,7 +330,7 @@ export default function FollowUpBookingPage() {
 
             <div className="mt-auto pt-4 border-t border-gray-100">
               <div className="flex justify-between items-center mb-2">
-                <label className="text-xs font-bold text-gray-700">Messaggio per Arianna (opzionale)</label>
+                <label className="text-xs font-bold text-gray-700">{t('step3.messaggio-label')}</label>
                 <span className="text-xs text-gray-400">{notes.length}/500</span>
               </div>
               <textarea
@@ -341,7 +339,7 @@ export default function FollowUpBookingPage() {
                 onChange={e => setNotes(e.target.value)}
                 maxLength={500}
                 className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:border-[var(--brand-title)] resize-none mb-4"
-                placeholder="Aggiornamenti, domande..."
+                placeholder={t('step3.messaggio-placeholder')}
               />
 
               <Button
@@ -353,7 +351,7 @@ export default function FollowUpBookingPage() {
                     : 'bg-[var(--brand-title)] hover:-translate-y-0.5 hover:shadow-lg'
                 }`}
               >
-                {isProcessing ? 'Conferma in corso...' : 'Conferma appuntamento'}
+                {isProcessing ? t('elaborazione') : t('step3.conferma')}
               </Button>
             </div>
           </div>

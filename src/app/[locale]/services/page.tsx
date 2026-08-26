@@ -3,13 +3,20 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Icon from '@/components/icons/Icon';
 import ScrollButton from '@/components/ui/ScrollButton';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata = {
-  title: 'Servizi - Viva Plant Nutrition | Consulenze Nutrizionali Vegane',
-  description: 'Scopri tutti i servizi di Viva Plant Nutrition: consulenze nutrizionali personalizzate, piani alimentari vegani, corsi di educazione alimentare e supporto per la transizione.',
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'servizi' });
+  return {
+    title: t('meta-titolo'),
+    description: t('meta-descrizione'),
+  };
+}
 
-export default function Servizi() {
+export default async function Servizi({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'servizi' });
   return (
     <div className="min-h-screen relative">
       {/* Floating button - solo mobile/tablet/iPad, lato sinistro */}
@@ -22,8 +29,8 @@ export default function Servizi() {
         }}
       >
         <Icon name="tag" size={20} />
-        <span className="hidden sm:inline">Vai a Tariffe e Percorsi</span>
-        <span className="sm:hidden">Tariffe e Percorsi</span>
+        <span className="hidden sm:inline">{t('prezzi.vai-tariffe-desktop')}</span>
+        <span className="sm:hidden">{t('prezzi.vai-tariffe-mobile')}</span>
       </a>
       {/* Hero Section */}
       <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
@@ -258,7 +265,7 @@ export default function Servizi() {
                   </div>
                 </div>
 
-                <Button href="/prenota" size="lg" className="w-full lg:w-auto">
+                <Button href="/booking" size="lg" className="w-full lg:w-auto">
                   Prenota Consulenza Gratuita
                 </Button>
               </div>
@@ -422,7 +429,7 @@ export default function Servizi() {
                 <strong>15 minuti</strong> per conoscerci. Mi racconterai i tuoi obiettivi e valuteremo insieme se i miei percorsi sono la soluzione giusta per te.
               </p>
               <Button
-                href="/prenota"
+                href="/booking"
                 size="lg"
                 className="font-bold text-lg shadow-lg"
                 style={{ background: 'var(--brand-title)', color: 'white' }}
@@ -476,7 +483,7 @@ export default function Servizi() {
                 </ul>
 
                 <Button
-                  href="/prenota?type=controllo"
+                  href="/booking?type=controllo"
                   className="w-full mt-auto"
                   style={{ background: 'var(--brand-title)', color: 'white' }}
                 >
@@ -525,7 +532,7 @@ export default function Servizi() {
                 </ul>
 
                 <Button
-                  href="/prenota?type=first"
+                  href="/booking?type=first"
                   className="w-full mt-auto"
                   style={{ background: 'var(--brand-title)', color: 'white' }}
                 >
@@ -585,7 +592,7 @@ export default function Servizi() {
                 </ul>
 
                 <Button
-                  href="/prenota?type=3mesi"
+                  href="/booking?type=3mesi"
                   className="w-full mt-auto"
                   style={{ background: 'var(--brand-title)', color: 'white' }}
                 >
@@ -650,7 +657,7 @@ export default function Servizi() {
                 </div>
 
                 <Button
-                  href="/prenota?type=6mesi"
+                  href="/booking?type=6mesi"
                   className="w-full mt-auto"
                   style={{ background: 'var(--brand-title)', color: 'white' }}
                 >
@@ -688,7 +695,7 @@ export default function Servizi() {
                 <div className="flex items-center justify-center md:justify-start gap-4">
                   <span className="text-2xl font-bold" style={{ color: 'var(--brand-title)' }}>120€</span>
                   <Button
-                    href="/prenota?type=guida-svezzamento"
+                    href="/booking?type=guida-svezzamento"
                     size="sm"
                     style={{ background: 'var(--brand-title)', color: 'white' }}
                   >
@@ -750,7 +757,7 @@ export default function Servizi() {
                   <div className="text-sm mt-1" style={{ color: 'transparent' }}> </div>
                 </div>
                 <Button 
-                  href="/contatti" 
+                  href="/contact" 
                   className="w-full"
                   style={{ background: 'var(--brand-title)', color: 'white' }}
                 >
@@ -786,7 +793,7 @@ export default function Servizi() {
                   <div className="text-sm mt-1" style={{ color: 'var(--text-darker)' }}>Prossima data: 15 Dicembre</div>
                 </div>
                 <Button 
-                  href="/contatti" 
+                  href="/contact" 
                   className="w-full"
                   style={{ background: 'var(--brand-title)', color: 'white' }}
                 >
@@ -871,7 +878,7 @@ export default function Servizi() {
             e scoprire quale servizio è più adatto a te.
           </p>
           <Button
-            href="/contatti"
+            href="/contact"
             variant="outline"
             size="lg"
             className="!bg-white !text-[var(--brand-title)] !border-white hover:!bg-white/90"

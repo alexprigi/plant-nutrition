@@ -1,0 +1,250 @@
+'use client';
+
+import { useState } from 'react';
+import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import Icon from '@/components/icons/Icon';
+import { useTranslations } from 'next-intl';
+
+export default function Contatti() {
+  const t = useTranslations('contatti');
+  const [formData, setFormData] = useState({ nome: '', email: '', telefono: '', servizio: '', messaggio: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError(null);
+    try {
+      const res = await fetch('/api/send-contact-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.error || t('form.errore-invio'));
+      }
+      setIsSubmitted(true);
+    } catch (err: any) {
+      setSubmitError(err.message || t('form.errore-generico'));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isSubmitted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-section-light)' }}>
+        <div className="max-w-md mx-auto text-center p-8">
+          <div className="mb-6"><Icon name="check" size={64} animated={true} variant='mint' /></div>
+          <h1 className="text-3xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>{t('successo.titolo')}</h1>
+          <div className="mb-8 p-6 rounded-xl" style={{ background: 'white', boxShadow: '0 4px 20px rgba(37, 105, 67, 0.15)' }}>
+            <p className="text-xl font-semibold" style={{ color: 'var(--brand-title)' }}>{t('successo.testo')}</p>
+          </div>
+          <Button href="/">{t('successo.torna-home')}</Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen">
+      {/* Hero */}
+      <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
+        <div className="absolute top-0 right-0 w-80 h-80 rounded-full opacity-12" style={{ background: 'var(--color-main)', transform: 'translate(40%, -40%)' }} />
+        <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full opacity-10" style={{ background: 'var(--brand-title)', transform: 'translate(-40%, 40%)' }} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="inline-block mb-4"><Icon name="chat" size={64} animated={true} variant='mint' /></div>
+          <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--brand-title)' }}>{t('hero.titolo')}</h1>
+          <p className="text-xl max-w-3xl mx-auto" style={{ color: 'var(--brand-title)' }}>{t('hero.sottotitolo')}</p>
+        </div>
+      </section>
+
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-hero) 0%, var(--bg-section-light) 100%)' }} />
+
+      <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
+        <div className="absolute top-1/4 left-0 w-96 h-96 rounded-full opacity-8" style={{ background: 'linear-gradient(135deg, var(--bg-hero) 0%, #F4E5C2 100%)', transform: 'translate(-50%, 0)' }} />
+        <div className="absolute bottom-1/4 right-0 w-80 h-80 rounded-full opacity-10" style={{ background: 'var(--color-main)', transform: 'translate(50%, 0)' }} />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Form */}
+            <div>
+              <h2 className="text-3xl font-bold mb-8" style={{ color: 'var(--brand-title)' }}>{t('form.titolo')}</h2>
+              <Card className="p-8" style={{ background: 'var(--bg-section-warm)' }}>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <label htmlFor="nome" className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>{t('form.nome-label')}</label>
+                    <input type="text" id="nome" name="nome" required value={formData.nome} onChange={handleChange}
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)' }}
+                      onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
+                      onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
+                      placeholder={t('form.nome-placeholder')} />
+                  </div>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>{t('form.email-label')}</label>
+                    <input type="email" id="email" name="email" required value={formData.email} onChange={handleChange}
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)' }}
+                      onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
+                      onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
+                      placeholder={t('form.email-placeholder')} />
+                  </div>
+                  <div>
+                    <label htmlFor="telefono" className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>{t('form.telefono-label')}</label>
+                    <input type="tel" id="telefono" name="telefono" value={formData.telefono} onChange={handleChange}
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)' }}
+                      onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
+                      onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
+                      placeholder={t('form.telefono-placeholder')} />
+                  </div>
+                  <div>
+                    <label htmlFor="servizio" className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>{t('form.servizio-label')}</label>
+                    <select id="servizio" name="servizio" required value={formData.servizio} onChange={handleChange}
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)' }}
+                      onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
+                      onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}>
+                      <option value="">{t('form.servizio-default')}</option>
+                      <option value="consulenza-nutrizionale">{t('form.servizio-consulenza')}</option>
+                      <option value="transizione-graduale">{t('form.servizio-transizione')}</option>
+                      <option value="nutrizione-pediatrica">{t('form.servizio-pediatrica')}</option>
+                      <option value="nutrizione-gravidanza">{t('form.servizio-gravidanza')}</option>
+                      <option value="nutrizione-sportiva">{t('form.servizio-sportiva')}</option>
+                      <option value="corso-online">{t('form.servizio-corso')}</option>
+                      <option value="workshop">{t('form.servizio-workshop')}</option>
+                      <option value="altro">{t('form.servizio-altro')}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="messaggio" className="block text-sm font-medium mb-2" style={{ color: 'var(--brand-title)' }}>{t('form.messaggio-label')}</label>
+                    <textarea id="messaggio" name="messaggio" rows={5} required value={formData.messaggio} onChange={handleChange}
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                      style={{ borderColor: 'var(--color-main)', color: 'var(--brand-title)', background: 'var(--bg-section-light)' }}
+                      onFocus={e => { e.currentTarget.style.boxShadow = '0 0 0 2px var(--brand-title)'; e.currentTarget.style.borderColor = 'var(--brand-title)'; }}
+                      onBlur={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-main)'; }}
+                      placeholder={t('form.messaggio-placeholder')} />
+                  </div>
+                  <Button type="submit" disabled={isSubmitting} className="w-full">
+                    {isSubmitting ? t('form.invio-in-corso') : t('form.invio')}
+                  </Button>
+                  {submitError && <p className="text-sm text-center text-red-600">{submitError}</p>}
+                  <p className="text-sm text-center" style={{ color: 'var(--brand-title)' }}>{t('form.campi-obbligatori')}</p>
+                </form>
+              </Card>
+            </div>
+
+            {/* Informazioni */}
+            <div>
+              <h2 className="text-3xl font-bold mb-8" style={{ color: 'var(--brand-title)' }}>{t('info.titolo')}</h2>
+              <div className="space-y-6">
+                <Card className="p-6" style={{ background: 'var(--bg-section-warm)' }}>
+                  <div className="flex items-center space-x-4">
+                    <Icon name="mail" size={32} variant='mint'/>
+                    <div>
+                      <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>{t('info.email-titolo')}</h3>
+                      <p style={{ color: 'var(--text-darker)' }}>info@vivaplantnutrition.com</p>
+                    </div>
+                  </div>
+                </Card>
+                <Card className="p-6" style={{ background: 'var(--bg-section-warm)' }}>
+                  <div className="flex items-center space-x-4">
+                    <Icon name="phone" size={32} variant='blue' />
+                    <div>
+                      <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>{t('info.telefono-titolo')}</h3>
+                      <p style={{ color: 'var(--text-darker)' }}>+39 349 123 4567</p>
+                    </div>
+                  </div>
+                </Card>
+                <Card className="p-6" style={{ background: 'var(--bg-section-warm)' }}>
+                  <div className="flex items-center space-x-4">
+                    <Icon name="mapPin" size={32} variant='lavender' />
+                    <div>
+                      <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>{t('info.area-titolo')}</h3>
+                      <p style={{ color: 'var(--text-darker)' }}>{t('info.area-testo')}<br />{t('info.area-sottotesto')}</p>
+                    </div>
+                  </div>
+                </Card>
+                <Card className="p-6" style={{ background: 'var(--bg-section-warm)' }}>
+                  <div className="flex items-center space-x-4">
+                    <Icon name="clock" size={32} variant='pink' />
+                    <div>
+                      <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>{t('info.orari-titolo')}</h3>
+                      <div style={{ color: 'var(--text-darker)' }}>
+                        <p>{t('info.orari-lun-ven')}</p>
+                        <p>{t('info.orari-sab')}</p>
+                        <p>{t('info.orari-dom')}</p>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+                <Card className="p-6" style={{ background: 'var(--bg-section-warm)', minHeight: '96px' }}>
+                  <div className="flex items-center space-x-4 h-full">
+                    <Icon name="coin" size={32} variant='mint' />
+                    <div>
+                      <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-title)' }}>{t('info.bonifico-titolo')}</h3>
+                      <p style={{ color: 'var(--text-darker)' }}>
+                        {t('info.bonifico-beneficiario')} <strong>Arianna Ciervo</strong><br />
+                        {t('info.bonifico-iban')} <span style={{ fontFamily: 'monospace' }}>DE14 1001 1001 2175 0735 33</span>
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            </div>
+          </div>
+
+          {/* Social */}
+          <div className="text-center mt-12">
+            <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--brand-title)' }}>{t('social.titolo')}</h3>
+            <div className="flex justify-center space-x-4">
+              <a href="https://wa.me/393491234567" className="bg-green-500 text-white p-3 rounded-full hover:bg-green-600 transition-colors" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+              </a>
+              <a href="https://t.me/vivaplantnuition" className="bg-sky-500 text-white p-3 rounded-full hover:bg-sky-600 transition-colors" aria-label="Telegram" target="_blank" rel="noopener noreferrer">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+              </a>
+              <a href="https://instagram.com/vivaplantnutrition" className="bg-pink-600 text-white p-3 rounded-full hover:bg-pink-700 transition-colors" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </a>
+              <a href="https://facebook.com/vivaplantnutrition" className="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition-colors" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="gradient-transition" style={{ background: 'linear-gradient(180deg, var(--bg-section-light) 0%, var(--bg-section-warm) 100%)' }} />
+
+      {/* FAQ */}
+      <section className="py-20" style={{ background: 'var(--bg-section-warm)' }}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold mb-12 text-center" style={{ color: 'var(--brand-title)' }}>{t('faq.titolo')}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[
+              { d: t('faq.d1-domanda'), r: t('faq.d1-risposta') },
+              { d: t('faq.d2-domanda'), r: t('faq.d2-risposta') },
+              { d: t('faq.d3-domanda'), r: t('faq.d3-risposta') },
+              { d: t('faq.d4-domanda'), r: t('faq.d4-risposta') },
+            ].map((faq, i) => (
+              <Card key={i} className="p-6">
+                <h3 className="text-lg font-semibold mb-3">{faq.d}</h3>
+                <p style={{ color: 'var(--foreground)' }}>{faq.r}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
