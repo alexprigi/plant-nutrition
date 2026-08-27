@@ -55,7 +55,6 @@ Guida completa per integrare uno o più sistemi di pagamento nel flusso di preno
 
 ```env
 STRIPE_SECRET_KEY=sk_live_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...  # ottenuto dopo aver configurato il webhook
 ```
 

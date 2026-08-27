@@ -338,69 +338,96 @@ const PrenotaPageContent = () => {
       .replace(/<[^>]*>/g, '')
       .substring(0, 500);
 
-    let finalStatus: AppointmentStatus = 'pending';
-    let finalIsPaid: boolean = false;
+    const bookingPayload = {
+      name: formData.name, surname: formData.surname, email: formData.email, phone: formData.phone,
+      address: formData.address, civicNumber: formData.civicNumber, city: formData.city,
+      zipCode: formData.zipCode, country: formData.country, fiscalCode: formData.fiscalCode,
+      commercialType: selectedService as any,
+      paymentMethod: (activeService?.price! > 0 ? paymentMethod : 'none') as PaymentMethod,
+      selectedDate, selectedTime, notes: sanitizedNotes,
+      isPaid: false,
+      status: 'pending' as AppointmentStatus,
+      durationMinutes: activeService?.durationMinutes ?? 60,
+    };
 
+    // Servizio gratuito: booking diretto senza pagamento
     if (activeService?.price === 0) {
-      finalStatus = 'confirmed';
-      finalIsPaid = true;
-    } else if (paymentMethod === 'bank_transfer') {
-      finalStatus = 'pending';
-      finalIsPaid = false;
-    } else {
-      finalStatus = 'confirmed';
-      finalIsPaid = true;
-    }
-
-    let managementToken: string | undefined;
-
-    try {
-      const result = await createFullBooking({
-        name: formData.name, surname: formData.surname, email: formData.email, phone: formData.phone,
-        address: formData.address, civicNumber: formData.civicNumber, city: formData.city,
-        zipCode: formData.zipCode, country: formData.country, fiscalCode: formData.fiscalCode,
-
-        commercialType: selectedService as any,
-        paymentMethod: (activeService?.price! > 0 ? paymentMethod : 'none') as PaymentMethod,
-
-        selectedDate, selectedTime, notes: sanitizedNotes,
-
-        status: finalStatus,
-        isPaid: finalIsPaid,
-      });
-      managementToken = result?.appointment?.managementToken;
-    } catch (error) {
-      console.error('Booking error:', error);
-      setIsProcessing(false);
+      try {
+        const result = await createFullBooking({ ...bookingPayload, status: 'confirmed', isPaid: true });
+        fetch('/api/send-booking-emails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            clientName: `${formData.name} ${formData.surname}`,
+            clientEmail: formData.email,
+            clientPhone: formData.phone,
+            serviceName: activeService?.title || '',
+            price: 0,
+            date: selectedDate,
+            time: selectedTime,
+            notes: sanitizedNotes,
+            paymentMethod: 'none',
+            isPaid: true,
+            managementToken: result?.appointment?.managementToken,
+            durationMinutes: activeService?.durationMinutes ?? 60,
+          }),
+        }).catch(() => {});
+        setIsProcessing(false);
+        setIsSuccess(true);
+        window.scrollTo(0, 0);
+      } catch (error) {
+        console.error('Booking error:', error);
+        setIsProcessing(false);
+      }
       return;
     }
 
-    fetch('/api/send-booking-emails', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        clientName: `${formData.name} ${formData.surname}`,
-        clientEmail: formData.email,
-        clientPhone: formData.phone,
-        serviceName: activeService?.title || '',
-        price: activeService?.price || 0,
-        date: selectedDate,
-        time: selectedTime,
-        notes: sanitizedNotes,
-        paymentMethod: (activeService?.price! > 0 ? paymentMethod : 'none') as PaymentMethod,
-        isPaid: finalIsPaid,
-        managementToken,
-        durationMinutes: activeService?.durationMinutes ?? 60,
-      })
-    }).catch(error => {
-      console.error('Failed to send emails:', error);
-    });
+    // Bonifico bancario: booking diretto, pagamento gestito manualmente
+    if (paymentMethod === 'bank_transfer') {
+      try {
+        const result = await createFullBooking({ ...bookingPayload, status: 'pending', isPaid: false });
+        fetch('/api/send-booking-emails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            clientName: `${formData.name} ${formData.surname}`,
+            clientEmail: formData.email,
+            clientPhone: formData.phone,
+            serviceName: activeService?.title || '',
+            price: activeService?.price || 0,
+            date: selectedDate,
+            time: selectedTime,
+            notes: sanitizedNotes,
+            paymentMethod: 'bank_transfer',
+            isPaid: false,
+            managementToken: result?.appointment?.managementToken,
+            durationMinutes: activeService?.durationMinutes ?? 60,
+          }),
+        }).catch(() => {});
+        setIsProcessing(false);
+        setIsSuccess(true);
+        window.scrollTo(0, 0);
+      } catch (error) {
+        console.error('Booking error:', error);
+        setIsProcessing(false);
+      }
+      return;
+    }
 
-    setTimeout(() => {
+    // Stripe: crea booking pending + redirect a Stripe Checkout
+    try {
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingPayload),
+      });
+      if (!response.ok) throw new Error('Failed to create checkout session');
+      const { url } = await response.json();
+      window.location.href = url;
+    } catch (error) {
+      console.error('Stripe checkout error:', error);
       setIsProcessing(false);
-      setIsSuccess(true);
-      window.scrollTo(0, 0);
-    }, 1000);
+    }
   };
 
   const calendarDays = useMemo(() => {
