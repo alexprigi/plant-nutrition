@@ -81,6 +81,7 @@ export interface CreateBookingDTO {
   notes: string;
   isPaid: boolean;
   status: AppointmentStatus;
+  durationMinutes?: number;
   existingSubscriptionId?: string;
 }
 

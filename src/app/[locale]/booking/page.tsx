@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from 'next-intl';
 
 import Button from '@/components/ui/Button';
 import { createFullBooking, checkEligibility, AppointmentStatus } from '@/lib/bookingService';
+import type { PaymentMethod } from '@/lib/bookingService';
 import { COUNTRIES, COUNTRY_FLAGS, COUNTRY_PREFIXES } from '@/lib/constants';
 import Icon from '@/components/icons/Icon';
 
@@ -360,7 +361,7 @@ const PrenotaPageContent = () => {
         zipCode: formData.zipCode, country: formData.country, fiscalCode: formData.fiscalCode,
 
         commercialType: selectedService as any,
-        paymentMethod: activeService?.price! > 0 ? paymentMethod : 'none',
+        paymentMethod: (activeService?.price! > 0 ? paymentMethod : 'none') as PaymentMethod,
 
         selectedDate, selectedTime, notes: sanitizedNotes,
 
@@ -386,7 +387,7 @@ const PrenotaPageContent = () => {
         date: selectedDate,
         time: selectedTime,
         notes: sanitizedNotes,
-        paymentMethod: activeService?.price! > 0 ? paymentMethod : 'none',
+        paymentMethod: (activeService?.price! > 0 ? paymentMethod : 'none') as PaymentMethod,
         isPaid: finalIsPaid,
         managementToken,
         durationMinutes: activeService?.durationMinutes ?? 60,
@@ -905,14 +906,14 @@ const PrenotaPageContent = () => {
                 <>
                   <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">{t('step4.titolo-pagamento')}</h2>
                   <p className="text-center text-gray-500 mb-8">
-                    {t('step4.sottotitolo-pagamento', { servizio: activeService?.title })}
+                    {t('step4.sottotitolo-pagamento', { servizio: activeService?.title ?? '' })}
                   </p>
                 </>
               ) : (
                 <>
                   <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">{t('step4.titolo-gratuito')}</h2>
                   <p className="text-center text-gray-500 mb-8">
-                    {t('step4.sottotitolo-gratuito', { servizio: activeService?.title })}
+                    {t('step4.sottotitolo-gratuito', { servizio: activeService?.title ?? '' })}
                   </p>
                 </>
               )}
