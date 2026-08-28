@@ -440,7 +440,6 @@ RESEND_API_KEY=re_xxxxxxxxxxxxx
 # DATABASE_URL=
 # DIRECT_URL=
 # NEXTAUTH_SECRET=
-# NEXTAUTH_URL=
 ```
 
 ## Deploy

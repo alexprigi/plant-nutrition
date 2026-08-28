@@ -547,7 +547,6 @@ npm run dev
    - `DATABASE_URL`
    - `DIRECT_URL`
    - `NEXTAUTH_SECRET` (genera con `openssl rand -base64 32`)
-   - `NEXTAUTH_URL` (es: `https://plant-nutrition.vercel.app`)
 
 2. Deploy:
 ```bash
