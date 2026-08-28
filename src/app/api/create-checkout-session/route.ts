@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     const data: CreateBookingDTO = await request.json()
     const { subType, apptType, totalSessions, price, label } = mapCommercialType(data.commercialType)
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const appUrl = (process.env.AUTH_URL || 'http://localhost:3000').replace(/\/$/, '')
 
     // 1. Crea booking nel DB con stato pending
     const result = await prisma.$transaction(async (tx) => {

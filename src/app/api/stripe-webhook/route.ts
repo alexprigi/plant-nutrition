@@ -4,7 +4,8 @@ import { prisma } from '@/lib/prisma'
 import Stripe from 'stripe'
 
 export async function POST(request: NextRequest) {
-  const body = await request.text()
+  const buf = await request.arrayBuffer()
+  const body = Buffer.from(buf)
   const signature = request.headers.get('stripe-signature')
 
   if (!signature) {
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
     ])
 
     // Invia email di conferma
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const appUrl = (process.env.AUTH_URL || 'http://localhost:3000').replace(/\/$/, '')
     const appointment = await prisma.appointment.findUnique({
       where: { id: appointmentId },
       select: { managementToken: true },
