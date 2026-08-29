@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Server-side validation schema
 interface BookingValidationRequest {
   name: string;
   surname: string;
@@ -13,35 +12,97 @@ interface BookingValidationRequest {
   country: string;
   fiscalCode: string;
   notes?: string;
+  locale?: string;
 }
+
+const validationMessages: Record<string, Record<string, string>> = {
+  it: {
+    nameRequired: 'Il nome è obbligatorio',
+    nameTooLong: 'Il nome è troppo lungo',
+    surnameRequired: 'Il cognome è obbligatorio',
+    surnameTooLong: 'Il cognome è troppo lungo',
+    emailRequired: "L'email è obbligatoria",
+    emailInvalid: 'Inserisci un indirizzo email valido',
+    phoneRequired: 'Il telefono è obbligatorio',
+    phoneInvalid: 'Il numero di telefono non è valido',
+    addressRequired: "L'indirizzo è obbligatorio",
+    addressTooLong: "L'indirizzo è troppo lungo",
+    civicNumberRequired: 'Il numero civico è obbligatorio',
+    cityRequired: 'La città è obbligatoria',
+    cityTooLong: 'Il nome della città è troppo lungo',
+    zipCodeRequired: 'Il codice postale è obbligatorio',
+    zipCodeInvalid: 'Il codice postale non è valido',
+    fiscalCodeRequired: 'Il codice fiscale è obbligatorio',
+    fiscalCodeInvalid: 'Il codice fiscale non è valido',
+    notesTooLong: 'Il messaggio non può superare 500 caratteri',
+    generalError: 'Errore durante la validazione dei dati',
+  },
+  de: {
+    nameRequired: 'Vorname ist erforderlich',
+    nameTooLong: 'Vorname ist zu lang',
+    surnameRequired: 'Nachname ist erforderlich',
+    surnameTooLong: 'Nachname ist zu lang',
+    emailRequired: 'E-Mail ist erforderlich',
+    emailInvalid: 'Bitte gib eine gültige E-Mail-Adresse ein',
+    phoneRequired: 'Telefonnummer ist erforderlich',
+    phoneInvalid: 'Die Telefonnummer ist ungültig',
+    addressRequired: 'Adresse ist erforderlich',
+    addressTooLong: 'Adresse ist zu lang',
+    civicNumberRequired: 'Hausnummer ist erforderlich',
+    cityRequired: 'Stadt ist erforderlich',
+    cityTooLong: 'Stadtname ist zu lang',
+    zipCodeRequired: 'Postleitzahl ist erforderlich',
+    zipCodeInvalid: 'Postleitzahl ist ungültig',
+    fiscalCodeRequired: 'Steuer-ID ist erforderlich',
+    fiscalCodeInvalid: 'Steuer-ID ist ungültig',
+    notesTooLong: 'Die Nachricht darf 500 Zeichen nicht überschreiten',
+    generalError: 'Fehler bei der Datenvalidierung',
+  },
+  en: {
+    nameRequired: 'First name is required',
+    nameTooLong: 'First name is too long',
+    surnameRequired: 'Last name is required',
+    surnameTooLong: 'Last name is too long',
+    emailRequired: 'Email is required',
+    emailInvalid: 'Please enter a valid email address',
+    phoneRequired: 'Phone number is required',
+    phoneInvalid: 'The phone number is invalid',
+    addressRequired: 'Address is required',
+    addressTooLong: 'Address is too long',
+    civicNumberRequired: 'House number is required',
+    cityRequired: 'City is required',
+    cityTooLong: 'City name is too long',
+    zipCodeRequired: 'Postal code is required',
+    zipCodeInvalid: 'Postal code is invalid',
+    fiscalCodeRequired: 'Tax ID is required',
+    fiscalCodeInvalid: 'Tax ID is invalid',
+    notesTooLong: 'Message cannot exceed 500 characters',
+    generalError: 'Error during data validation',
+  },
+};
 
 function sanitizeString(str: string): string {
   return str
     .trim()
-    .replace(/<[^>]*>/g, '') // Remove HTML tags
-    .replace(/[<>'"]/g, ''); // Remove dangerous characters
+    .replace(/<[^>]*>/g, '')
+    .replace(/[<>'"]/g, '');
 }
 
 function validateEmail(email: string): boolean {
-  // RFC 5322 compliant regex
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   return emailRegex.test(email);
 }
 
 function validatePhone(phone: string): boolean {
-  // Extract digits from phone
   const digits = phone.replace(/\D/g, '');
-  // At least 6 digits for international flexibility
   return digits.length >= 6 && digits.length <= 20;
 }
 
 function validateZipCode(zipCode: string): boolean {
-  // At least 4 characters
   return zipCode.length >= 4 && zipCode.length <= 10;
 }
 
 function validateFiscalCode(fiscalCode: string): boolean {
-  // At least 8 alphanumeric characters
   const cleaned = fiscalCode.replace(/[^A-Za-z0-9]/g, '');
   return cleaned.length >= 8 && cleaned.length <= 20;
 }
@@ -49,68 +110,67 @@ function validateFiscalCode(fiscalCode: string): boolean {
 export async function POST(request: NextRequest) {
   try {
     const body: BookingValidationRequest = await request.json();
+    const locale = body.locale && validationMessages[body.locale] ? body.locale : 'it';
+    const m = validationMessages[locale];
 
     const errors: Record<string, string> = {};
 
-    // Required fields validation
     if (!body.name || body.name.trim().length === 0) {
-      errors.name = 'Il nome è obbligatorio';
+      errors.name = m.nameRequired;
     } else if (body.name.length > 100) {
-      errors.name = 'Il nome è troppo lungo';
+      errors.name = m.nameTooLong;
     }
 
     if (!body.surname || body.surname.trim().length === 0) {
-      errors.surname = 'Il cognome è obbligatorio';
+      errors.surname = m.surnameRequired;
     } else if (body.surname.length > 100) {
-      errors.surname = 'Il cognome è troppo lungo';
+      errors.surname = m.surnameTooLong;
     }
 
     if (!body.email || body.email.trim().length === 0) {
-      errors.email = "L'email è obbligatoria";
+      errors.email = m.emailRequired;
     } else if (!validateEmail(body.email)) {
-      errors.email = 'Inserisci un indirizzo email valido';
+      errors.email = m.emailInvalid;
     }
 
     if (!body.phone || body.phone.trim().length === 0) {
-      errors.phone = 'Il telefono è obbligatorio';
+      errors.phone = m.phoneRequired;
     } else if (!validatePhone(body.phone)) {
-      errors.phone = 'Il numero di telefono non è valido';
+      errors.phone = m.phoneInvalid;
     }
 
     if (!body.address || body.address.trim().length === 0) {
-      errors.address = "L'indirizzo è obbligatorio";
+      errors.address = m.addressRequired;
     } else if (body.address.length > 200) {
-      errors.address = "L'indirizzo è troppo lungo";
+      errors.address = m.addressTooLong;
     }
 
     if (!body.civicNumber || body.civicNumber.trim().length === 0) {
-      errors.civicNumber = 'Il numero civico è obbligatorio';
+      errors.civicNumber = m.civicNumberRequired;
     }
 
     if (!body.city || body.city.trim().length === 0) {
-      errors.city = 'La città è obbligatoria';
+      errors.city = m.cityRequired;
     } else if (body.city.length > 100) {
-      errors.city = 'Il nome della città è troppo lungo';
+      errors.city = m.cityTooLong;
     }
 
     if (!body.zipCode || body.zipCode.trim().length === 0) {
-      errors.zipCode = 'Il codice postale è obbligatorio';
+      errors.zipCode = m.zipCodeRequired;
     } else if (!validateZipCode(body.zipCode)) {
-      errors.zipCode = 'Il codice postale non è valido';
+      errors.zipCode = m.zipCodeInvalid;
     }
 
     if (!body.fiscalCode || body.fiscalCode.trim().length === 0) {
-      errors.fiscalCode = 'Il codice fiscale è obbligatorio';
+      errors.fiscalCode = m.fiscalCodeRequired;
     } else if (!validateFiscalCode(body.fiscalCode)) {
-      errors.fiscalCode = 'Il codice fiscale non è valido';
+      errors.fiscalCode = m.fiscalCodeInvalid;
     }
 
-    // Notes validation (optional but limited)
     if (body.notes && body.notes.length > 500) {
-      errors.notes = 'Il messaggio non può superare 500 caratteri';
+      errors.notes = m.notesTooLong;
     }
 
-    // If there are errors, return them
     if (Object.keys(errors).length > 0) {
       return NextResponse.json(
         { valid: false, errors },
@@ -118,7 +178,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Sanitize all fields
     const sanitized = {
       name: sanitizeString(body.name),
       surname: sanitizeString(body.surname),
@@ -133,11 +192,7 @@ export async function POST(request: NextRequest) {
       notes: body.notes ? sanitizeString(body.notes).substring(0, 500) : '',
     };
 
-    // Return success with sanitized data
-    return NextResponse.json({
-      valid: true,
-      sanitized,
-    });
+    return NextResponse.json({ valid: true, sanitized });
   } catch (error) {
     console.error('Validation error:', error);
     return NextResponse.json(
