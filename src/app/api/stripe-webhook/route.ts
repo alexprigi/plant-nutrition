@@ -25,13 +25,7 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
     console.error('Webhook signature verification failed:', message)
-    return NextResponse.json({
-      error: 'Invalid signature',
-      detail: message,
-      secretPrefix: process.env.STRIPE_WEBHOOK_SECRET?.substring(0, 12),
-      bodyLength: body.length,
-      bodyPreview: body.substring(0, 80),
-    }, { status: 400 })
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
   if (event.type === 'checkout.session.completed') {
