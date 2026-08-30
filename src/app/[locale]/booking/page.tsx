@@ -6,6 +6,7 @@ import { useRouter } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 
 import Button from '@/components/ui/Button';
+import CountrySelect from '@/components/ui/CountrySelect';
 import { createFullBooking, checkEligibility, AppointmentStatus } from '@/lib/bookingService';
 import type { PaymentMethod } from '@/lib/bookingService';
 import { COUNTRIES, COUNTRY_FLAGS, COUNTRY_PREFIXES } from '@/lib/constants';
@@ -128,11 +129,11 @@ const PrenotaPageContent = () => {
   const defaultCountry = locale === 'de' ? 'Germania' : locale === 'en' ? 'Regno Unito' : 'Italia';
   const defaultPhonePrefix = locale === 'de' ? '+49' : locale === 'en' ? '+44' : '+39';
 
-  const displayNames = useMemo(() => {
+  const [displayNames, setDisplayNames] = useState<Intl.DisplayNames | null>(null);
+  useEffect(() => {
     if (typeof Intl !== 'undefined' && Intl.DisplayNames) {
-      return new Intl.DisplayNames([locale], { type: 'region' });
+      setDisplayNames(new Intl.DisplayNames([locale], { type: 'region' }));
     }
-    return null;
   }, [locale]);
 
   const getLocalizedCountryName = useCallback((italianName: string): string => {
@@ -151,6 +152,12 @@ const PrenotaPageContent = () => {
       return italianName;
     }
   }, [displayNames]);
+
+  const sortedCountries = useMemo(() =>
+    [...COUNTRIES].sort((a, b) =>
+      getLocalizedCountryName(a).localeCompare(getLocalizedCountryName(b), locale)
+    ),
+  [getLocalizedCountryName, locale]);
 
   const [formData, setFormData] = useState({
     name: '', surname: '', email: '', phone: '', notes: '',
@@ -727,15 +734,12 @@ const PrenotaPageContent = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.nazione-label')}</label>
-                        <div className="relative">
-                          <select value={formData.country} onChange={e => setFormData({ ...formData, country: e.target.value })} className="w-full p-3 pr-8 bg-white text-gray-900 border border-gray-300 rounded-xl outline-none focus:border-[var(--brand-title)] appearance-none cursor-pointer">
-                            {COUNTRIES.map(c => {
-                              const localizedName = getLocalizedCountryName(c);
-                              return <option key={c} value={c}>{COUNTRY_FLAGS[c] ? `${COUNTRY_FLAGS[c]} ${localizedName}` : localizedName}</option>;
-                            })}
-                          </select>
-                          <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none text-gray-500"><Icon name="chevronRight" size={14} style={{ transform: 'rotate(90deg)' }} /></div>
-                        </div>
+                        <CountrySelect
+                          value={formData.country}
+                          onChange={country => setFormData({ ...formData, country })}
+                          countries={sortedCountries}
+                          getLocalizedName={getLocalizedCountryName}
+                        />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.cf-label')}</label>
