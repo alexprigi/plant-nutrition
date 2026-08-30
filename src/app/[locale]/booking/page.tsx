@@ -166,6 +166,16 @@ const PrenotaPageContent = () => {
   const [phonePrefix, setPhonePrefix] = useState(defaultPhonePrefix);
   const [phoneNumber, setPhoneNumber] = useState('');
 
+  // Sync country/phone defaults when locale changes via client-side navigation
+  useEffect(() => {
+    const countryForLocale = locale === 'de' ? 'Germania' : locale === 'en' ? 'Regno Unito' : 'Italia';
+    const prefixForLocale = locale === 'de' ? '+49' : locale === 'en' ? '+44' : '+39';
+    const defaultCountries = ['Italia', 'Germania', 'Regno Unito'];
+    const defaultPrefixes = ['+39', '+49', '+44'];
+    setFormData(prev => defaultCountries.includes(prev.country) ? { ...prev, country: countryForLocale } : prev);
+    setPhonePrefix(prev => defaultPrefixes.includes(prev) ? prefixForLocale : prev);
+  }, [locale]);
+
   // Payment State
   const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'paypal' | 'bank_transfer'>('stripe');
   const [policyAccepted, setPolicyAccepted] = useState(false);
@@ -736,7 +746,7 @@ const PrenotaPageContent = () => {
                         <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.nazione-label')}</label>
                         <CountrySelect
                           value={formData.country}
-                          onChange={country => setFormData({ ...formData, country })}
+                          onChange={country => setFormData(prev => ({ ...prev, country }))}
                           countries={sortedCountries}
                           getLocalizedName={getLocalizedCountryName}
                         />
