@@ -2,68 +2,16 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import Card from './ui/Card';
 import Icon from './icons/Icon';
 
-interface Testimonial {
-  id: number;
-  name: string;
-  role: string;
-  image: string;
-  text: string;
-  rating: number;
-}
-
-const testimonials: Testimonial[] = [
-  {
-    id: 1,
-    name: "Giulia M.",
-    role: "Mamma in attesa",
-    image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23E6EFCC'/%3E%3Ctext x='50' y='50' font-size='40' font-weight='bold' text-anchor='middle' dy='.35em' fill='%234A5D23'%3EG%3C/text%3E%3C/svg%3E",
-    text: "Arianna mi ha seguita durante tutta la gravidanza con una dieta vegana bilanciata. Grazie ai suoi consigli, io e il mio bambino siamo in perfetta salute. Professionalità e umanità straordinarie!",
-    rating: 5
-  },
-  {
-    id: 2,
-    name: "Marco S.",
-    role: "Transizione vegana",
-    image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23E6EFCC'/%3E%3Ctext x='50' y='50' font-size='40' font-weight='bold' text-anchor='middle' dy='.35em' fill='%234A5D23'%3EM%3C/text%3E%3C/svg%3E",
-    text: "Dopo anni di alimentazione onnivora, volevo passare al veganesimo ma avevo mille dubbi. Arianna mi ha accompagnato passo dopo passo con un piano personalizzato. Ora mi sento più energico e in forma che mai!",
-    rating: 5
-  },
-  {
-    id: 3,
-    name: "Laura P.",
-    role: "Mamma di due bambini",
-    image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23E6EFCC'/%3E%3Ctext x='50' y='50' font-size='40' font-weight='bold' text-anchor='middle' dy='.35em' fill='%234A5D23'%3EL%3C/text%3E%3C/svg%3E",
-    text: "Ho seguito il percorso completo di 3 mesi per tutta la famiglia. I miei bambini ora mangiano di tutto e sono più sereni a tavola. Il supporto WhatsApp è stato fondamentale nei momenti di dubbio!",
-    rating: 5
-  },
-  {
-    id: 4,
-    name: "Sofia R.",
-    role: "Gravidanza vegana",
-    image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23E6EFCC'/%3E%3Ctext x='50' y='50' font-size='40' font-weight='bold' text-anchor='middle' dy='.35em' fill='%234A5D23'%3ES%3C/text%3E%3C/svg%3E",
-    text: "Incinta del mio secondo figlio, cercavo una nutrizionista che capisse le mie esigenze vegane. Arianna è stata perfetta: competente, disponibile e sempre pronta a rispondere ai miei dubbi. Consigliatissima!",
-    rating: 5
-  },
-  {
-    id: 5,
-    name: "Alessandro T.",
-    role: "Sportivo vegano",
-    image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23E6EFCC'/%3E%3Ctext x='50' y='50' font-size='40' font-weight='bold' text-anchor='middle' dy='.35em' fill='%234A5D23'%3EA%3C/text%3E%3C/svg%3E",
-    text: "Pratico CrossFit e temevo che una dieta vegana non mi desse abbastanza energia. Arianna mi ha dimostrato il contrario con un piano alimentare ottimizzato. Le mie performance sono migliorate!",
-    rating: 5
-  },
-  {
-    id: 6,
-    name: "Francesca B.",
-    role: "Neomamma vegana",
-    image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23E6EFCC'/%3E%3Ctext x='50' y='50' font-size='40' font-weight='bold' text-anchor='middle' dy='.35em' fill='%234A5D23'%3EF%3C/text%3E%3C/svg%3E",
-    text: "Ho conosciuto Arianna durante la gravidanza e continuo a seguirla per l'allattamento. La sua preparazione e il suo approccio empatico mi hanno dato sicurezza in un periodo delicato. Grazie di cuore!",
-    rating: 5
-  }
+const testimonialMeta = [
+  { id: 1, key: 't1', name: 'Emma M.',  initial: 'E' },
+  { id: 2, key: 't2', name: 'Alex S.',  initial: 'A' },
+  { id: 3, key: 't3', name: 'Anna P.',  initial: 'A' },
+  { id: 4, key: 't4', name: 'Elena R.', initial: 'E' },
+  { id: 5, key: 't5', name: 'Max T.',   initial: 'M' },
+  { id: 6, key: 't6', name: 'Clara B.', initial: 'C' },
 ];
 
 export default function Testimonials() {
@@ -72,18 +20,18 @@ export default function Testimonials() {
   const testimonialsPerPage = 3;
 
   const nextTestimonials = () => {
-    setCurrentIndex((prev) => 
-      (prev + testimonialsPerPage) >= testimonials.length ? 0 : prev + testimonialsPerPage
+    setCurrentIndex((prev) =>
+      (prev + testimonialsPerPage) >= testimonialMeta.length ? 0 : prev + testimonialsPerPage
     );
   };
 
   const prevTestimonials = () => {
-    setCurrentIndex((prev) => 
-      prev === 0 ? Math.max(0, testimonials.length - testimonialsPerPage) : prev - testimonialsPerPage
+    setCurrentIndex((prev) =>
+      prev === 0 ? Math.max(0, testimonialMeta.length - testimonialsPerPage) : prev - testimonialsPerPage
     );
   };
 
-  const visibleTestimonials = testimonials.slice(currentIndex, currentIndex + testimonialsPerPage);
+  const visibleTestimonials = testimonialMeta.slice(currentIndex, currentIndex + testimonialsPerPage);
 
   return (
     <section className="py-20 relative overflow-hidden" style={{ background: 'var(--bg-section-light)' }}>
@@ -137,44 +85,29 @@ export default function Testimonials() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {visibleTestimonials.map((testimonial, index) => (
-            <div 
+            <div
               key={testimonial.id}
               className="transform transition-all duration-300 hover:scale-105"
-              style={{
-                animation: `fadeIn 0.5s ease-in-out ${index * 0.1}s both`
-              }}
+              style={{ animation: `fadeIn 0.5s ease-in-out ${index * 0.1}s both` }}
             >
-              <Card 
-                className="p-8 h-full flex flex-col relative overflow-hidden" 
-                style={{ 
-                  background: 'white', 
+              <Card
+                className="p-8 h-full flex flex-col relative overflow-hidden"
+                style={{
+                  background: 'white',
                   borderRadius: '1.5rem',
                   boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
                   border: '2px solid var(--color-main-light)'
                 }}
               >
-                {/* Quote decoration */}
                 <div className="absolute top-6 right-6 text-6xl opacity-10" style={{ color: 'var(--color-main)' }}>
                   "
                 </div>
 
                 <div className="flex items-center mb-6 relative z-10">
                   <div className="relative w-20 h-20 mr-4 flex-shrink-0">
-                    <div className="absolute inset-0 rounded-full" style={{ 
-                      background: 'linear-gradient(135deg, var(--color-main-light) 0%, var(--color-main) 100%)',
-                      padding: '3px'
-                    }}>
-                      <div className="relative w-full h-full rounded-full overflow-hidden" style={{ background: 'white' }}>
-                        <Image
-                          src={testimonial.image}
-                          alt={testimonial.name}
-                          fill
-                          sizes="80px"
-                          className="object-cover"
-                          loading="lazy"
-                          quality={75}
-                        />
-                      </div>
+                    <div className="absolute inset-0 rounded-full flex items-center justify-center text-2xl font-bold"
+                      style={{ background: 'linear-gradient(135deg, var(--color-main-light) 0%, var(--color-main) 100%)', color: '#4A5D23' }}>
+                      {testimonial.initial}
                     </div>
                   </div>
                   <div>
@@ -182,19 +115,19 @@ export default function Testimonials() {
                       {testimonial.name}
                     </h4>
                     <p className="text-sm" style={{ color: 'var(--text-dark-green)' }}>
-                      {testimonial.role}
+                      {t(`${testimonial.key}-ruolo` as Parameters<typeof t>[0])}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
+                  {[...Array(5)].map((_, i) => (
                     <span key={i} className="text-yellow-500 text-2xl">★</span>
                   ))}
                 </div>
 
                 <p className="text-base italic leading-relaxed flex-grow" style={{ color: 'var(--text-dark-green)' }}>
-                  "{testimonial.text}"
+                  &ldquo;{t(`${testimonial.key}-testo` as Parameters<typeof t>[0])}&rdquo;
                 </p>
 
                 {/* Decorative bottom accent */}
@@ -225,7 +158,7 @@ export default function Testimonials() {
           </button>
 
           <div className="flex gap-3">
-            {Array.from({ length: Math.ceil(testimonials.length / testimonialsPerPage) }).map((_, index) => (
+            {Array.from({ length: Math.ceil(testimonialMeta.length / testimonialsPerPage) }).map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index * testimonialsPerPage)}
