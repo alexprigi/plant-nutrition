@@ -31,7 +31,13 @@
       "scorri": "Scorri",
       "immagine-precedente": "Immagine precedente",
       "immagine-successiva": "Immagine successiva",
-      "vai-immagine": "Vai all'immagine {numero}"
+      "vai-immagine": "Vai all'immagine {numero}",
+      "alt-slider-1": "Arianna Ciervo - Nutrizionista Vegana",
+      "alt-slider-2": "Alimentazione Vegana Colorata e Nutriente",
+      "alt-slider-3": "Consulenza Nutrizionale Personalizzata",
+      "alt-slider-4": "Ingredienti Vegetali Freschi",
+      "alt-slider-5": "Nutrizione in Gravidanza",
+      "alt-studio": "Studio professionale di Arianna con piante e setup per consulenze online"
     },
     "presentazione": {
       "titolo": "Ciao, sono Arianna",
@@ -98,6 +104,16 @@
     "social": {
       "titolo": "Seguimi sui Social",
       "testo": "Ricette, consigli e ispirazione quotidiana per il tuo percorso vegano"
+    },
+    "testimonianze": {
+      "titolo": "Storie di Successo",
+      "sottotitolo": "Scopri come altre mamme, famiglie e persone hanno trasformato la loro vita con la nutrizione vegetale",
+      "verificata": "Cliente Verificata",
+      "precedenti": "Testimonianze precedenti",
+      "successive": "Testimonianze successive",
+      "gruppo": "Vai al gruppo {n}",
+      "cta-testo": "Vuoi essere anche tu una storia di successo?",
+      "cta-bottone": "Prenota la Tua Consulenza Gratuita →"
     }
   },
   "chi-sono": {
@@ -118,7 +134,31 @@
       "titolo": "Formazione e Qualifiche",
       "qualifica-precedente": "Qualifica precedente",
       "qualifica-successiva": "Qualifica successiva",
-      "vai-slide": "Vai alla slide {numero}"
+      "vai-slide": "Vai alla slide {numero}",
+      "q1-titolo": "Nutrizionista Certificata",
+      "q1-org": "Ecodemy",
+      "q1-anno": "2024 - Generale",
+      "q2-titolo": "Nutrizione Materno-Infantile",
+      "q2-org": "Ecodemy",
+      "q2-anno": "2024 - Gravidanza, Allattamento, Svezzamento",
+      "q3-titolo": "Nutrizione Vegetale",
+      "q3-org": "Accademia della Nutrizione",
+      "q3-anno": "2025",
+      "q4-titolo": "Vegana da oltre 10 anni",
+      "q4-org": "Esperienza personale e pratica quotidiana",
+      "q4-anno": "Scelta etica e di vita",
+      "q5-titolo": "Mamma vegana",
+      "q5-org": "Crescita di un figlio vegano dalla gravidanza",
+      "q5-anno": "Esperienza diretta",
+      "q6-titolo": "Laurea in Lingue",
+      "q6-org": "Università di Torino",
+      "q6-anno": "2017",
+      "q7-titolo": "Formazione Continua",
+      "q7-org": "Aggiornamento costante su nutrizione",
+      "q7-anno": "Partecipazione a congressi",
+      "q8-titolo": "Educatrice",
+      "q8-org": "(Eventuale Ente/Scuola)",
+      "q8-anno": "Dal 2020 in Germania"
     },
     "approccio": {
       "titolo": "Il Mio Approccio",
@@ -174,7 +214,8 @@
       "allattamento-testo": "Nutrizione ottimale per la produzione e qualità del latte materno",
       "postparto-titolo": "Recupero Post-Parto",
       "postparto-testo": "Ricomposizione corporea gentile e recupero energetico",
-      "prenota": "Prenota Consulenza Gratuita"
+      "prenota": "Prenota Consulenza Gratuita",
+      "immagine-alt": "Arianna durante la gravidanza - Specializzazione nutrizione materno-infantile"
     },
     "altre-spec": {
       "titolo": "Altre Specializzazioni",
@@ -247,7 +288,11 @@
       "guida-titolo": "Guida Completa allo Svezzamento Vegano",
       "guida-testo": "Preferisci fare da sola? Acquista la guida completa in PDF: menu settimanali, tagli sicuri, gestione dei nutrienti critici e ricette. Tutto quello che ti serve per partire.",
       "guida-bottone": "Acquista Solo la Guida",
-      "nota-finale": "Ogni percorso è unico, come te. Non riceverai una dieta rigida, ma un progetto nutrizionale sostenibile, costruito sui tuoi gusti e sui ritmi della tua famiglia."
+      "nota-finale": "Ogni percorso è unico, come te. Non riceverai una dieta rigida, ma un progetto nutrizionale sostenibile, costruito sui tuoi gusti e sui ritmi della tua famiglia.",
+      "tag-gravidanza": "Gravidanza",
+      "tag-tutti": "Tutti",
+      "tag-sport": "Sport",
+      "tag-lifestyle": "Lifestyle"
     },
     "faq": {
       "titolo": "Domande Frequenti",
@@ -577,5 +622,13 @@
     "h5-testo": "Le prenotazioni con bonifico bancario devono essere confermate tramite pagamento entro 72 ore dalla prenotazione. Trascorso questo termine senza ricezione del pagamento, la prenotazione viene annullata automaticamente e lo slot reso disponibile.",
     "h6": "6. Contatti",
     "h6-testo": "Per qualsiasi necessità scrivi a info@vivaplantnutrition.com."
+  },
+  "booking-success": {
+    "error-testo": "Si è verificato un errore. Contattaci a info@vivaplantnutrition.com.",
+    "error-link": "Torna alla prenotazione",
+    "titolo": "Pagamento confermato!",
+    "testo": "La tua prenotazione è stata confermata. Riceverai a breve una email di conferma con tutti i dettagli.",
+    "spam": "Controlla anche la cartella spam se non la ricevi entro qualche minuto.",
+    "torna-home": "Torna alla home"
   }
 }

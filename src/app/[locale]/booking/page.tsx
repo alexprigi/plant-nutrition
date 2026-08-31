@@ -1141,12 +1141,13 @@ const PrenotaPageContent = () => {
 };
 
 const PrenotaPage = () => {
+  const t = useTranslations('prenota');
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-[#F5F7F5] flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-[var(--brand-title)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="font-bold text-gray-700">Loading...</p>
+          <p className="font-bold text-gray-700">{t('caricamento')}</p>
         </div>
       </div>
     }>

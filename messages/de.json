@@ -31,7 +31,13 @@
       "scorri": "Scrollen",
       "immagine-precedente": "Vorheriges Bild",
       "immagine-successiva": "Nächstes Bild",
-      "vai-immagine": "Zu Bild {numero} gehen"
+      "vai-immagine": "Zu Bild {numero} gehen",
+      "alt-slider-1": "Arianna Ciervo - Vegane Ernährungsberaterin",
+      "alt-slider-2": "Bunte und nahrhafte vegane Ernährung",
+      "alt-slider-3": "Personalisierte Ernährungsberatung",
+      "alt-slider-4": "Frische pflanzliche Zutaten",
+      "alt-slider-5": "Ernährung in der Schwangerschaft",
+      "alt-studio": "Ariannas professionelles Heimstudio mit Pflanzen und Setup für Online-Beratungen"
     },
     "presentazione": {
       "titolo": "Hallo, ich bin Arianna",
@@ -98,6 +104,16 @@
     "social": {
       "titolo": "Folge mir in den sozialen Medien",
       "testo": "Rezepte, Tipps und tägliche Inspiration für deine vegane Reise"
+    },
+    "testimonianze": {
+      "titolo": "Erfolgsgeschichten",
+      "sottotitolo": "Entdecke, wie andere Mütter, Familien und Menschen ihr Leben durch pflanzliche Ernährung verändert haben",
+      "verificata": "Verifizierte Kundin",
+      "precedenti": "Vorherige Bewertungen",
+      "successive": "Nächste Bewertungen",
+      "gruppo": "Zur Gruppe {n}",
+      "cta-testo": "Möchtest auch du eine Erfolgsgeschichte schreiben?",
+      "cta-bottone": "Kostenlose Beratung buchen →"
     }
   },
   "chi-sono": {
@@ -118,7 +134,31 @@
       "titolo": "Ausbildung und Qualifikationen",
       "qualifica-precedente": "Vorherige Qualifikation",
       "qualifica-successiva": "Nächste Qualifikation",
-      "vai-slide": "Zu Folie {numero} gehen"
+      "vai-slide": "Zu Folie {numero} gehen",
+      "q1-titolo": "Zertifizierte Ernährungsberaterin",
+      "q1-org": "Ecodemy",
+      "q1-anno": "2024 - Allgemein",
+      "q2-titolo": "Mutter-Kind-Ernährung",
+      "q2-org": "Ecodemy",
+      "q2-anno": "2024 - Schwangerschaft, Stillzeit, Beikost",
+      "q3-titolo": "Pflanzliche Ernährung",
+      "q3-org": "Accademia della Nutrizione",
+      "q3-anno": "2025",
+      "q4-titolo": "Vegan seit über 10 Jahren",
+      "q4-org": "Persönliche Erfahrung und tägliche Praxis",
+      "q4-anno": "Ethische Lebensweise",
+      "q5-titolo": "Vegane Mutter",
+      "q5-org": "Aufzucht eines veganen Kindes von der Schwangerschaft an",
+      "q5-anno": "Direkte Erfahrung",
+      "q6-titolo": "Studium der Sprachwissenschaften",
+      "q6-org": "Universität Turin",
+      "q6-anno": "2017",
+      "q7-titolo": "Kontinuierliche Weiterbildung",
+      "q7-org": "Ständige Aktualisierung in Ernährung",
+      "q7-anno": "Teilnahme an Kongressen",
+      "q8-titolo": "Erzieherin",
+      "q8-org": "(Eventuelle Einrichtung/Schule)",
+      "q8-anno": "Seit 2020 in Deutschland"
     },
     "approccio": {
       "titolo": "Mein Ansatz",
@@ -174,7 +214,8 @@
       "allattamento-testo": "Optimale Ernährung für die Produktion und Qualität der Muttermilch",
       "postparto-titolo": "Erholung nach der Geburt",
       "postparto-testo": "Sanfte Körperumformung und Energieerholung",
-      "prenota": "Kostenlose Beratung buchen"
+      "prenota": "Kostenlose Beratung buchen",
+      "immagine-alt": "Arianna während der Schwangerschaft - Spezialisierung auf Mutter-Kind-Ernährung"
     },
     "altre-spec": {
       "titolo": "Weitere Spezialisierungen",
@@ -247,7 +288,11 @@
       "guida-titolo": "Vollständiger Leitfaden zur veganen Beikost",
       "guida-testo": "Bevorzugst du es alleine? Kaufe den vollständigen PDF-Leitfaden: Wochenspeisepläne, sichere Schnittformen, Verwaltung kritischer Nährstoffe und Rezepte. Alles, was du brauchst, um zu starten.",
       "guida-bottone": "Nur den Leitfaden kaufen",
-      "nota-finale": "Jedes Programm ist einzigartig, wie du. Du erhältst keine starre Diät, sondern ein nachhaltiges Ernährungsprojekt, das auf deinen Geschmäcken und dem Rhythmus deiner Familie aufgebaut ist."
+      "nota-finale": "Jedes Programm ist einzigartig, wie du. Du erhältst keine starre Diät, sondern ein nachhaltiges Ernährungsprojekt, das auf deinen Geschmäcken und dem Rhythmus deiner Familie aufgebaut ist.",
+      "tag-gravidanza": "Schwangerschaft",
+      "tag-tutti": "Alle",
+      "tag-sport": "Sport",
+      "tag-lifestyle": "Lifestyle"
     },
     "faq": {
       "titolo": "Häufig gestellte Fragen",
@@ -577,5 +622,13 @@
     "h5-testo": "Buchungen per Banküberweisung müssen innerhalb von 72 Stunden nach der Buchung durch die Zahlung bestätigt werden. Wird innerhalb dieser Frist keine Zahlung eingehen, wird die Buchung automatisch storniert und der Termin wieder freigegeben.",
     "h6": "6. Kontakt",
     "h6-testo": "Bei Fragen schreibe an info@vivaplantnutrition.com."
+  },
+  "booking-success": {
+    "error-testo": "Es ist ein Fehler aufgetreten. Kontaktiere uns unter info@vivaplantnutrition.com.",
+    "error-link": "Zurück zur Buchung",
+    "titolo": "Zahlung bestätigt!",
+    "testo": "Deine Buchung wurde bestätigt. Du erhältst in Kürze eine Bestätigungsmail mit allen Details.",
+    "spam": "Überprüfe auch deinen Spam-Ordner, falls du sie nicht innerhalb weniger Minuten erhältst.",
+    "torna-home": "Zurück zur Startseite"
   }
 }

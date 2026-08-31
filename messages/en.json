@@ -31,7 +31,13 @@
       "scorri": "Scroll",
       "immagine-precedente": "Previous image",
       "immagine-successiva": "Next image",
-      "vai-immagine": "Go to image {numero}"
+      "vai-immagine": "Go to image {numero}",
+      "alt-slider-1": "Arianna Ciervo - Vegan Nutritionist",
+      "alt-slider-2": "Colourful and Nutritious Vegan Food",
+      "alt-slider-3": "Personalised Nutritional Consultation",
+      "alt-slider-4": "Fresh Plant-Based Ingredients",
+      "alt-slider-5": "Nutrition During Pregnancy",
+      "alt-studio": "Arianna's professional home studio with plants and setup for online consultations"
     },
     "presentazione": {
       "titolo": "Hello, I'm Arianna",
@@ -98,6 +104,16 @@
     "social": {
       "titolo": "Follow Me on Social Media",
       "testo": "Recipes, tips and daily inspiration for your vegan journey"
+    },
+    "testimonianze": {
+      "titolo": "Success Stories",
+      "sottotitolo": "Discover how other mothers, families and people have transformed their lives through plant-based nutrition",
+      "verificata": "Verified Client",
+      "precedenti": "Previous testimonials",
+      "successive": "Next testimonials",
+      "gruppo": "Go to group {n}",
+      "cta-testo": "Do you want to be a success story too?",
+      "cta-bottone": "Book Your Free Consultation →"
     }
   },
   "chi-sono": {
@@ -118,7 +134,31 @@
       "titolo": "Education and Qualifications",
       "qualifica-precedente": "Previous qualification",
       "qualifica-successiva": "Next qualification",
-      "vai-slide": "Go to slide {numero}"
+      "vai-slide": "Go to slide {numero}",
+      "q1-titolo": "Certified Nutritionist",
+      "q1-org": "Ecodemy",
+      "q1-anno": "2024 - General",
+      "q2-titolo": "Maternal and Infant Nutrition",
+      "q2-org": "Ecodemy",
+      "q2-anno": "2024 - Pregnancy, Breastfeeding, Weaning",
+      "q3-titolo": "Plant-Based Nutrition",
+      "q3-org": "Accademia della Nutrizione",
+      "q3-anno": "2025",
+      "q4-titolo": "Vegan for over 10 years",
+      "q4-org": "Personal experience and daily practice",
+      "q4-anno": "Ethical lifestyle",
+      "q5-titolo": "Vegan mother",
+      "q5-org": "Raising a vegan child from pregnancy",
+      "q5-anno": "Direct experience",
+      "q6-titolo": "Degree in Languages",
+      "q6-org": "University of Turin",
+      "q6-anno": "2017",
+      "q7-titolo": "Continuous Education",
+      "q7-org": "Constant updates in nutrition",
+      "q7-anno": "Conference participation",
+      "q8-titolo": "Educator",
+      "q8-org": "(Educational Institution/School)",
+      "q8-anno": "Since 2020 in Germany"
     },
     "approccio": {
       "titolo": "My Approach",
@@ -174,7 +214,8 @@
       "allattamento-testo": "Optimal nutrition for the production and quality of breast milk",
       "postparto-titolo": "Postpartum Recovery",
       "postparto-testo": "Gentle body recomposition and energy recovery",
-      "prenota": "Book Free Consultation"
+      "prenota": "Book Free Consultation",
+      "immagine-alt": "Arianna during pregnancy - Specialisation in maternal and infant nutrition"
     },
     "altre-spec": {
       "titolo": "Other Specializations",
@@ -247,7 +288,11 @@
       "guida-titolo": "Complete Guide to Vegan Weaning",
       "guida-testo": "Prefer to do it on your own? Buy the complete PDF guide: weekly menus, safe cutting techniques, management of critical nutrients and recipes. Everything you need to get started.",
       "guida-bottone": "Buy the Guide Only",
-      "nota-finale": "Every journey is unique, like you. You won't receive a rigid diet, but a sustainable nutritional project built on your tastes and the rhythms of your family."
+      "nota-finale": "Every journey is unique, like you. You won't receive a rigid diet, but a sustainable nutritional project built on your tastes and the rhythms of your family.",
+      "tag-gravidanza": "Pregnancy",
+      "tag-tutti": "All",
+      "tag-sport": "Sport",
+      "tag-lifestyle": "Lifestyle"
     },
     "faq": {
       "titolo": "Frequently Asked Questions",
@@ -577,5 +622,13 @@
     "h5-testo": "Bookings paid by bank transfer must be confirmed by payment within 72 hours of booking. After this deadline, if no payment is received, the booking is automatically cancelled and the slot is made available again.",
     "h6": "6. Contact",
     "h6-testo": "For any queries, write to info@vivaplantnutrition.com."
+  },
+  "booking-success": {
+    "error-testo": "An error occurred. Contact us at info@vivaplantnutrition.com.",
+    "error-link": "Back to booking",
+    "titolo": "Payment confirmed!",
+    "testo": "Your booking has been confirmed. You will shortly receive a confirmation email with all the details.",
+    "spam": "Also check your spam folder if you don't receive it within a few minutes.",
+    "torna-home": "Back to home"
   }
 }

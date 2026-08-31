@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Card from './ui/Card';
 import Icon from './icons/Icon';
@@ -66,6 +67,7 @@ const testimonials: Testimonial[] = [
 ];
 
 export default function Testimonials() {
+  const t = useTranslations('home.testimonianze');
   const [currentIndex, setCurrentIndex] = useState(0);
   const testimonialsPerPage = 3;
 
@@ -126,10 +128,10 @@ export default function Testimonials() {
             <Icon name="heart" size={64} animated={true} />
           </div>
           <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ color: 'var(--brand-title)' }}>
-            Storie di Successo
+            {t('titolo')}
           </h2>
           <p className="text-lg max-w-3xl mx-auto" style={{ color: 'var(--text-dark-green)' }}>
-            Scopri come altre mamme, famiglie e persone hanno trasformato la loro vita con la nutrizione vegetale
+            {t('sottotitolo')}
           </p>
         </div>
 
@@ -198,7 +200,7 @@ export default function Testimonials() {
                 {/* Decorative bottom accent */}
                 <div className="mt-6 pt-4 border-t-2" style={{ borderColor: 'var(--color-main-light)' }}>
                   <div className="flex items-center justify-center gap-2" style={{ color: 'var(--color-main)' }}>
-                    <span className="text-sm font-semibold">Cliente Verificata</span>
+                    <span className="text-sm font-semibold">{t('verificata')}</span>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                       <path d="M8 0L9.8 5.5L16 6.5L11.5 10.5L13 16L8 13L3 16L4.5 10.5L0 6.5L6.2 5.5L8 0Z"/>
                     </svg>
@@ -215,7 +217,7 @@ export default function Testimonials() {
             onClick={prevTestimonials}
             className="p-4 rounded-full transition-all hover:scale-110 shadow-lg"
             style={{ background: 'var(--brand-title)', color: 'white' }}
-            aria-label="Testimonianze precedenti"
+            aria-label={t('precedenti')}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
               <path d="M15 18l-6-6 6-6"/>
@@ -233,7 +235,7 @@ export default function Testimonials() {
                   width: currentIndex === index * testimonialsPerPage ? '40px' : '12px',
                   height: '12px'
                 }}
-                aria-label={`Vai al gruppo ${index + 1}`}
+                aria-label={t('gruppo', { n: index + 1 })}
               />
             ))}
           </div>
@@ -242,7 +244,7 @@ export default function Testimonials() {
             onClick={nextTestimonials}
             className="p-4 rounded-full transition-all hover:scale-110 shadow-lg"
             style={{ background: 'var(--brand-title)', color: 'white' }}
-            aria-label="Testimonianze successive"
+            aria-label={t('successive')}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
               <path d="M9 18l6-6-6-6"/>
@@ -259,8 +261,7 @@ export default function Testimonials() {
         >
           <div className="relative z-10">
             <p className="text-xl sm:text-2xl font-semibold mb-6 flex items-center justify-center gap-2 px-2" style={{ color: 'var(--brand-title)' }}>
-              <span>Vuoi essere anche tu una storia di successo?</span>
-              {/* <Icon name="sparkles" size={28} animated={true} /> */}
+              <span>{t('cta-testo')}</span>
             </p>
             <a
               href="/booking"
@@ -268,7 +269,7 @@ export default function Testimonials() {
               style={{ background: 'var(--brand-title)', color: 'white' }}
             >
               <span className="text-center leading-tight">
-                Prenota la Tua<br className="sm:hidden" /> Consulenza Gratuita →
+                {t('cta-bottone')}
               </span>
             </a>
           </div>

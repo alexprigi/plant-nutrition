@@ -11,15 +11,15 @@ export default function ChiSono() {
   const t = useTranslations('chi-sono');
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const allQualifications: Array<{ icon: IconName; titleKey: string; org: string; year: string; variant: 'mint' | 'blue' | 'peach' | 'pink' | 'lavender' | 'lemon' }> = [
-    { icon: 'certificate', titleKey: 'Nutrizionista Certificata', org: 'Ecodemy', year: '2024 - Generale', variant: 'mint' },
-    { icon: 'pregnant', titleKey: 'Nutrizione Materno-Infantile', org: 'Ecodemy', year: '2024 - Gravidanza, Allattamento, Svezzamento', variant: 'pink' },
-    { icon: 'carrot', titleKey: 'Nutrizione Vegetale', org: 'Accademia della Nutrizione', year: '2025', variant: 'peach' },
-    { icon: 'medal', titleKey: 'Vegana da oltre 10 anni', org: 'Esperienza personale e pratica quotidiana', year: 'Scelta etica e di vita', variant: 'lemon' },
-    { icon: 'heartMom', titleKey: 'Mamma vegana', org: 'Crescita di un figlio vegano dalla gravidanza', year: 'Esperienza diretta', variant: 'pink' },
-    { icon: 'speech', titleKey: 'Laurea in Lingue', org: 'Università di Torino', year: '2017', variant: 'blue' },
-    { icon: 'gradCap', titleKey: 'Formazione Continua', org: 'Aggiornamento costante su nutrizione', year: 'Partecipazione a congressi', variant: 'lemon' },
-    { icon: 'puzzle', titleKey: 'Educatrice', org: '(Eventuale Ente/Scuola)', year: 'Dal 2020 in Germania', variant: 'lavender' },
+  const allQualifications: Array<{ icon: IconName; key: string; variant: 'mint' | 'blue' | 'peach' | 'pink' | 'lavender' | 'lemon' }> = [
+    { icon: 'certificate', key: 'q1', variant: 'mint' },
+    { icon: 'pregnant', key: 'q2', variant: 'pink' },
+    { icon: 'carrot', key: 'q3', variant: 'peach' },
+    { icon: 'medal', key: 'q4', variant: 'lemon' },
+    { icon: 'heartMom', key: 'q5', variant: 'pink' },
+    { icon: 'speech', key: 'q6', variant: 'blue' },
+    { icon: 'gradCap', key: 'q7', variant: 'lemon' },
+    { icon: 'puzzle', key: 'q8', variant: 'lavender' },
   ];
 
   const itemsPerSlide = 4;
@@ -107,9 +107,9 @@ export default function ChiSono() {
                   style={{ background: 'var(--bg-card-warm)', color: 'var(--foreground)', borderRadius: '1.5rem', boxShadow: '0 8px 32px 0 rgba(0,0,0,0.12)', borderTop: '6px solid var(--bg-card-border)', transform: index % 3 === 0 ? 'rotate(-1deg)' : index % 3 === 1 ? 'rotate(0.5deg)' : 'rotate(-0.5deg)', animation: 'fadeIn 0.5s ease-in-out' }}
                 >
                   <Icon name={qual.icon} size={48} variant={qual.variant} />
-                  <h3 className="text-xl font-semibold mb-4 mt-4" style={{ color: 'var(--brand-title)' }}>{qual.titleKey}</h3>
-                  <p className="mb-2" style={{ color: 'var(--text-dark-green)' }}>{qual.org}</p>
-                  <p className="text-sm" style={{ color: 'var(--text-dark-green)' }}>{qual.year}</p>
+                  <h3 className="text-xl font-semibold mb-4 mt-4" style={{ color: 'var(--brand-title)' }}>{t(`formazione.${qual.key}-titolo`)}</h3>
+                  <p className="mb-2" style={{ color: 'var(--text-dark-green)' }}>{t(`formazione.${qual.key}-org`)}</p>
+                  <p className="text-sm" style={{ color: 'var(--text-dark-green)' }}>{t(`formazione.${qual.key}-anno`)}</p>
                 </Card>
               ))}
             </div>

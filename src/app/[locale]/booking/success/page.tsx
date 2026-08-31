@@ -2,20 +2,20 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 
 export default function BookingSuccessPage() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
+  const t = useTranslations('booking-success')
 
   useEffect(() => {
     if (!sessionId) {
       setStatus('error')
       return
     }
-    // Il webhook ha già confermato il pagamento lato server.
-    // Qui mostriamo solo la conferma visiva.
     setStatus('success')
   }, [sessionId])
 
@@ -31,8 +31,8 @@ export default function BookingSuccessPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <p className="text-gray-600 mb-6">Si è verificato un errore. Contattaci a info@vivaplantnutrition.com.</p>
-          <Link href="/booking" className="text-[var(--brand-title)] underline">Torna alla prenotazione</Link>
+          <p className="text-gray-600 mb-6">{t('error-testo')}</p>
+          <Link href="/booking" className="text-[var(--brand-title)] underline">{t('error-link')}</Link>
         </div>
       </div>
     )
@@ -47,19 +47,15 @@ export default function BookingSuccessPage() {
           </svg>
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-3">Pagamento confermato!</h1>
-        <p className="text-gray-600 mb-2">
-          La tua prenotazione è stata confermata. Riceverai a breve una email di conferma con tutti i dettagli.
-        </p>
-        <p className="text-sm text-gray-400 mb-8">
-          Controlla anche la cartella spam se non la ricevi entro qualche minuto.
-        </p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-3">{t('titolo')}</h1>
+        <p className="text-gray-600 mb-2">{t('testo')}</p>
+        <p className="text-sm text-gray-400 mb-8">{t('spam')}</p>
 
         <Link
           href="/"
           className="inline-block bg-[var(--brand-title)] text-white px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity"
         >
-          Torna alla home
+          {t('torna-home')}
         </Link>
       </div>
     </div>

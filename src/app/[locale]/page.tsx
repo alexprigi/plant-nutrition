@@ -17,26 +17,11 @@ export default function Home() {
   const [loadedSlides, setLoadedSlides] = useState<Set<number>>(new Set([0]));
 
   const heroImages = [
-    {
-      src: '/images/hero/nutritionist-hero.webp',
-      alt: 'Arianna Ciervo - Nutrizionista Vegana'
-    },
-    {
-      src: '/images/hero/vegan-food-colorful.webp',
-      alt: 'Alimentazione Vegana Colorata e Nutriente'
-    },
-    {
-      src: '/images/hero/arianna-consultation.webp',
-      alt: 'Consulenza Nutrizionale Personalizzata'
-    },
-    {
-      src: '/images/hero/plant-based-ingredients.webp',
-      alt: 'Ingredienti Vegetali Freschi'
-    },
-    {
-      src: '/images/hero/arianna-pregnant.webp',
-      alt: 'Nutrizione in Gravidanza'
-    }
+    { src: '/images/hero/nutritionist-hero.webp', altKey: 'hero.alt-slider-1' },
+    { src: '/images/hero/vegan-food-colorful.webp', altKey: 'hero.alt-slider-2' },
+    { src: '/images/hero/arianna-consultation.webp', altKey: 'hero.alt-slider-3' },
+    { src: '/images/hero/plant-based-ingredients.webp', altKey: 'hero.alt-slider-4' },
+    { src: '/images/hero/arianna-pregnant.webp', altKey: 'hero.alt-slider-5' },
   ];
 
   useEffect(() => {
@@ -77,7 +62,7 @@ export default function Home() {
               >
                 <Image
                   src={image.src}
-                  alt={image.alt}
+                  alt={t(image.altKey as Parameters<typeof t>[0])}
                   fill
                   className="object-cover"
                   style={{ objectPosition: index === 0 ? '65% center' : 'center center' }}
@@ -222,7 +207,7 @@ export default function Home() {
                   <div className="image-box-hover w-full h-[500px] rounded-2xl shadow-xl relative overflow-hidden">
                     <Image
                       src="/images/studio-arianna.webp"
-                      alt="Studio professionale di Arianna con piante e setup per consulenze online"
+                      alt={t('hero.alt-studio')}
                       fill
                       className="object-cover"
                       style={{ objectPosition: '70% center' }}
