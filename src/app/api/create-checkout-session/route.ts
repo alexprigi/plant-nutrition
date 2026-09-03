@@ -21,7 +21,7 @@ function mapCommercialType(commercialType: CreateBookingDTO['commercialType']): 
     case 'free-consultation':
       return { subType: 'FREE_CONSULTATION', apptType: 'FREE_CONSULTATION', totalSessions: 1, price: 0, label: 'Colloquio Gratuito' }
     case 'follow-up':
-      return { subType: 'SINGLE_SESSION', apptType: 'FOLLOW_UP', totalSessions: 1, price: 0.50, label: 'Consulenza Follow-up' }
+      return { subType: 'SINGLE_SESSION', apptType: 'FOLLOW_UP', totalSessions: 1, price: 50, label: 'Consulenza Follow-up' }
     case 'first-visit':
       return { subType: 'SINGLE_SESSION', apptType: 'FIRST_VISIT', totalSessions: 1, price: 85, label: 'Prima Visita Nutrizionale' }
     case 'plan-3-months':
