@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from 'next-intl';
 
 import Button from '@/components/ui/Button';
 import CountrySelect from '@/components/ui/CountrySelect';
+import PhonePrefixSelect from '@/components/ui/PhonePrefixSelect';
 import { createFullBooking, checkEligibility, AppointmentStatus } from '@/lib/bookingService';
 import type { PaymentMethod } from '@/lib/bookingService';
 import { COUNTRIES, COUNTRY_FLAGS, COUNTRY_PREFIXES } from '@/lib/constants';
@@ -128,6 +129,7 @@ const PrenotaPageContent = () => {
   // --- FORM DATA ---
   const defaultCountry = locale === 'de' ? 'Germania' : locale === 'en' ? 'Regno Unito' : 'Italia';
   const defaultPhonePrefix = locale === 'de' ? '+49' : locale === 'en' ? '+44' : '+39';
+  const defaultPhonePrefixName = locale === 'de' ? 'Germania' : locale === 'en' ? 'Regno Unito' : 'Italia';
 
   const [displayNames, setDisplayNames] = useState<Intl.DisplayNames | null>(null);
   useEffect(() => {
@@ -164,6 +166,7 @@ const PrenotaPageContent = () => {
     address: '', civicNumber: '', city: '', zipCode: '', country: defaultCountry, fiscalCode: ''
   });
   const [phonePrefix, setPhonePrefix] = useState(defaultPhonePrefix);
+  const [phonePrefixName, setPhonePrefixName] = useState(defaultPhonePrefixName);
   const [phoneNumber, setPhoneNumber] = useState('');
 
   // Sync country/phone defaults when locale changes via client-side navigation
@@ -174,6 +177,7 @@ const PrenotaPageContent = () => {
     const defaultPrefixes = ['+39', '+49', '+44'];
     setFormData(prev => defaultCountries.includes(prev.country) ? { ...prev, country: countryForLocale } : prev);
     setPhonePrefix(prev => defaultPrefixes.includes(prev) ? prefixForLocale : prev);
+    setPhonePrefixName(prev => defaultCountries.includes(prev) ? countryForLocale : prev);
   }, [locale]);
 
   // Payment State
@@ -332,11 +336,20 @@ const PrenotaPageContent = () => {
       setIsProcessing(true);
 
       if (selectedService === 'free-consultation' && formData.email) {
-        const check = await checkEligibility(formData.email);
-        if (!check.eligible) {
-          setEligibilityError(t('step1.colloquio-gia-usato-testo'));
+        try {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 8000);
+          const check = await checkEligibility(formData.email, controller.signal);
+          clearTimeout(timeout);
+          if (check.eligible === false) {
+            setEligibilityError(t('step1.colloquio-gia-usato-testo'));
+            setIsProcessing(false);
+            setStep(1);
+            return;
+          }
+        } catch {
+          setErrors({ general: t('step2.errore-server') });
           setIsProcessing(false);
-          setStep(1);
           return;
         }
       }
@@ -375,6 +388,7 @@ const PrenotaPageContent = () => {
 
   const handleFinalBooking = async () => {
     if (!selectedDate || !selectedTime) return;
+    setErrors({});
     setIsProcessing(true);
 
     const sanitizedNotes = formData.notes
@@ -392,6 +406,7 @@ const PrenotaPageContent = () => {
       isPaid: false,
       status: 'pending' as AppointmentStatus,
       durationMinutes: activeService?.durationMinutes ?? 60,
+      locale,
     };
 
     // Servizio gratuito: booking diretto senza pagamento
@@ -421,6 +436,7 @@ const PrenotaPageContent = () => {
         window.scrollTo(0, 0);
       } catch (error) {
         console.error('Booking error:', error);
+        setErrors({ general: t('step2.errore-server') });
         setIsProcessing(false);
       }
       return;
@@ -453,6 +469,7 @@ const PrenotaPageContent = () => {
         window.scrollTo(0, 0);
       } catch (error) {
         console.error('Booking error:', error);
+        setErrors({ general: t('step2.errore-server') });
         setIsProcessing(false);
       }
       return;
@@ -470,6 +487,7 @@ const PrenotaPageContent = () => {
       window.location.href = url;
     } catch (error) {
       console.error('Stripe checkout error:', error);
+      setErrors({ general: t('step2.errore-server') });
       setIsProcessing(false);
     }
   };
@@ -541,7 +559,7 @@ const PrenotaPageContent = () => {
               <p className="text-amber-700 mt-2 text-xs">{t('successo.bonifico-scadenza')}</p>
             </div>
           )}
-          <Button href="/" className="w-full bg-[var(--brand-title)] text-white">{t('successo.torna-home')}</Button>
+          <Button href={`/${locale}`} className="w-full bg-[var(--brand-title)] text-white">{t('successo.torna-home')}</Button>
         </div>
       </div>
     );
@@ -699,14 +717,15 @@ const PrenotaPageContent = () => {
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1 ml-1">{t('step2.telefono-label')}</label>
                   <div className="flex items-center gap-2">
-                    <div className="relative shrink-0">
-                      <select value={phonePrefix} onChange={(e) => setPhonePrefix(e.target.value)} className={`h-[50px] px-3 pr-8 bg-white text-gray-900 border rounded-xl outline-none appearance-none cursor-pointer text-sm min-w-[5.5rem] w-auto ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}>
-                        {COUNTRY_PREFIXES.map(country => (
-                          <option key={country.name} value={country.code}>{country.flag} {country.code}</option>
-                        ))}
-                      </select>
-                      <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none text-gray-500"><Icon name="chevronRight" size={14} style={{ transform: 'rotate(90deg)' }} /></div>
-                    </div>
+                    <PhonePrefixSelect
+                      value={phonePrefixName}
+                      onChange={(name) => {
+                        setPhonePrefixName(name);
+                        const code = COUNTRY_PREFIXES.find(c => c.name === name)?.code ?? '';
+                        setPhonePrefix(code);
+                      }}
+                      hasError={!!errors.phone}
+                    />
                     <input type="tel" name="tel-national" autoComplete="tel-national" inputMode="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value.replace(/[^0-9+\s\-().]/g, ''))} className={`flex-1 min-w-0 h-[50px] px-3 bg-white text-gray-900 border rounded-xl outline-none focus:border-[var(--brand-title)] ${errors.phone ? 'border-red-500' : 'border-gray-300'}`} placeholder={t('step2.telefono-placeholder')} />
                   </div>
                   {errors.phone && <p className="text-red-500 text-xs mt-1 ml-1">{errors.phone}</p>}
@@ -761,10 +780,6 @@ const PrenotaPageContent = () => {
                 </div>
               </div>
 
-                {errors.general && (
-                  <p className="text-red-500 text-sm text-center mt-4">{errors.general}</p>
-                )}
-
                 {/* GDPR checkbox */}
                 <div className="mt-6 pt-5 border-t border-gray-100">
                   <label className="flex items-start gap-3 cursor-pointer">
@@ -783,6 +798,13 @@ const PrenotaPageContent = () => {
                     </span>
                   </label>
                 </div>
+
+                {errors.general && (
+                  <div className="mt-5 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3">
+                    <Icon name="alert" size={20} className="text-red-600 shrink-0" />
+                    <p className="text-sm text-red-700 font-medium">{errors.general}</p>
+                  </div>
+                )}
 
                 {/* Desktop Buttons */}
                 <div className="hidden md:flex justify-between mt-6 pt-4 border-t border-gray-100">
@@ -987,6 +1009,13 @@ const PrenotaPageContent = () => {
                     {t('step4.sottotitolo-gratuito', { servizio: activeService?.title ?? '' })}
                   </p>
                 </>
+              )}
+
+              {errors.general && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3">
+                  <Icon name="alert" size={20} className="text-red-600 mt-0.5 shrink-0" />
+                  <p className="text-sm text-red-700 font-medium">{errors.general}</p>
+                </div>
               )}
 
               {/* PAYMENT OPTIONS */}

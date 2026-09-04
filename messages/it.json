@@ -429,6 +429,7 @@
       "gdpr-consenso": ". Acconsento al trattamento dei miei dati personali per la gestione dell'appuntamento.",
       "validazione": "Validazione...",
       "errore-validazione": "Errore durante la validazione. Riprova.",
+      "errore-server": "Impossibile raggiungere il server. Controlla la connessione e riprova.",
       "continua": "Continua",
       "indietro": "Indietro"
     },

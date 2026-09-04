@@ -26,6 +26,7 @@ export default function CountrySelect({
   const autofillNameRef = useRef<HTMLInputElement>(null);
   const autofillISORef = useRef<HTMLInputElement>(null);
   const onChangeRef = useRef(onChange);
+  const queryResetRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => { onChangeRef.current = onChange; });
 
   const reverseMap = useMemo(() => {
@@ -113,10 +114,6 @@ export default function CountrySelect({
     };
   }, [reverseMap]);
 
-  const filtered = query.trim()
-    ? countries.filter(c => getLocalizedName(c).toLowerCase().startsWith(query.toLowerCase()))
-    : countries;
-
   const selectedFlag = value ? COUNTRY_FLAGS[value] ?? '' : '';
   const selectedName = value ? getLocalizedName(value) : '';
 
@@ -148,7 +145,14 @@ export default function CountrySelect({
     triggerRef.current.focus();
   };
 
-  useEffect(() => { setHighlighted(0); }, [query]);
+  useEffect(() => {
+    if (!query.trim()) return;
+    const idx = countries.findIndex(c =>
+      getLocalizedName(c).toLowerCase().startsWith(query.toLowerCase())
+    );
+    if (idx >= 0) setHighlighted(idx);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
   useEffect(() => {
     if (!open) return;
@@ -168,6 +172,7 @@ export default function CountrySelect({
       if (listRef.current?.parentElement?.contains(e.target as Node)) return;
       setOpen(false);
       setQuery('');
+      if (queryResetRef.current) clearTimeout(queryResetRef.current);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -201,12 +206,16 @@ export default function CountrySelect({
       }
       return;
     }
-    if (e.key === 'Escape') { e.preventDefault(); setOpen(false); setQuery(''); }
-    else if (e.key === 'ArrowDown') { e.preventDefault(); setHighlighted(h => Math.min(h + 1, filtered.length - 1)); }
+    const scheduleReset = () => {
+      if (queryResetRef.current) clearTimeout(queryResetRef.current);
+      queryResetRef.current = setTimeout(() => setQuery(''), 1000);
+    };
+    if (e.key === 'Escape') { e.preventDefault(); setOpen(false); setQuery(''); if (queryResetRef.current) clearTimeout(queryResetRef.current); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); setHighlighted(h => Math.min(h + 1, countries.length - 1)); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setHighlighted(h => Math.max(h - 1, 0)); }
-    else if (e.key === 'Enter') { e.preventDefault(); if (filtered[highlighted]) select(filtered[highlighted]); }
-    else if (e.key === 'Backspace') { e.preventDefault(); setQuery(q => q.slice(0, -1)); }
-    else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) { e.preventDefault(); setQuery(q => q + e.key); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (countries[highlighted]) select(countries[highlighted]); }
+    else if (e.key === 'Backspace') { e.preventDefault(); setQuery(q => q.slice(0, -1)); scheduleReset(); }
+    else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) { e.preventDefault(); setQuery(q => q + e.key); scheduleReset(); }
   };
 
   const hiddenStyle: React.CSSProperties = {
@@ -232,19 +241,10 @@ export default function CountrySelect({
         className={`w-full h-[50px] px-3 bg-white border rounded-xl flex items-center gap-2 cursor-pointer select-none outline-none
           ${hasError ? 'border-red-500' : open ? 'border-[var(--brand-title)]' : 'border-gray-300 focus:border-[var(--brand-title)]'}`}
       >
-        {!query && selectedFlag && <span className="text-base shrink-0">{selectedFlag}</span>}
-        <span className={`flex-1 min-w-0 truncate text-sm ${query || selectedName ? 'text-gray-900' : 'text-gray-400'}`}>
-          {query || selectedName || placeholder}
+        {selectedFlag && <span className="text-base shrink-0">{selectedFlag}</span>}
+        <span className={`flex-1 min-w-0 truncate text-sm ${selectedName ? 'text-gray-900' : 'text-gray-400'}`}>
+          {selectedName || placeholder}
         </span>
-        {query && (
-          <button
-            type="button"
-            onMouseDown={e => { e.preventDefault(); e.stopPropagation(); setQuery(''); }}
-            className="text-gray-400 hover:text-gray-600 shrink-0"
-          >
-            <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        )}
         <Icon
           name="chevronRight"
           size={14}
@@ -258,10 +258,7 @@ export default function CountrySelect({
       {open && typeof document !== 'undefined' && createPortal(
         <div style={dropdownStyle} className="bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
           <ul ref={listRef} role="listbox" className="max-h-52 overflow-y-auto py-1">
-            {filtered.length === 0 && (
-              <li className="px-3 py-2 text-sm text-gray-400 text-center">—</li>
-            )}
-            {filtered.map((c, i) => (
+            {countries.map((c, i) => (
               <li
                 key={c}
                 role="option"
@@ -269,7 +266,7 @@ export default function CountrySelect({
                 onMouseDown={() => select(c)}
                 onMouseEnter={() => setHighlighted(i)}
                 className={`px-3 py-2 text-sm cursor-pointer flex items-center gap-2
-                  ${i === highlighted ? 'bg-[var(--brand-title)]/10 text-[var(--brand-title)]' : 'text-gray-800 hover:bg-gray-50'}`}
+                  ${i === highlighted ? 'bg-[var(--brand-title)]/10 text-[var(--brand-title)]' : 'text-gray-1000 hover:bg-gray-50'}`}
               >
                 {COUNTRY_FLAGS[c] && <span>{COUNTRY_FLAGS[c]}</span>}
                 <span>{getLocalizedName(c)}</span>

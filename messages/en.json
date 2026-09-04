@@ -429,6 +429,7 @@
       "gdpr-consenso": ". I consent to the processing of my personal data for appointment management.",
       "validazione": "Validating...",
       "errore-validazione": "Validation error. Please try again.",
+      "errore-server": "Unable to reach the server. Please check your connection and try again.",
       "continua": "Continue",
       "indietro": "Back"
     },

@@ -143,8 +143,8 @@ export async function POST(request: NextRequest) {
         clientPhone: data.phone,
         notes: data.notes?.substring(0, 500) ?? '',
       },
-      success_url: `${appUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}/booking?cancelled=true`,
+      success_url: `${appUrl}/${data.locale ?? 'it'}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/${data.locale ?? 'it'}/booking?cancelled=true`,
       expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // 30 minuti
     })
 

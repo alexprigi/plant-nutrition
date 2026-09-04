@@ -429,6 +429,7 @@
       "gdpr-consenso": "gelesen und akzeptiere sie. Ich stimme der Verarbeitung meiner personenbezogenen Daten für die Terminverwaltung zu.",
       "validazione": "Validierung...",
       "errore-validazione": "Validierungsfehler. Bitte versuche es erneut.",
+      "errore-server": "Server nicht erreichbar. Bitte überprüfe deine Verbindung und versuche es erneut.",
       "continua": "Weiter",
       "indietro": "Zurück"
     },

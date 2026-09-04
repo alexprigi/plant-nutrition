@@ -99,15 +99,19 @@ const Header = () => {
           {/* Desktop Right: CTA + Selettore Lingua */}
           <div className="hidden md:flex items-center gap-3">
             {/* Selettore lingua */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               {VISIBLE_LOCALES.map((loc) => (
                 <button
                   key={loc}
                   onClick={() => switchLocale(loc)}
-                  className={`text-xl px-1 py-0.5 rounded transition-all duration-150 ${locale === loc ? 'opacity-100 scale-110' : 'opacity-40 hover:opacity-70'}`}
-                  title={loc.toUpperCase()}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${locale === loc ? 'shadow-sm' : 'opacity-70 hover:opacity-90'}`}
+                  style={locale === loc
+                    ? { background: 'var(--brand-title)', color: 'white' }
+                    : { color: 'var(--brand-title)', background: 'var(--bg-section-light)', border: '1.5px solid var(--color-main-light)' }
+                  }
                 >
-                  {LocaleFlag[loc]}
+                  <span className="text-base">{LocaleFlag[loc]}</span>
+                  <span>{loc.toUpperCase()}</span>
                 </button>
               ))}
             </div>
@@ -122,8 +126,25 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
+          {/* Mobile: lingua + burger */}
+          <div className="md:hidden flex items-center gap-2">
+            {/* Selettore lingua inline */}
+            <div className="flex items-center gap-1.5">
+              {VISIBLE_LOCALES.map((loc) => (
+                <button
+                  key={loc}
+                  onClick={() => switchLocale(loc)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${locale === loc ? 'shadow-sm' : 'opacity-70'}`}
+                  style={locale === loc
+                    ? { background: 'var(--brand-title)', color: 'white' }
+                    : { color: 'var(--brand-title)', background: 'var(--bg-section-light)', border: '1.5px solid var(--color-main-light)' }
+                  }
+                >
+                  <span className="text-base">{LocaleFlag[loc]}</span>
+                  <span>{loc.toUpperCase()}</span>
+                </button>
+              ))}
+            </div>
             <button
               ref={menuButtonRef}
               onClick={() => { setIsMenuOpen(!isMenuOpen); setIsBtnPressed(false); }}
@@ -167,19 +188,6 @@ const Header = () => {
                 {t('prenota')}
               </Link>
 
-              {/* Selettore lingua mobile */}
-              <div className="flex items-center gap-3 mt-2 pt-2 border-t" style={{ borderColor: 'var(--color-main-light)' }}>
-                {VISIBLE_LOCALES.map((loc) => (
-                  <button
-                    key={loc}
-                    onClick={() => switchLocale(loc)}
-                    className={`text-sm px-3 py-1.5 rounded-lg font-semibold transition-all ${locale === loc ? 'ring-2 ring-[var(--brand-title)]' : 'opacity-50'}`}
-                    style={{ color: 'var(--brand-title)', background: 'var(--bg-section-light)' }}
-                  >
-                    {LocaleFlag[loc]} {loc.toUpperCase()}
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
         )}

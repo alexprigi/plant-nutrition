@@ -4,10 +4,11 @@ import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Icon from '@/components/icons/Icon';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 export default function Contatti() {
   const t = useTranslations('contatti');
+  const locale = useLocale();
   const [formData, setFormData] = useState({ nome: '', email: '', telefono: '', servizio: '', messaggio: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -48,7 +49,7 @@ export default function Contatti() {
           <div className="mb-8 p-6 rounded-xl" style={{ background: 'white', boxShadow: '0 4px 20px rgba(37, 105, 67, 0.15)' }}>
             <p className="text-xl font-semibold" style={{ color: 'var(--brand-title)' }}>{t('successo.testo')}</p>
           </div>
-          <Button href="/">{t('successo.torna-home')}</Button>
+          <Button href={`/${locale}`}>{t('successo.torna-home')}</Button>
         </div>
       </div>
     );

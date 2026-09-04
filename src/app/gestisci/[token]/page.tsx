@@ -141,7 +141,7 @@ export default function GestisciPage() {
           </div>
           <h2 className="text-xl font-bold text-gray-800 mb-2">Link non valido</h2>
           <p className="text-gray-500 text-sm mb-6">{errorMsg}</p>
-          <Button href="/" className="bg-[var(--brand-title)] text-white w-full">Torna alla Home</Button>
+          <Button href="/it" className="bg-[var(--brand-title)] text-white w-full">Torna alla Home</Button>
         </div>
       </div>
     );
@@ -190,7 +190,7 @@ export default function GestisciPage() {
           <p className="font-bold text-gray-800 mb-6">
             {formattedDate(newDate)} alle {newTime}
           </p>
-          <Button href="/" className="bg-[var(--brand-title)] text-white w-full">Torna alla Home</Button>
+          <Button href="/it" className="bg-[var(--brand-title)] text-white w-full">Torna alla Home</Button>
         </div>
       </div>
     );

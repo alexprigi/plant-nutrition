@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 import Link from 'next/link'
 
 export default function BookingSuccessPage() {
@@ -10,6 +11,7 @@ export default function BookingSuccessPage() {
   const sessionId = searchParams.get('session_id')
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const t = useTranslations('booking-success')
+  const locale = useLocale()
 
   useEffect(() => {
     if (!sessionId) {
@@ -52,7 +54,7 @@ export default function BookingSuccessPage() {
         <p className="text-sm text-gray-400 mb-8">{t('spam')}</p>
 
         <Link
-          href="/"
+          href={`/${locale}`}
           className="inline-block bg-[var(--brand-title)] text-white px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity"
         >
           {t('torna-home')}

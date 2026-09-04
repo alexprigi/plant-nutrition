@@ -203,7 +203,7 @@ export default function FollowUpBookingPage() {
           </div>
           <h2 className="text-xl font-bold text-gray-800 mb-2">{t('step1.colloquio-gia-usato-titolo')}</h2>
           <p className="text-gray-500 text-sm mb-6">{errorMsg}</p>
-          <Button href="/" className="bg-[var(--brand-title)] text-white w-full">{t('successo.torna-home')}</Button>
+          <Button href={`/${locale}`} className="bg-[var(--brand-title)] text-white w-full">{t('successo.torna-home')}</Button>
         </div>
       </div>
     );
@@ -225,7 +225,7 @@ export default function FollowUpBookingPage() {
             {new Date(selectedDate).toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} — {selectedTime}
           </p>
           <p className="text-sm text-gray-400 mb-6">{t('successo.testo-fissato')}</p>
-          <Button href="/" className="bg-[var(--brand-title)] text-white w-full">{t('successo.torna-home')}</Button>
+          <Button href={`/${locale}`} className="bg-[var(--brand-title)] text-white w-full">{t('successo.torna-home')}</Button>
         </div>
       </div>
     );

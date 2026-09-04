@@ -83,6 +83,7 @@ export interface CreateBookingDTO {
   status: AppointmentStatus;
   durationMinutes?: number;
   existingSubscriptionId?: string;
+  locale?: string;
 }
 
 // --- 4. HELPERS ---
@@ -106,11 +107,13 @@ export const getSubscriptionLabel = (type: SubscriptionType): string => {
 
 export const checkEligibility = async (
   email: string,
+  signal?: AbortSignal,
 ): Promise<{ eligible: boolean; reason?: string }> => {
   const response = await fetch("/api/clients/check-eligibility", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
+    signal,
   });
   return response.json();
 };
