@@ -61,7 +61,8 @@ export async function POST(request: NextRequest) {
       select: { managementToken: true },
     })
 
-    fetch(`${appUrl}/api/send-booking-emails`, {
+    console.log('[webhook] Sending emails to:', clientEmail, 'appUrl:', appUrl)
+    const emailRes = await fetch(`${appUrl}/api/send-booking-emails`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -78,7 +79,9 @@ export async function POST(request: NextRequest) {
         managementToken: appointment?.managementToken,
         durationMinutes: parseInt(durationMinutes ?? '60', 10),
       }),
-    }).catch((err) => console.error('Failed to send booking emails:', err))
+    })
+    const emailJson = await emailRes.json().catch(() => null)
+    console.log('[webhook] Email API response:', emailRes.status, emailJson)
   }
 
   return NextResponse.json({ received: true })
