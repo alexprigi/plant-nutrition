@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { DEFAULT_LOCALE } from '@/i18n/locales';
 
 interface BookingValidationRequest {
   name: string;
@@ -110,7 +111,7 @@ function validateFiscalCode(fiscalCode: string): boolean {
 export async function POST(request: NextRequest) {
   try {
     const body: BookingValidationRequest = await request.json();
-    const locale = body.locale && validationMessages[body.locale] ? body.locale : 'it';
+    const locale = body.locale && validationMessages[body.locale] ? body.locale : DEFAULT_LOCALE;
     const m = validationMessages[locale];
 
     const errors: Record<string, string> = {};

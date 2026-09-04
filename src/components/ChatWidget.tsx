@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
+import { DEFAULT_LOCALE } from '@/i18n/locales';
 
 interface Message {
   id: number;
@@ -772,7 +773,7 @@ export default function ChatWidget() {
   const pathname = usePathname();
 
   const segments = pathname.split('/').filter(Boolean);
-  const locale = segments[0] || 'it';
+  const locale = segments[0] || DEFAULT_LOCALE;
   const localePath = segments.length > 1 ? '/' + segments.slice(1).join('/') : '/';
   const isBookingPage = localePath === '/booking';
 

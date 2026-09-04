@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 import type { CreateBookingDTO } from '@/lib/bookingService'
+import { LOCALES, DEFAULT_LOCALE } from '@/i18n/locales'
 import {
   AppointmentStatus,
   AppointmentType,
@@ -143,8 +144,8 @@ export async function POST(request: NextRequest) {
         clientPhone: data.phone,
         notes: data.notes?.substring(0, 500) ?? '',
       },
-      success_url: `${appUrl}/${data.locale ?? 'it'}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}/${data.locale ?? 'it'}/booking?cancelled=true`,
+      success_url: `${appUrl}/${LOCALES.includes(data.locale as any) ? data.locale : DEFAULT_LOCALE}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/${LOCALES.includes(data.locale as any) ? data.locale : DEFAULT_LOCALE}/booking?cancelled=true`,
       expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // 30 minuti
     })
 

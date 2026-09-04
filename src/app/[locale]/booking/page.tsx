@@ -484,6 +484,7 @@ const PrenotaPageContent = () => {
       });
       if (!response.ok) throw new Error('Failed to create checkout session');
       const { url } = await response.json();
+      if (!url) throw new Error('Missing checkout URL');
       window.location.href = url;
     } catch (error) {
       console.error('Stripe checkout error:', error);
