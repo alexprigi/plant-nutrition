@@ -115,39 +115,48 @@ export async function POST(request: NextRequest) {
       return { client, subscription, appointment }
     })
 
-    // 2. Crea Stripe Checkout Session
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      customer_email: data.email,
-      line_items: [
-        {
-          quantity: 1,
-          price_data: {
-            currency: 'eur',
-            unit_amount: price * 100,
-            product_data: {
-              name: label,
-              description: `Consulenza con Arianna Ciervo — ${data.selectedDate} ore ${data.selectedTime}`,
+    // 2. Crea Stripe Checkout Session — se fallisce, elimina i record DB appena creati
+    let session
+    try {
+      session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        customer_email: data.email,
+        line_items: [
+          {
+            quantity: 1,
+            price_data: {
+              currency: 'eur',
+              unit_amount: price * 100,
+              product_data: {
+                name: label,
+                description: `Consulenza con Arianna Ciervo — ${data.selectedDate} ore ${data.selectedTime}`,
+              },
             },
           },
+        ],
+        metadata: {
+          subscriptionId: result.subscription.id,
+          appointmentId: result.appointment.id,
+          clientEmail: data.email,
+          serviceName: label,
+          date: data.selectedDate,
+          time: data.selectedTime,
+          durationMinutes: String(data.durationMinutes ?? 60),
+          clientName: `${data.name} ${data.surname}`,
+          clientPhone: data.phone,
+          notes: data.notes?.substring(0, 500) ?? '',
         },
-      ],
-      metadata: {
-        subscriptionId: result.subscription.id,
-        appointmentId: result.appointment.id,
-        clientEmail: data.email,
-        serviceName: label,
-        date: data.selectedDate,
-        time: data.selectedTime,
-        durationMinutes: String(data.durationMinutes ?? 60),
-        clientName: `${data.name} ${data.surname}`,
-        clientPhone: data.phone,
-        notes: data.notes?.substring(0, 500) ?? '',
-      },
-      success_url: `${appUrl}/${LOCALES.includes(data.locale as any) ? data.locale : DEFAULT_LOCALE}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}/${LOCALES.includes(data.locale as any) ? data.locale : DEFAULT_LOCALE}/booking?cancelled=true`,
-      expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // 30 minuti
-    })
+        success_url: `${appUrl}/${LOCALES.includes(data.locale as any) ? data.locale : DEFAULT_LOCALE}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${appUrl}/${LOCALES.includes(data.locale as any) ? data.locale : DEFAULT_LOCALE}/booking?cancelled=true`,
+        expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // 30 minuti
+      })
+    } catch (stripeError) {
+      await prisma.$transaction([
+        prisma.appointment.delete({ where: { id: result.appointment.id } }),
+        prisma.subscription.delete({ where: { id: result.subscription.id } }),
+      ]).catch((e) => console.error('Rollback failed:', e))
+      throw stripeError
+    }
 
     // 3. Salva stripeSessionId sulla subscription
     await prisma.subscription.update({
