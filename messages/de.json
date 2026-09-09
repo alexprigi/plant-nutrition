@@ -53,7 +53,8 @@
       "scopri-storia": "Meine Geschichte entdecken",
       "stats-percentuale": "95%",
       "stats-testo": "der Patienten erreichen ihre Ziele",
-      "badge-consulenze": "Online-Beratungen"
+      "badge-consulenze": "Online-Beratungen",
+      "trust-ssnv": "15 Teilnahme- und Leistungsnachweise"
     },
     "servizi": {
       "titolo": "Meine Leistungen",
@@ -184,6 +185,20 @@
       "sostenibile-testo": "Ich glaube, dass die Fürsorge für sich selbst auch die Fürsorge für unseren Planeten bedeutet.",
       "missione-titolo": "Meine Mission",
       "missione-testo": "\"Vegane Ernährung für alle zugänglich, lecker und nährstoffvollständig zu machen und zu beweisen, dass es möglich ist, gesund zu leben und dabei jede Form von Leben zu respektieren.\""
+    },
+    "certificazioni": {
+      "titolo": "Offizielle Zertifikate",
+      "sottotitolo": "Meine professionelle Ausbildung – geprüft und anerkannt",
+      "ecodemy-nome": "Vegane Ernährungsberaterin",
+      "ecodemy-testo": "Zertifizierte vegane Ernährungsberaterin der Fachfernschule ecodemy GmbH · ID: 4767",
+      "ecodemy-data": "23.10.2025",
+      "verifica-badge": "Zertifikat überprüfen",
+      "ecodemy2-nome": "Vegane Ernährung für Mutter und Kind",
+      "ecodemy2-testo": "Fachfortbildung vegane Ernährung für Mutter und Kind · ID: 3653",
+      "ecodemy2-data": "22.09.2023",
+      "ssnv-titolo": "Accademia della Nutrizione · SSNV",
+      "ssnv-sottotitolo": "15 Teilnahme- und Leistungsnachweise — Società Scientifica di Nutrizione Vegetariana",
+      "scarica-pdf": "PDF herunterladen"
     },
     "cta": {
       "titolo": "Möchtest du mehr über meinen Ansatz erfahren?",

@@ -53,7 +53,8 @@
       "scopri-storia": "Discover My Story",
       "stats-percentuale": "95%",
       "stats-testo": "of patients achieve their goals",
-      "badge-consulenze": "Online Consultations"
+      "badge-consulenze": "Online Consultations",
+      "trust-ssnv": "15 attendance and achievement certificates"
     },
     "servizi": {
       "titolo": "My Services",
@@ -184,6 +185,20 @@
       "sostenibile-testo": "I believe that taking care of yourself also means taking care of our planet.",
       "missione-titolo": "My Mission",
       "missione-testo": "\"Making vegan nutrition accessible, tasty and nutritionally complete for everyone, demonstrating that it's possible to live healthily while respecting every form of life.\""
+    },
+    "certificazioni": {
+      "titolo": "Official Certifications",
+      "sottotitolo": "My professional training – verified and recognised",
+      "ecodemy-nome": "Vegane Ernährungsberaterin",
+      "ecodemy-testo": "Certified Vegan Nutritionist from Fachfernschule ecodemy GmbH · ID: 4767",
+      "ecodemy-data": "23.10.2025",
+      "verifica-badge": "Verify certificate",
+      "ecodemy2-nome": "Vegane Ernährung für Mutter und Kind",
+      "ecodemy2-testo": "Continuing education in vegan maternal & infant nutrition · ID: 3653",
+      "ecodemy2-data": "22.09.2023",
+      "ssnv-titolo": "Accademia della Nutrizione · SSNV",
+      "ssnv-sottotitolo": "15 attendance and achievement certificates — Società Scientifica di Nutrizione Vegetariana",
+      "scarica-pdf": "Download PDF"
     },
     "cta": {
       "titolo": "Want to Know More About My Approach?",

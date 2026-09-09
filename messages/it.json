@@ -53,7 +53,8 @@
       "scopri-storia": "Scopri la Mia Storia",
       "stats-percentuale": "95%",
       "stats-testo": "dei pazienti raggiunge i propri obiettivi",
-      "badge-consulenze": "Consulenze Online"
+      "badge-consulenze": "Consulenze Online",
+      "trust-ssnv": "15 attestati di frequenza e profitto"
     },
     "servizi": {
       "titolo": "I Miei Servizi",
@@ -184,6 +185,20 @@
       "sostenibile-testo": "Credo che prendersi cura di sé stessi significhi anche prendersi cura del nostro pianeta.",
       "missione-titolo": "La Mia Missione",
       "missione-testo": "\"Rendere l'alimentazione vegana accessibile, gustosa e nutrizionalmente completa per tutti, dimostrando che è possibile vivere in salute rispettando ogni forma di vita.\""
+    },
+    "certificazioni": {
+      "titolo": "Certificazioni Ufficiali",
+      "sottotitolo": "La mia formazione professionale, verificata e riconosciuta",
+      "ecodemy-nome": "Vegane Ernährungsberaterin",
+      "ecodemy-testo": "Nutrizionista Vegana certificata dalla Fachfernschule ecodemy GmbH · ID: 4767",
+      "ecodemy-data": "23.10.2025",
+      "verifica-badge": "Verifica il certificato",
+      "ecodemy2-nome": "Vegane Ernährung für Mutter und Kind",
+      "ecodemy2-testo": "Fachfortbildung in nutrizione vegana materno-infantile · ID: 3653",
+      "ecodemy2-data": "22.09.2023",
+      "ssnv-titolo": "Accademia della Nutrizione · SSNV",
+      "ssnv-sottotitolo": "15 attestati di frequenza e profitto — Società Scientifica di Nutrizione Vegetariana",
+      "scarica-pdf": "Scarica PDF"
     },
     "cta": {
       "titolo": "Vuoi Saperne di Più sul Mio Approccio?",

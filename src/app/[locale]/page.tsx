@@ -197,6 +197,51 @@ export default function Home() {
                   ))}
                 </div>
 
+                {/* Trust bar certificazioni — embed code ufficiale ecodemy richiesto dai T&C */}
+                <div className="flex flex-wrap items-center gap-3 pt-2 pb-4">
+                  <a href="https://ecodemy.de/" target="_blank" rel="noopener noreferrer"
+                    title="Ich wurde bei der Fachfernschule ecodemy ausgebildet!"
+                    className="hover:opacity-85 transition-opacity flex-shrink-0">
+                    <img
+                      src="https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-ausbildung-vegane-ernaehrungsberaterin-vea-150px-1x.png"
+                      srcSet="https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-ausbildung-vegane-ernaehrungsberaterin-vea-150px-1x.png 1x, https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-ausbildung-vegane-ernaehrungsberaterin-vea-150px-2x.png 2x"
+                      width={150} height={120} loading="lazy"
+                      alt="Ich wurde bei der Fachfernschule ecodemy ausgebildet!"
+                    />
+                  </a>
+                  <a href="https://ecodemy.de/" target="_blank" rel="noopener noreferrer"
+                    title="Ich habe mich bei der Fachfernschule ecodemy fortgebildet!"
+                    className="hover:opacity-85 transition-opacity flex-shrink-0">
+                    <img
+                      src="https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-fachfortbildung-vegane-ernaehrung-fuer-mutter-und-kind-wb04-150px-1x.png"
+                      srcSet="https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-fachfortbildung-vegane-ernaehrung-fuer-mutter-und-kind-wb04-150px-1x.png 1x, https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-fachfortbildung-vegane-ernaehrung-fuer-mutter-und-kind-wb04-150px-2x.png 2x"
+                      width={150} height={120} loading="lazy"
+                      alt="Ich habe mich bei der Fachfernschule ecodemy fortgebildet!"
+                    />
+                  </a>
+                  <Link href="/about#certificazioni"
+                    title={t('presentazione.trust-ssnv')}
+                    className="relative flex-shrink-0 hover:opacity-85 transition-opacity" style={{ width: 150, height: 120 }}>
+                    <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full flex items-center justify-center z-10"
+                      style={{ background: '#1a4f8a', boxShadow: '0 2px 8px rgba(26,79,138,0.4)' }}>
+                      <span className="text-sm font-black text-white leading-none">15</span>
+                    </div>
+                    <div className="w-full h-full flex flex-col overflow-hidden"
+                      style={{ border: '2px solid #1a4f8a', borderRadius: '12px', boxShadow: '0 4px 16px rgba(26,79,138,0.20)', background: 'white' }}>
+                      <div className="flex-1" style={{ padding: '1.5px 1.5px 2px 1.5px', background: 'white' }}>
+                        <div className="w-full h-full flex items-center justify-center px-2 overflow-hidden"
+                          style={{ border: '1.5px solid #1a4f8a', borderRadius: '10px', background: 'linear-gradient(180deg, #ffffff 0%, #dce8f5 100%)' }}>
+                          <Image src="/images/logos/accademia-nutrizione-logo.png" alt="Accademia della Nutrizione" width={100} height={48} className="object-contain" />
+                        </div>
+                      </div>
+                      <div className="w-full flex items-center justify-center py-1"
+                        style={{ background: 'linear-gradient(180deg, #2a6aad 0%, #1a4f8a 100%)' }}>
+                        <span className="text-xs font-bold text-white tracking-widest">SSNV</span>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+
                 <Button href="/about" variant="outline" size="lg">
                   {t('presentazione.scopri-storia')}
                 </Button>
