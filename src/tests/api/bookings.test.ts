@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 import { POST, GET } from '@/app/api/bookings/route'
 import { prisma } from '@/lib/prisma'
 
-const mockPrisma = vi.mocked(prisma)
+const mockPrisma = vi.mocked(prisma, { deep: true })
 
 const baseDTO = {
   name: 'Mario', surname: 'Rossi', email: 'mario@test.com',
@@ -47,6 +47,25 @@ describe('POST /api/bookings', () => {
     expect(data).toHaveProperty('client')
     expect(data).toHaveProperty('subscription')
     expect(data).toHaveProperty('appointment')
+  })
+
+  it.each([
+    ['it', 'it'],
+    ['en', 'en'],
+    [undefined, 'de'],
+    ['fr', 'de'],
+  ])('stores locale %s as %s on the appointment', async (input, expected) => {
+    let capturedApptData: any
+    mockPrisma.$transaction.mockImplementation(async (fn: any) =>
+      fn({
+        client: { upsert: vi.fn().mockResolvedValue({ id: 'cli_1' }) },
+        subscription: { create: vi.fn().mockResolvedValue({ id: 'sub_1' }) },
+        appointment: { create: vi.fn().mockImplementation(async ({ data }: any) => { capturedApptData = data; return { id: 'appt_1' } }) },
+      }),
+    )
+
+    await POST(makePostRequest({ ...baseDTO, locale: input }))
+    expect(capturedApptData.locale).toBe(expected)
   })
 
   it('maps free-consultation to FREE_CONSULTATION type', async () => {

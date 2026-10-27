@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 import { GET, POST } from '@/app/api/appointments/manage/route'
 import { prisma } from '@/lib/prisma'
 
-const mockPrisma = vi.mocked(prisma)
+const mockPrisma = vi.mocked(prisma, { deep: true })
 
 // Helper: data relativa a oggi + N giorni
 function dateInDays(n: number): string {

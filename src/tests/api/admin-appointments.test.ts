@@ -4,8 +4,8 @@ import { PATCH } from '@/app/api/admin/appointments/[id]/route'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 
-const mockPrisma = vi.mocked(prisma)
-const mockAuth = vi.mocked(auth)
+const mockPrisma = vi.mocked(prisma, { deep: true })
+const mockAuth = vi.mocked(auth) as unknown as ReturnType<typeof vi.fn>
 
 vi.mock('@/lib/email', () => ({
   resend: { emails: { send: vi.fn().mockResolvedValue({ data: { id: 'email_1' } }) } },

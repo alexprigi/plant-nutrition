@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 import { GET } from '@/app/api/follow-up/route'
 import { prisma } from '@/lib/prisma'
 
-const mockPrisma = vi.mocked(prisma)
+const mockPrisma = vi.mocked(prisma, { deep: true })
 
 const makeRequest = (token?: string) =>
   new NextRequest(`http://localhost/api/follow-up${token ? `?token=${token}` : ''}`)

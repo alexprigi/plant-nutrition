@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 import { GET } from '@/app/api/cron/reminders/route'
 import { prisma } from '@/lib/prisma'
 
-const mockPrisma = vi.mocked(prisma)
+const mockPrisma = vi.mocked(prisma, { deep: true })
 
 // Mock resend
 vi.mock('@/lib/email', () => ({
@@ -72,6 +72,40 @@ describe('GET /api/cron/reminders', () => {
     expect(mockSend).toHaveBeenCalledWith(
       expect.objectContaining({ to: 'mario@test.com' })
     )
+  })
+
+  it('sends the reminder in the appointment locale with a translated service name', async () => {
+    const { resend } = await import('@/lib/email')
+    const mockSend = vi.mocked(resend.emails.send)
+
+    mockPrisma.appointment.findMany
+      .mockResolvedValueOnce([baseAppointment({ locale: 'en' }) as any])
+      .mockResolvedValueOnce([])
+    mockPrisma.subscription.updateMany.mockResolvedValue({ count: 0 } as any)
+
+    await GET(makeRequest())
+
+    const call = mockSend.mock.calls[0][0] as any
+    expect(call.subject).toContain('Reminder')
+    expect(call.html).toContain('<html lang="en">')
+    expect(call.html).toContain('Single Consultation')
+  })
+
+  it('sends the expired booking email to the client in the appointment locale', async () => {
+    const { resend } = await import('@/lib/email')
+    const mockSend = vi.mocked(resend.emails.send)
+
+    mockPrisma.appointment.findMany
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([baseAppointment({ status: 'PENDING', locale: 'it' }) as any])
+    mockPrisma.appointment.update.mockResolvedValue({} as any)
+    mockPrisma.subscription.updateMany.mockResolvedValue({ count: 0 } as any)
+
+    await GET(makeRequest())
+
+    const clientCall = mockSend.mock.calls.map(([p]) => p as any).find((p) => p.to === 'mario@test.com')
+    expect(clientCall.subject).toContain('Prenotazione annullata')
+    expect(clientCall.subject).toContain('Visita Singola')
   })
 
   it('cancels expired PENDING appointments (>72h)', async () => {

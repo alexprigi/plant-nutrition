@@ -4,8 +4,8 @@ import { POST } from '@/app/api/admin/subscriptions/[id]/cancel/route'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 
-const mockPrisma = vi.mocked(prisma)
-const mockAuth = vi.mocked(auth)
+const mockPrisma = vi.mocked(prisma, { deep: true })
+const mockAuth = vi.mocked(auth) as unknown as ReturnType<typeof vi.fn>
 
 const makeRequest = () =>
   new NextRequest('http://localhost/api/admin/subscriptions/sub_1/cancel', { method: 'POST' })

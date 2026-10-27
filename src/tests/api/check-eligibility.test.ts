@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 import { POST } from '@/app/api/clients/check-eligibility/route'
 import { prisma } from '@/lib/prisma'
 
-const mockPrisma = vi.mocked(prisma)
+const mockPrisma = vi.mocked(prisma, { deep: true })
 
 const makeRequest = (body: object) =>
   new NextRequest('http://localhost/api/clients/check-eligibility', {
