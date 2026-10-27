@@ -3,6 +3,7 @@ import { stripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 import type { CreateBookingDTO } from '@/lib/bookingService'
 import { LOCALES, DEFAULT_LOCALE } from '@/i18n/locales'
+import { getT, getEmailLocale, type EmailT } from '@/lib/email-templates/email-i18n'
 import {
   AppointmentStatus,
   AppointmentType,
@@ -11,7 +12,7 @@ import {
   SubscriptionType,
 } from '@prisma/client'
 
-function mapCommercialType(commercialType: CreateBookingDTO['commercialType']): {
+function mapCommercialType(commercialType: CreateBookingDTO['commercialType'], t: EmailT): {
   subType: SubscriptionType
   apptType: AppointmentType
   totalSessions: number
@@ -20,15 +21,15 @@ function mapCommercialType(commercialType: CreateBookingDTO['commercialType']): 
 } {
   switch (commercialType) {
     case 'free-consultation':
-      return { subType: 'FREE_CONSULTATION', apptType: 'FREE_CONSULTATION', totalSessions: 1, price: 0, label: 'Colloquio Gratuito' }
+      return { subType: 'FREE_CONSULTATION', apptType: 'FREE_CONSULTATION', totalSessions: 1, price: 0, label: t.svcFree }
     case 'follow-up':
-      return { subType: 'SINGLE_SESSION', apptType: 'FOLLOW_UP', totalSessions: 1, price: 50, label: 'Consulenza Follow-up' }
+      return { subType: 'SINGLE_SESSION', apptType: 'FOLLOW_UP', totalSessions: 1, price: 50, label: t.svcFollowUp }
     case 'first-visit':
-      return { subType: 'SINGLE_SESSION', apptType: 'FIRST_VISIT', totalSessions: 1, price: 85, label: 'Prima Visita Nutrizionale' }
+      return { subType: 'SINGLE_SESSION', apptType: 'FIRST_VISIT', totalSessions: 1, price: 85, label: t.svcFirstVisit }
     case 'plan-3-months':
-      return { subType: 'BUNDLE_3_MONTHS', apptType: 'FIRST_VISIT', totalSessions: 3, price: 237, label: 'Percorso Nutrizionale 3 Mesi' }
+      return { subType: 'BUNDLE_3_MONTHS', apptType: 'FIRST_VISIT', totalSessions: 3, price: 237, label: t.svcBundle3 }
     case 'plan-6-months':
-      return { subType: 'BUNDLE_6_MONTHS', apptType: 'FIRST_VISIT', totalSessions: 6, price: 450, label: 'Percorso Nutrizionale 6 Mesi VIP' }
+      return { subType: 'BUNDLE_6_MONTHS', apptType: 'FIRST_VISIT', totalSessions: 6, price: 450, label: t.svcBundle6 }
   }
 }
 
@@ -45,7 +46,8 @@ function mapPaymentMethod(pm: CreateBookingDTO['paymentMethod']): PaymentMethod 
 export async function POST(request: NextRequest) {
   try {
     const data: CreateBookingDTO = await request.json()
-    const { subType, apptType, totalSessions, price, label } = mapCommercialType(data.commercialType)
+    const t = getT(data.locale)
+    const { subType, apptType, totalSessions, price, label } = mapCommercialType(data.commercialType, t)
 
     const appUrl = (process.env.AUTH_URL || 'http://localhost:3000').replace(/\/$/, '')
 
@@ -109,6 +111,7 @@ export async function POST(request: NextRequest) {
           time: data.selectedTime,
           status: 'PENDING' as AppointmentStatus,
           notes: data.notes ?? '',
+          locale: getEmailLocale(data.locale),
         },
       })
 
@@ -129,7 +132,7 @@ export async function POST(request: NextRequest) {
               unit_amount: price * 100,
               product_data: {
                 name: label,
-                description: `Consulenza con Arianna Ciervo — ${data.selectedDate} ore ${data.selectedTime}`,
+                description: t.stripeDescription(data.selectedDate, data.selectedTime),
               },
             },
           },
@@ -145,6 +148,7 @@ export async function POST(request: NextRequest) {
           clientName: `${data.name} ${data.surname}`,
           clientPhone: data.phone,
           notes: data.notes?.substring(0, 500) ?? '',
+          locale: getEmailLocale(data.locale),
         },
         success_url: `${appUrl}/${LOCALES.includes(data.locale as any) ? data.locale : DEFAULT_LOCALE}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${appUrl}/${LOCALES.includes(data.locale as any) ? data.locale : DEFAULT_LOCALE}/booking?cancelled=true`,

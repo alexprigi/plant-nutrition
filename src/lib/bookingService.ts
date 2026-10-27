@@ -1,5 +1,7 @@
 // src/lib/bookingService.ts
 
+import { getT } from "@/lib/email-templates/email-i18n";
+
 // --- 1. CORE TYPES & ENUMS ---
 
 export type PaymentMethod = "stripe" | "paypal" | "bank_transfer" | "none";
@@ -88,18 +90,19 @@ export interface CreateBookingDTO {
 
 // --- 4. HELPERS ---
 
-export const getSubscriptionLabel = (type: SubscriptionType): string => {
+export const getSubscriptionLabel = (type: SubscriptionType, locale?: string | null): string => {
+  const t = getT(locale);
   switch (type) {
     case "free-consultation":
-      return "Colloquio Gratuito";
+      return t.svcFree;
     case "single-session":
-      return "Visita Singola";
+      return t.svcSingle;
     case "bundle-3-months":
-      return "Percorso Nutrizionale 3 Mesi";
+      return t.svcBundle3;
     case "bundle-6-months":
-      return "Percorso Nutrizionale 6 Mesi VIP";
+      return t.svcBundle6;
     default:
-      return "Servizio";
+      return t.svcDefault;
   }
 };
 

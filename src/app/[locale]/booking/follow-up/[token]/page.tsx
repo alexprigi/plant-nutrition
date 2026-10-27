@@ -144,6 +144,7 @@ export default function FollowUpBookingPage() {
           isPaid: true,
           status: 'confirmed',
           existingSubscriptionId: data.subscriptionId,
+          locale,
         }),
       });
 
@@ -167,6 +168,7 @@ export default function FollowUpBookingPage() {
           isPaid: true,
           managementToken: result?.appointment?.managementToken,
           durationMinutes: 30,
+          locale,
         }),
       }).catch(() => {});
 

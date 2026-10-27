@@ -1,4 +1,4 @@
-// Template email per conferma prenotazione cliente
+import { getT, getEmailLocale, formatEmailDate } from './email-i18n'
 
 interface EmailClientData {
   clientName: string;
@@ -11,23 +11,22 @@ interface EmailClientData {
   isBankTransfer: boolean;
   managementToken?: string;
   isTest?: boolean;
+  locale?: string;
 }
 
 export function getClientConfirmationEmailHTML(data: EmailClientData): string {
-  const formattedDate = new Date(data.date).toLocaleDateString('it-IT', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  });
+  const locale = getEmailLocale(data.locale)
+  const t = getT(locale)
+  const formattedDate = formatEmailDate(data.date, locale)
+  const appUrl = process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'
 
   return `
 <!DOCTYPE html>
-<html lang="it">
+<html lang="${locale}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Conferma Prenotazione</title>
+  <title>${data.isBankTransfer ? t.bankTransferPending : t.confirmed}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #F5F7F5;">
   ${data.isTest ? `
@@ -43,7 +42,7 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
     <tr>
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden;">
-          
+
           <!-- Logo -->
           <tr>
             <td style="background-color: #ffffff; padding: 20px 30px; text-align: center; border-bottom: 1px solid #E5E7EB;">
@@ -56,7 +55,7 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
           <tr>
             <td style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
               <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">
-                ${data.isBankTransfer ? '💳 Completa il Pagamento per Confermare' : '✅ Prenotazione Confermata!'}
+                ${data.isBankTransfer ? t.bankTransferPending : t.confirmed}
               </h1>
             </td>
           </tr>
@@ -65,16 +64,16 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
           <tr>
             <td style="padding: 40px 30px;">
               <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #374151;">
-                Ciao <strong>${data.clientName}</strong>,
+                ${t.greeting} <strong>${data.clientName}</strong>,
               </p>
-              
+
               ${data.isBankTransfer ? `
                 <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #374151;">
-                  Abbiamo ricevuto la tua richiesta di prenotazione. L'appuntamento sarà confermato dopo aver ricevuto il bonifico bancario.
+                  ${t.bodyBankTransfer}
                 </p>
               ` : `
                 <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #374151;">
-                  ${data.isFree ? 'Il tuo colloquio gratuito è confermato!' : 'Il tuo appuntamento è stato confermato con successo!'}
+                  ${data.isFree ? t.bodyFree : t.bodyPaid}
                 </p>
               `}
 
@@ -83,25 +82,25 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                 <tr>
                   <td style="padding: 25px;">
                     <h2 style="margin: 0 0 20px; font-size: 18px; font-weight: bold; color: #111827;">
-                      📅 Dettagli Appuntamento
+                      ${t.detailsTitle}
                     </h2>
-                    
+
                     <table width="100%" cellpadding="8" cellspacing="0">
                       <tr>
-                        <td style="font-weight: 600; color: #6B7280; font-size: 14px;">Servizio:</td>
+                        <td style="font-weight: 600; color: #6B7280; font-size: 14px;">${t.service}:</td>
                         <td style="color: #111827; font-size: 14px; text-align: right;"><strong>${data.serviceName}</strong></td>
                       </tr>
                       <tr>
-                        <td style="font-weight: 600; color: #6B7280; font-size: 14px;">Data:</td>
+                        <td style="font-weight: 600; color: #6B7280; font-size: 14px;">${t.date}:</td>
                         <td style="color: #111827; font-size: 14px; text-align: right;"><strong>${formattedDate}</strong></td>
                       </tr>
                       <tr>
-                        <td style="font-weight: 600; color: #6B7280; font-size: 14px;">Orario:</td>
+                        <td style="font-weight: 600; color: #6B7280; font-size: 14px;">${t.time}:</td>
                         <td style="color: #111827; font-size: 14px; text-align: right;"><strong>${data.time}</strong></td>
                       </tr>
                       ${!data.isFree ? `
                         <tr>
-                          <td style="font-weight: 600; color: #6B7280; font-size: 14px;">Importo:</td>
+                          <td style="font-weight: 600; color: #6B7280; font-size: 14px;">${t.amount}:</td>
                           <td style="color: #059669; font-size: 16px; text-align: right; font-weight: bold;">${data.price}€</td>
                         </tr>
                       ` : ''}
@@ -109,7 +108,7 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                         <tr>
                           <td colspan="2" style="padding-top: 15px; border-top: 1px solid #E5E7EB; margin-top: 10px;">
                             <p style="margin: 5px 0 0; font-size: 14px; color: #6B7280;">
-                              <strong>Note:</strong><br/>
+                              <strong>${t.notes}:</strong><br/>
                               ${data.notes}
                             </p>
                           </td>
@@ -126,14 +125,14 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                   <tr>
                     <td style="padding: 20px;">
                       <h3 style="margin: 0 0 15px; font-size: 16px; font-weight: bold; color: #92400E;">
-                        💳 Istruzioni per il Bonifico
+                        ${t.bankTitle}
                       </h3>
                       <p style="margin: 0 0 10px; font-size: 14px; color: #78350F;">
-                        Per confermare la prenotazione, effettua il bonifico ai seguenti dati:
+                        ${t.bankBody}
                       </p>
                       <table width="100%" cellpadding="5" cellspacing="0" style="font-size: 14px;">
                         <tr>
-                          <td style="color: #92400E; font-weight: 600;">Beneficiario:</td>
+                          <td style="color: #92400E; font-weight: 600;">${t.bankBeneficiary}:</td>
                           <td style="color: #78350F;">Arianna Ciervo</td>
                         </tr>
                         <tr>
@@ -141,16 +140,16 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                           <td style="color: #78350F; font-family: monospace;">DE14 1001 1001 2175 0735 33</td>
                         </tr>
                         <tr>
-                          <td style="color: #92400E; font-weight: 600;">Importo:</td>
+                          <td style="color: #92400E; font-weight: 600;">${t.amount}:</td>
                           <td style="color: #78350F; font-weight: bold;">${data.price}€</td>
                         </tr>
                         <tr>
-                          <td style="color: #92400E; font-weight: 600;">Causale:</td>
-                          <td style="color: #78350F;">Prenotazione ${data.serviceName} - ${data.clientName}</td>
+                          <td style="color: #92400E; font-weight: 600;">${t.bankReason}:</td>
+                          <td style="color: #78350F;">${t.bankReasonValue(data.serviceName, data.clientName)}</td>
                         </tr>
                       </table>
                       <p style="margin: 15px 0 0; font-size: 13px; color: #92400E; font-style: italic;">
-                        ⏱️ L'appuntamento sarà confermato entro 24 ore dalla ricezione del bonifico.
+                        ${t.bankNote}
                       </p>
                     </td>
                   </tr>
@@ -162,19 +161,19 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                 <tr>
                   <td>
                     <h3 style="margin: 0 0 15px; font-size: 18px; font-weight: bold; color: #111827;">
-                      Prossimi Passi
+                      ${t.nextSteps}
                     </h3>
                     <ul style="margin: 0; padding-left: 20px; color: #374151; font-size: 14px; line-height: 1.8;">
                       ${data.isFree ? `
-                        <li>Prepara eventuali domande o obiettivi da discutere</li>
+                        <li>${t.stepFree}</li>
                       ` : data.isBankTransfer ? `
-                        <li>Effettua il bonifico con i dati indicati sopra entro <strong>72 ore</strong>, altrimenti la prenotazione verrà annullata automaticamente</li>
-                        <li>Riceverai una email di conferma non appena il pagamento sarà verificato</li>
+                        <li>${t.stepBankExpire}</li>
+                        <li>${t.stepBankEmail}</li>
                       ` : `
-                        <li>Porta con te eventuali referti medici o esami</li>
-                        <li>Prepara un diario alimentare degli ultimi giorni (se possibile)</li>
+                        <li>${t.stepPaid1}</li>
+                        <li>${t.stepPaid2}</li>
                       `}
-                      ${data.managementToken && !data.isBankTransfer ? `<li>Puoi spostare o cancellare l'appuntamento direttamente dal link qui sotto</li>` : ''}
+                      ${data.managementToken && !data.isBankTransfer ? `<li>${t.stepManage}</li>` : ''}
                     </ul>
                   </td>
                 </tr>
@@ -186,10 +185,10 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                   <tr>
                     <td style="padding: 20px; text-align: center;">
                       <p style="margin: 0 0 12px; font-size: 14px; color: #6B7280;">
-                        Hai bisogno di modificare l'appuntamento?
+                        ${t.manageQuestion}
                       </p>
-                      <a href="${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/gestisci/${data.managementToken}" style="display: inline-block; background-color: #ffffff; color: #374151; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #D1D5DB;">
-                        Gestisci appuntamento
+                      <a href="${appUrl}/gestisci/${data.managementToken}" style="display: inline-block; background-color: #ffffff; color: #374151; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #D1D5DB;">
+                        ${t.manageCta}
                       </a>
                     </td>
                   </tr>
@@ -202,7 +201,7 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                 <tr>
                   <td style="text-align: center;">
                     <p style="margin: 0; font-size: 12px; color: #9CA3AF;">
-                      Consultare la <a href="${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/cancellation-policy" style="color: #9CA3AF;">policy di cancellazione</a> per info su spostamenti e rimborsi.
+                      ${t.policyText(appUrl)}
                     </p>
                   </td>
                 </tr>
@@ -214,7 +213,7 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                 <tr>
                   <td style="text-align: center;">
                     <p style="margin: 0 0 10px; font-size: 14px; color: #6B7280;">
-                      Hai domande? Contattami:
+                      ${t.contact}
                     </p>
                     <p style="margin: 0; font-size: 14px;">
                       <a href="mailto:info@vivaplantnutrition.com" style="color: #059669; text-decoration: none; font-weight: 600;">info@vivaplantnutrition.com</a>
@@ -231,10 +230,10 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
           <tr>
             <td style="background-color: #F9FAFB; padding: 25px 30px; text-align: center; border-top: 1px solid #E5E7EB;">
               <p style="margin: 0 0 5px; font-size: 12px; color: #9CA3AF;">
-                Questa email è stata inviata da Viva Plant Nutrition
+                ${t.footer1}
               </p>
               <p style="margin: 0; font-size: 12px; color: #9CA3AF;">
-                © 2026 Viva Plant Nutrition. Tutti i diritti riservati.
+                ${t.footer2}
               </p>
             </td>
           </tr>
@@ -248,66 +247,62 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
 }
 
 export function getClientConfirmationEmailText(data: EmailClientData): string {
-  const formattedDate = new Date(data.date).toLocaleDateString('it-IT', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  });
+  const locale = getEmailLocale(data.locale)
+  const t = getT(locale)
+  const formattedDate = formatEmailDate(data.date, locale)
 
   return `
-${data.isBankTransfer ? 'RICHIESTA RICEVUTA' : 'PRENOTAZIONE CONFERMATA'}
+${data.isBankTransfer ? t.bankTransferPending : t.confirmed}
 
-Ciao ${data.clientName},
+${t.greeting} ${data.clientName},
 
-${data.isBankTransfer 
-  ? 'Abbiamo ricevuto la tua richiesta di prenotazione. L\'appuntamento sarà confermato dopo aver ricevuto il bonifico bancario.'
-  : data.isFree 
-    ? 'Il tuo colloquio gratuito è confermato!' 
-    : 'Il tuo appuntamento è stato confermato con successo!'
+${data.isBankTransfer
+  ? t.bodyBankTransfer
+  : data.isFree
+    ? t.bodyFree
+    : t.bodyPaid
 }
 
-DETTAGLI APPUNTAMENTO
+${t.detailsTitle}
 ---------------------
-Servizio: ${data.serviceName}
-Data: ${formattedDate}
-Orario: ${data.time}
-${!data.isFree ? `Importo: ${data.price}€` : ''}
-${data.notes ? `\nNote: ${data.notes}` : ''}
+${t.service}: ${data.serviceName}
+${t.date}: ${formattedDate}
+${t.time}: ${data.time}
+${!data.isFree ? `${t.amount}: ${data.price}€` : ''}
+${data.notes ? `\n${t.notes}: ${data.notes}` : ''}
 
 ${data.isBankTransfer ? `
-ISTRUZIONI PER IL BONIFICO
+${t.bankTitle}
 ---------------------------
-Per confermare la prenotazione, effettua il bonifico ai seguenti dati:
+${t.bankBody}
 
-Beneficiario: Arianna Ciervo
+${t.bankBeneficiary}: Arianna Ciervo
 IBAN: DE14 1001 1001 2175 0735 33
-Importo: ${data.price}€
-Causale: Prenotazione ${data.serviceName} - ${data.clientName}
+${t.amount}: ${data.price}€
+${t.bankReason}: ${t.bankReasonValue(data.serviceName, data.clientName)}
 
-L'appuntamento sarà confermato entro 24 ore dalla ricezione del bonifico.
+${t.bankNote}
 ` : ''}
 
-PROSSIMI PASSI
+${t.nextSteps}
 --------------
 ${data.isFree
-  ? '- Prepara eventuali domande o obiettivi da discutere'
+  ? `- ${t.stepFree}`
   : data.isBankTransfer
-    ? '- Effettua il bonifico entro 72 ore, altrimenti la prenotazione verrà annullata automaticamente\n- Riceverai una email di conferma non appena il pagamento sarà verificato'
-    : '- Porta con te eventuali referti medici o esami\n- Prepara un diario alimentare degli ultimi giorni (se possibile)'}
-${data.managementToken && !data.isBankTransfer ? `- Puoi spostare o cancellare l'appuntamento dal link qui sotto` : ''}
+    ? `- ${t.stepBankExpire.replace(/<[^>]+>/g, '')}\n- ${t.stepBankEmail}`
+    : `- ${t.stepPaid1}\n- ${t.stepPaid2}`}
+${data.managementToken && !data.isBankTransfer ? `- ${t.stepManage}` : ''}
 
-${data.managementToken ? `GESTISCI APPUNTAMENTO
+${data.managementToken ? `${t.manageCta}
 ---------------------
-Sposta o cancella: ${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/gestisci/${data.managementToken}
+${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/gestisci/${data.managementToken}
 
-` : ''}CONTATTI
+` : ''}${t.contact}
 --------
 Email: info@vivaplantnutrition.com
-Telefono: +39 333 123 4567
 
 ---
-Questa email è stata inviata da Viva Plant Nutrition
-© 2026 Viva Plant Nutrition. Tutti i diritti riservati.
+${t.footer1}
+${t.footer2}
   `;
 }

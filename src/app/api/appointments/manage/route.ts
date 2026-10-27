@@ -138,6 +138,7 @@ export async function POST(request: NextRequest) {
         date: appointment.date,
         time: appointment.time,
         isRefundable,
+        locale: appointment.locale,
       }),
     }).catch(() => {})
 

@@ -1,4 +1,4 @@
-// Template email per cron job giornaliero
+import { getT, getEmailLocale, formatEmailDate } from './email-i18n'
 
 interface ReminderEmailData {
   clientName: string;
@@ -8,6 +8,7 @@ interface ReminderEmailData {
   isFree?: boolean;
   managementToken?: string;
   isTest?: boolean;
+  locale?: string;
 }
 
 interface ExpiredBankTransferEmailData {
@@ -16,12 +17,7 @@ interface ExpiredBankTransferEmailData {
   date: string;
   time: string;
   isTest?: boolean;
-}
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('it-IT', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-  });
+  locale?: string;
 }
 
 const BASE_STYLE = `font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;`;
@@ -48,27 +44,32 @@ function logoHeader() {
   </tr>`;
 }
 
-function footer() {
+function footer(locale?: string) {
+  const t = getT(locale)
   return `
   <tr>
     <td style="background-color: #F9FAFB; padding: 25px 30px; text-align: center; border-top: 1px solid #E5E7EB;">
-      <p style="margin: 0 0 5px; font-size: 12px; color: #9CA3AF;">Questa email è stata inviata da Viva Plant Nutrition</p>
-      <p style="margin: 0; font-size: 12px; color: #9CA3AF;">© 2026 Viva Plant Nutrition. Tutti i diritti riservati.</p>
+      <p style="margin: 0 0 5px; font-size: 12px; color: #9CA3AF;">${t.footer1}</p>
+      <p style="margin: 0; font-size: 12px; color: #9CA3AF;">${t.footer2}</p>
     </td>
   </tr>`;
 }
 
-// --- PROMEMORIA 24H ---
+// --- PROMEMORIA 3 GIORNI ---
 
 export function getReminderEmailHTML(data: ReminderEmailData): string {
+  const locale = getEmailLocale(data.locale)
+  const t = getT(locale)
   const appUrl = process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com';
+  const formattedDate = formatEmailDate(data.date, locale)
+
   return `
 <!DOCTYPE html>
-<html lang="it">
+<html lang="${locale}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Promemoria Appuntamento</title>
+  <title>${t.reminderTitle}</title>
 </head>
 <body style="margin: 0; padding: 0; ${BASE_STYLE} background-color: #F5F7F5;">
   ${testBanner(data.isTest)}
@@ -79,16 +80,16 @@ export function getReminderEmailHTML(data: ReminderEmailData): string {
           ${logoHeader()}
           <tr>
             <td style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">🔔 Promemoria Appuntamento</h1>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">${t.reminderTitle}</h1>
             </td>
           </tr>
           <tr>
             <td style="padding: 40px 30px;">
               <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #374151;">
-                Ciao <strong>${data.clientName}</strong>,
+                ${t.greeting} <strong>${data.clientName}</strong>,
               </p>
               <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #374151;">
-                Ti ricordiamo che tra 3 giorni hai un appuntamento con Arianna.
+                ${t.reminderBody}
               </p>
 
               <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F9FAFB; border-radius: 12px; margin: 0 0 30px; border: 2px solid #E5E7EB;">
@@ -96,15 +97,15 @@ export function getReminderEmailHTML(data: ReminderEmailData): string {
                   <td style="padding: 25px;">
                     <table width="100%" cellpadding="8" cellspacing="0">
                       <tr>
-                        <td style="font-weight: 600; color: #6B7280; font-size: 14px;">Servizio:</td>
+                        <td style="font-weight: 600; color: #6B7280; font-size: 14px;">${t.service}:</td>
                         <td style="color: #111827; font-size: 14px; text-align: right;"><strong>${data.serviceName}</strong></td>
                       </tr>
                       <tr>
-                        <td style="font-weight: 600; color: #6B7280; font-size: 14px;">Data:</td>
-                        <td style="color: #111827; font-size: 14px; text-align: right;"><strong>${formatDate(data.date)}</strong></td>
+                        <td style="font-weight: 600; color: #6B7280; font-size: 14px;">${t.date}:</td>
+                        <td style="color: #111827; font-size: 14px; text-align: right;"><strong>${formattedDate}</strong></td>
                       </tr>
                       <tr>
-                        <td style="font-weight: 600; color: #6B7280; font-size: 14px;">Orario:</td>
+                        <td style="font-weight: 600; color: #6B7280; font-size: 14px;">${t.time}:</td>
                         <td style="color: #111827; font-size: 14px; text-align: right;"><strong>${data.time}</strong></td>
                       </tr>
                     </table>
@@ -116,11 +117,9 @@ export function getReminderEmailHTML(data: ReminderEmailData): string {
               <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #ECFDF5; border-radius: 12px; margin: 0 0 20px; border: 1px solid #A7F3D0;">
                 <tr>
                   <td style="padding: 20px;">
-                    <h3 style="margin: 0 0 12px; font-size: 15px; font-weight: bold; color: #065F46;">📋 Cosa portare</h3>
+                    <h3 style="margin: 0 0 12px; font-size: 15px; font-weight: bold; color: #065F46;">${t.reminderBringTitle}</h3>
                     <ul style="margin: 0; padding-left: 20px; color: #374151; font-size: 14px; line-height: 1.8;">
-                      <li>Eventuali esami del sangue o referti medici recenti</li>
-                      <li>Diario alimentare degli ultimi giorni (se possibile)</li>
-                      <li>Lista dei farmaci o integratori che stai assumendo</li>
+                      ${t.reminderBring.map(item => `<li>${item}</li>`).join('')}
                     </ul>
                   </td>
                 </tr>
@@ -129,10 +128,9 @@ export function getReminderEmailHTML(data: ReminderEmailData): string {
               <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #ECFDF5; border-radius: 12px; margin: 0 0 20px; border: 1px solid #A7F3D0;">
                 <tr>
                   <td style="padding: 20px;">
-                    <h3 style="margin: 0 0 12px; font-size: 15px; font-weight: bold; color: #065F46;">💡 Come prepararti</h3>
+                    <h3 style="margin: 0 0 12px; font-size: 15px; font-weight: bold; color: #065F46;">${t.reminderPrepTitle}</h3>
                     <ul style="margin: 0; padding-left: 20px; color: #374151; font-size: 14px; line-height: 1.8;">
-                      <li>Prepara eventuali domande o obiettivi che vuoi discutere</li>
-                      <li>Pensa a cosa ti ha spinto a cercare supporto nutrizionale</li>
+                      ${t.reminderPrep.map(item => `<li>${item}</li>`).join('')}
                     </ul>
                   </td>
                 </tr>
@@ -143,18 +141,18 @@ export function getReminderEmailHTML(data: ReminderEmailData): string {
               <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F9FAFB; border-radius: 12px; border: 1px solid #E5E7EB;">
                 <tr>
                   <td style="padding: 20px; text-align: center;">
-                    <p style="margin: 0 0 12px; font-size: 14px; color: #6B7280;">Non riesci a venire?</p>
+                    <p style="margin: 0 0 12px; font-size: 14px; color: #6B7280;">${t.cantCome}</p>
                     <a href="${appUrl}/gestisci/${data.managementToken}" style="display: inline-block; background-color: #ffffff; color: #374151; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #D1D5DB;">
-                      Sposta o cancella l'appuntamento
+                      ${t.rescheduleCancel}
                     </a>
-                    ${!data.isFree ? `<p style="margin: 12px 0 0; font-size: 11px; color: #9CA3AF;">Consulta la <a href="${appUrl}/cancellation-policy" style="color: #9CA3AF;">policy di cancellazione</a> per info su rimborsi.</p>` : ''}
+                    ${!data.isFree ? `<p style="margin: 12px 0 0; font-size: 11px; color: #9CA3AF;">${t.policyReminder(appUrl)}</p>` : ''}
                   </td>
                 </tr>
               </table>
               ` : ''}
             </td>
           </tr>
-          ${footer()}
+          ${footer(data.locale)}
         </table>
       </td>
     </tr>
@@ -164,23 +162,27 @@ export function getReminderEmailHTML(data: ReminderEmailData): string {
 }
 
 export function getReminderEmailText(data: ReminderEmailData): string {
+  const locale = getEmailLocale(data.locale)
+  const t = getT(locale)
   const appUrl = process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com';
+  const formattedDate = formatEmailDate(data.date, locale)
+
   return `
-PROMEMORIA APPUNTAMENTO
+${t.reminderTitle}
 
-Ciao ${data.clientName},
+${t.greeting} ${data.clientName},
 
-Ti ricordiamo che tra 3 giorni hai un appuntamento con Arianna.
+${t.reminderBody}
 
-Servizio: ${data.serviceName}
-Data: ${formatDate(data.date)}
-Orario: ${data.time}
+${t.service}: ${data.serviceName}
+${t.date}: ${formattedDate}
+${t.time}: ${data.time}
 
 ${!data.isFree
-  ? 'COSA PORTARE\n- Eventuali esami del sangue o referti medici recenti\n- Diario alimentare degli ultimi giorni (se possibile)\n- Lista dei farmaci o integratori che stai assumendo'
-  : 'COME PREPARARTI\n- Prepara eventuali domande o obiettivi che vuoi discutere\n- Pensa a cosa ti ha spinto a cercare supporto nutrizionale'}
+  ? `${t.reminderBringTitle}\n${t.reminderBring.map(i => `- ${i}`).join('\n')}`
+  : `${t.reminderPrepTitle}\n${t.reminderPrep.map(i => `- ${i}`).join('\n')}`}
 
-${data.managementToken ? `Non riesci a venire? Sposta o cancella: ${appUrl}/gestisci/${data.managementToken}\n` : ''}
+${data.managementToken ? `${t.cantCome} ${appUrl}/gestisci/${data.managementToken}\n` : ''}
 ---
 Viva Plant Nutrition
 `;
@@ -189,13 +191,18 @@ Viva Plant Nutrition
 // --- SCADENZA BONIFICO ---
 
 export function getExpiredBankTransferEmailHTML(data: ExpiredBankTransferEmailData): string {
+  const locale = getEmailLocale(data.locale)
+  const t = getT(locale)
+  const formattedDate = formatEmailDate(data.date, locale)
+  const appUrl = process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'
+
   return `
 <!DOCTYPE html>
-<html lang="it">
+<html lang="${locale}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prenotazione Annullata</title>
+  <title>${t.expiredTitle}</title>
 </head>
 <body style="margin: 0; padding: 0; ${BASE_STYLE} background-color: #F5F7F5;">
   ${testBanner(data.isTest)}
@@ -206,16 +213,16 @@ export function getExpiredBankTransferEmailHTML(data: ExpiredBankTransferEmailDa
           ${logoHeader()}
           <tr>
             <td style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); padding: 40px 30px; text-align: center;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">⚠️ Prenotazione Annullata</h1>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">${t.expiredTitle}</h1>
             </td>
           </tr>
           <tr>
             <td style="padding: 40px 30px;">
               <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #374151;">
-                Ciao <strong>${data.clientName}</strong>,
+                ${t.greeting} <strong>${data.clientName}</strong>,
               </p>
               <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #374151;">
-                Non abbiamo ricevuto il bonifico entro 72 ore dalla prenotazione, quindi l'appuntamento è stato annullato automaticamente.
+                ${t.expiredBody}
               </p>
 
               <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #FEF3C7; border-radius: 12px; margin: 0 0 30px; border-left: 4px solid #F59E0B;">
@@ -223,15 +230,15 @@ export function getExpiredBankTransferEmailHTML(data: ExpiredBankTransferEmailDa
                   <td style="padding: 20px;">
                     <table width="100%" cellpadding="8" cellspacing="0">
                       <tr>
-                        <td style="font-weight: 600; color: #92400E; font-size: 14px;">Servizio:</td>
+                        <td style="font-weight: 600; color: #92400E; font-size: 14px;">${t.service}:</td>
                         <td style="color: #78350F; font-size: 14px; text-align: right;">${data.serviceName}</td>
                       </tr>
                       <tr>
-                        <td style="font-weight: 600; color: #92400E; font-size: 14px;">Data:</td>
-                        <td style="color: #78350F; font-size: 14px; text-align: right;">${formatDate(data.date)}</td>
+                        <td style="font-weight: 600; color: #92400E; font-size: 14px;">${t.date}:</td>
+                        <td style="color: #78350F; font-size: 14px; text-align: right;">${formattedDate}</td>
                       </tr>
                       <tr>
-                        <td style="font-weight: 600; color: #92400E; font-size: 14px;">Orario:</td>
+                        <td style="font-weight: 600; color: #92400E; font-size: 14px;">${t.time}:</td>
                         <td style="color: #78350F; font-size: 14px; text-align: right;">${data.time}</td>
                       </tr>
                     </table>
@@ -240,21 +247,21 @@ export function getExpiredBankTransferEmailHTML(data: ExpiredBankTransferEmailDa
               </table>
 
               <p style="margin: 0 0 20px; font-size: 14px; line-height: 1.6; color: #374151;">
-                Se vuoi, puoi effettuare una nuova prenotazione dal sito.
+                ${t.expiredBookAgain}
               </p>
 
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td align="center">
-                    <a href="${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/booking" style="display: inline-block; background-color: #10B981; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 15px;">
-                      Prenota di nuovo
+                    <a href="${appUrl}/de/prenota" style="display: inline-block; background-color: #10B981; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 15px;">
+                      ${t.expiredCta}
                     </a>
                   </td>
                 </tr>
               </table>
             </td>
           </tr>
-          ${footer()}
+          ${footer(data.locale)}
         </table>
       </td>
     </tr>
@@ -264,18 +271,23 @@ export function getExpiredBankTransferEmailHTML(data: ExpiredBankTransferEmailDa
 }
 
 export function getExpiredBankTransferEmailText(data: ExpiredBankTransferEmailData): string {
+  const locale = getEmailLocale(data.locale)
+  const t = getT(locale)
+  const formattedDate = formatEmailDate(data.date, locale)
+  const appUrl = process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'
+
   return `
-PRENOTAZIONE ANNULLATA
+${t.expiredTitle}
 
-Ciao ${data.clientName},
+${t.greeting} ${data.clientName},
 
-Non abbiamo ricevuto il bonifico entro 72 ore dalla prenotazione, quindi l'appuntamento è stato annullato automaticamente.
+${t.expiredBody}
 
-Servizio: ${data.serviceName}
-Data: ${formatDate(data.date)}
-Orario: ${data.time}
+${t.service}: ${data.serviceName}
+${t.date}: ${formattedDate}
+${t.time}: ${data.time}
 
-Se vuoi, puoi effettuare una nuova prenotazione: ${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/booking
+${t.expiredBookAgain} ${appUrl}/de/prenota
 
 ---
 Viva Plant Nutrition

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { resend } from '@/lib/email'
 import { getSubscriptionLabel } from '@/lib/bookingService'
+import { getT } from '@/lib/email-templates/email-i18n'
 import type { SubscriptionType } from '@/lib/bookingService'
 import {
   getReminderEmailHTML,
@@ -55,13 +56,13 @@ export async function GET(request: NextRequest) {
 
   for (const appt of appointmentsTomorrow) {
     try {
-      const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[appt.subscription.type] ?? 'single-session')
+      const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[appt.subscription.type] ?? 'single-session', appt.locale)
       const isFree = appt.subscription.type === 'FREE_CONSULTATION'
       const clientName = `${appt.client.name} ${appt.client.surname}`
       await resend.emails.send({
         from: FROM,
         to: appt.client.email,
-        subject: `${subjectPrefix}🔔 Promemoria: appuntamento tra 3 giorni alle ${appt.time}`,
+        subject: `${subjectPrefix}${getT(appt.locale).subjReminder(appt.time)}`,
         html: getReminderEmailHTML({
           clientName,
           serviceName,
@@ -70,6 +71,7 @@ export async function GET(request: NextRequest) {
           isFree,
           managementToken: appt.managementToken,
           isTest: !IS_PROD,
+          locale: appt.locale,
         }),
         text: getReminderEmailText({
           clientName,
@@ -79,6 +81,7 @@ export async function GET(request: NextRequest) {
           isFree,
           managementToken: appt.managementToken,
           isTest: !IS_PROD,
+          locale: appt.locale,
         }),
       })
       results.reminders++
@@ -111,20 +114,21 @@ export async function GET(request: NextRequest) {
         data: { status: 'CANCELLED' },
       })
 
-      const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[appt.subscription.type] ?? 'single-session')
+      const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[appt.subscription.type] ?? 'single-session', appt.locale)
       const clientName = `${appt.client.name} ${appt.client.surname}`
 
       // Email al cliente
       await resend.emails.send({
         from: FROM,
         to: appt.client.email,
-        subject: `${subjectPrefix}Prenotazione annullata — ${serviceName}`,
+        subject: `${subjectPrefix}${getT(appt.locale).subjExpired(serviceName)}`,
         html: getExpiredBankTransferEmailHTML({
           clientName,
           serviceName,
           date: appt.date,
           time: appt.time,
           isTest: !IS_PROD,
+          locale: appt.locale,
         }),
         text: getExpiredBankTransferEmailText({
           clientName,
@@ -132,6 +136,7 @@ export async function GET(request: NextRequest) {
           date: appt.date,
           time: appt.time,
           isTest: !IS_PROD,
+          locale: appt.locale,
         }),
       })
 

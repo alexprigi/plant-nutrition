@@ -5,6 +5,7 @@ import { resend } from '@/lib/email'
 import type { AppointmentStatus } from '@prisma/client'
 import { getSubscriptionLabel } from '@/lib/bookingService'
 import type { SubscriptionType } from '@/lib/bookingService'
+import { getT } from '@/lib/email-templates/email-i18n'
 import { getFollowUpEmailHTML, getFollowUpEmailText } from '@/lib/email-templates/follow-up'
 
 const FROM = 'Viva Plant Nutrition <info@vivaplantnutrition.com>'
@@ -66,17 +67,18 @@ export async function PATCH(
       })
 
       if (isBundleType && sessionsRemaining > 0 && sub.followUpToken) {
-        const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[sub.type] ?? 'single-session')
+        const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[sub.type] ?? 'single-session', appointment.locale)
         resend.emails.send({
           from: FROM,
           to: appointment.client.email,
-          subject: `${subjectPrefix}📅 Prenota il prossimo appuntamento — ${sessionsRemaining} ${sessionsRemaining === 1 ? 'sessione rimasta' : 'sessioni rimaste'}`,
+          subject: `${subjectPrefix}${getT(appointment.locale).fuSubject(sessionsRemaining)}`,
           html: getFollowUpEmailHTML({
             clientName: `${appointment.client.name} ${appointment.client.surname}`,
             serviceName,
             sessionsRemaining,
             followUpToken: sub.followUpToken,
             isTest: !IS_PROD,
+            locale: appointment.locale,
           }),
           text: getFollowUpEmailText({
             clientName: `${appointment.client.name} ${appointment.client.surname}`,
@@ -84,6 +86,7 @@ export async function PATCH(
             sessionsRemaining,
             followUpToken: sub.followUpToken,
             isTest: !IS_PROD,
+            locale: appointment.locale,
           }),
         }).catch(() => {})
       }
@@ -133,7 +136,7 @@ export async function PATCH(
         clientName: `${appointment.client.name} ${appointment.client.surname}`,
         clientEmail: appointment.client.email,
         clientPhone: appointment.client.phone,
-        serviceName: getSubscriptionLabel(subTypeMap[appointment.subscription.type] ?? 'single-session'),
+        serviceName: getSubscriptionLabel(subTypeMap[appointment.subscription.type] ?? 'single-session', appointment.locale),
         price: appointment.subscription.price,
         date: appointment.date,
         time: appointment.time,
@@ -141,6 +144,7 @@ export async function PATCH(
         paymentMethod: appointment.subscription.paymentMethod.toLowerCase(),
         isPaid: true,
         managementToken: appointment.managementToken,
+        locale: appointment.locale,
       }),
     }).catch(() => {})
 
@@ -169,13 +173,14 @@ export async function PATCH(
     })
 
     // Email al cliente con nuovi dettagli
-    const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[appointment.subscription.type] ?? 'single-session')
+    const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[appointment.subscription.type] ?? 'single-session', appointment.locale)
+    const t = getT(appointment.locale)
     resend.emails.send({
       from: FROM,
       to: appointment.client.email,
-      subject: `${subjectPrefix}📅 Il tuo appuntamento è stato spostato`,
-      html: `<p>Ciao <strong>${appointment.client.name}</strong>,<br>Il tuo appuntamento per <strong>${serviceName}</strong> è stato spostato a:<br><strong>${date}</strong> alle <strong>${time}</strong>.</p><p>Se hai domande scrivi a <a href="mailto:info@vivaplantnutrition.com">info@vivaplantnutrition.com</a>.</p>`,
-      text: `Ciao ${appointment.client.name},\nIl tuo appuntamento per ${serviceName} è stato spostato a:\n${date} alle ${time}.\n\nPer domande: info@vivaplantnutrition.com`,
+      subject: `${subjectPrefix}${t.subjRescheduled}`,
+      html: `<p>${t.rescheduledBody(appointment.client.name, serviceName, date, time)}</p><p>${t.rescheduledContact} <a href="mailto:info@vivaplantnutrition.com">info@vivaplantnutrition.com</a>.</p>`,
+      text: `${t.rescheduledText(appointment.client.name, serviceName, date, time)}\n\ninfo@vivaplantnutrition.com`,
     }).catch(() => {})
 
     return NextResponse.json({ success: true })
@@ -199,17 +204,18 @@ export async function PATCH(
       return NextResponse.json({ error: 'Nessuna sessione rimanente o token mancante' }, { status: 400 })
     }
 
-    const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[sub.type] ?? 'single-session')
+    const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[sub.type] ?? 'single-session', appointment.locale)
     await resend.emails.send({
       from: FROM,
       to: appointment.client.email,
-      subject: `${subjectPrefix}📅 Prenota il prossimo appuntamento — ${sessionsRemaining} ${sessionsRemaining === 1 ? 'sessione rimasta' : 'sessioni rimaste'}`,
+      subject: `${subjectPrefix}${getT(appointment.locale).fuSubject(sessionsRemaining)}`,
       html: getFollowUpEmailHTML({
         clientName: `${appointment.client.name} ${appointment.client.surname}`,
         serviceName,
         sessionsRemaining,
         followUpToken: sub.followUpToken,
         isTest: !IS_PROD,
+        locale: appointment.locale,
       }),
       text: getFollowUpEmailText({
         clientName: `${appointment.client.name} ${appointment.client.surname}`,
@@ -217,6 +223,7 @@ export async function PATCH(
         sessionsRemaining,
         followUpToken: sub.followUpToken,
         isTest: !IS_PROD,
+        locale: appointment.locale,
       }),
     })
 

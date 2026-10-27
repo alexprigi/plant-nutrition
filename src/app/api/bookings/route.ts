@@ -1,3 +1,4 @@
+import { getEmailLocale } from '@/lib/email-templates/email-i18n'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import {
@@ -129,6 +130,7 @@ export async function POST(request: NextRequest) {
           time: data.selectedTime,
           status: mapStatus(data.status),
           notes: data.notes ?? '',
+          locale: getEmailLocale(data.locale),
         },
       })
 

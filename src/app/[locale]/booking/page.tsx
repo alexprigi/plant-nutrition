@@ -429,6 +429,7 @@ const PrenotaPageContent = () => {
             isPaid: true,
             managementToken: result?.appointment?.managementToken,
             durationMinutes: activeService?.durationMinutes ?? 60,
+            locale,
           }),
         }).catch(() => {});
         setIsProcessing(false);
@@ -462,6 +463,7 @@ const PrenotaPageContent = () => {
             isPaid: false,
             managementToken: result?.appointment?.managementToken,
             durationMinutes: activeService?.durationMinutes ?? 60,
+            locale,
           }),
         }).catch(() => {});
         setIsProcessing(false);

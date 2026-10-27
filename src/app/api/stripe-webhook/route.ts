@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true })
     }
 
-    const { subscriptionId, appointmentId, clientEmail, serviceName, date, time, durationMinutes, clientName, clientPhone, notes } = session.metadata ?? {}
+    const { subscriptionId, appointmentId, clientEmail, serviceName, date, time, durationMinutes, clientName, clientPhone, notes, locale } = session.metadata ?? {}
 
     if (!subscriptionId || !appointmentId) {
       console.error('Missing metadata in session:', session.id)
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       select: { managementToken: true },
     })
 
-    await fetch(`${appUrl}/api/send-booking-emails`, {
+    const emailRes = await fetch(`${appUrl}/api/send-booking-emails`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -77,8 +77,16 @@ export async function POST(request: NextRequest) {
         isPaid: true,
         managementToken: appointment?.managementToken,
         durationMinutes: parseInt(durationMinutes ?? '60', 10),
+        locale,
       }),
-    }).catch((err) => console.error('Failed to send booking emails:', err))
+    }).catch((err) => {
+      console.error('Failed to send booking emails:', err)
+      return null
+    })
+
+    if (emailRes && !emailRes.ok) {
+      console.error('send-booking-emails failed:', emailRes.status, await emailRes.text().catch(() => ''), 'appointmentId:', appointmentId)
+    }
   }
 
   return NextResponse.json({ received: true })

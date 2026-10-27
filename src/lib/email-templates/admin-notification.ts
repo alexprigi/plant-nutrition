@@ -1,3 +1,5 @@
+import { getT, getEmailLocale, formatEmailDate } from './email-i18n'
+
 // Template email per notifica admin
 
 const BASE_STYLE = `font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;`;
@@ -153,37 +155,42 @@ export interface EmailClientCancellationData {
   time: string;
   isRefundable?: boolean;
   isTest?: boolean;
+  locale?: string;
 }
 
 export function getClientCancellationEmailHTML(data: EmailClientCancellationData): string {
-  const formattedDate = new Date(data.date).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const locale = getEmailLocale(data.locale)
+  const t = getT(locale)
+  const formattedDate = formatEmailDate(data.date, locale)
   const content = `
-    <p style="margin: 0 0 20px; font-size: 16px; color: #374151;">Ciao <strong>${data.clientName}</strong>,</p>
+    <p style="margin: 0 0 20px; font-size: 16px; color: #374151;">${t.greeting} <strong>${data.clientName}</strong>,</p>
     <p style="margin: 0 0 25px; font-size: 16px; color: #374151;">
-      La cancellazione del tuo appuntamento è stata registrata.
+      ${t.cancelBody}
     </p>
     <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F9FAFB; border-radius: 12px; margin: 0 0 20px; border: 2px solid #E5E7EB;">
       <tr><td style="padding: 20px;">
         <table width="100%" cellpadding="0" cellspacing="0">
-          ${clientRow('Data', formattedDate)}
-          ${clientRow('Orario', data.time)}
+          ${clientRow(t.date, formattedDate)}
+          ${clientRow(t.time, data.time)}
         </table>
       </td></tr>
     </table>
     ${data.isRefundable ? `
     <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #ECFDF5; border-radius: 12px; border: 2px solid #A7F3D0; margin-bottom: 20px;">
       <tr><td style="padding: 16px;">
-        <p style="margin: 0 0 8px; font-size: 14px; color: #065F46; font-weight: bold;">Hai diritto al rimborso completo.</p>
-        <p style="margin: 0; font-size: 14px; color: #065F46;">Contatta Arianna Ciervo a <a href="mailto:info@vivaplantnutrition.com" style="color: #059669;">info@vivaplantnutrition.com</a> per riceverlo.</p>
+        <p style="margin: 0 0 8px; font-size: 14px; color: #065F46; font-weight: bold;">${t.refundTitle}</p>
+        <p style="margin: 0; font-size: 14px; color: #065F46;">${t.refundContact}</p>
       </td></tr>
     </table>` : `
-    <p style="margin: 0; font-size: 14px; color: #6B7280;">Se desideri prenotare un nuovo appuntamento, puoi farlo dal sito.</p>`}`;
-  return adminLayout(content, 'linear-gradient(135deg, #6B7280 0%, #4B5563 100%)', '✅ Cancellazione Confermata', data.isTest);
+    <p style="margin: 0; font-size: 14px; color: #6B7280;">${t.noRefund}</p>`}`;
+  return adminLayout(content, 'linear-gradient(135deg, #6B7280 0%, #4B5563 100%)', t.cancelTitle, data.isTest);
 }
 
 export function getClientCancellationEmailText(data: EmailClientCancellationData): string {
-  const formattedDate = new Date(data.date).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  return `Ciao ${data.clientName},\n\nLa cancellazione del tuo appuntamento del ${formattedDate} alle ${data.time} è stata registrata.${data.isRefundable ? '\n\nHai diritto al rimborso completo. Contatta Arianna Ciervo a info@vivaplantnutrition.com per riceverlo.' : '\n\nSe desideri prenotare un nuovo appuntamento, puoi farlo dal sito.'}\n\n---\nViva Plant Nutrition`;
+  const locale = getEmailLocale(data.locale)
+  const t = getT(locale)
+  const formattedDate = formatEmailDate(data.date, locale)
+  return `${t.greeting} ${data.clientName},\n\n${t.cancelBody} (${formattedDate}, ${data.time})${data.isRefundable ? `\n\n${t.refundTitle} ${t.refundContact}` : `\n\n${t.noRefund}`}\n\n---\nViva Plant Nutrition`;
 }
 
 interface EmailAdminData {

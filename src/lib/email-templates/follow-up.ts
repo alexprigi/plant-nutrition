@@ -1,24 +1,29 @@
+import { getEmailLocale, getT } from './email-i18n';
+
 interface FollowUpEmailData {
   clientName: string;
   serviceName: string;
   sessionsRemaining: number;
   followUpToken: string;
   isTest?: boolean;
+  locale?: string;
 }
 
 const BASE_STYLE = `font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;`;
 
 export function getFollowUpEmailHTML(data: FollowUpEmailData): string {
   const appUrl = process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com';
-  const bookingUrl = `${appUrl}/booking/follow-up/${data.followUpToken}`;
+  const locale = getEmailLocale(data.locale);
+  const t = getT(locale);
+  const bookingUrl = `${appUrl}/${locale}/booking/follow-up/${data.followUpToken}`;
 
   return `
 <!DOCTYPE html>
-<html lang="it">
+<html lang="${locale}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prenota il prossimo appuntamento</title>
+  <title>${t.fuTitle}</title>
 </head>
 <body style="margin: 0; padding: 0; ${BASE_STYLE} background-color: #F5F7F5;">
   ${data.isTest ? `
@@ -46,7 +51,7 @@ export function getFollowUpEmailHTML(data: FollowUpEmailData): string {
           <tr>
             <td style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
               <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">
-                📅 Prenota il prossimo appuntamento
+                ${t.fuTitle}
               </h1>
             </td>
           </tr>
@@ -55,27 +60,27 @@ export function getFollowUpEmailHTML(data: FollowUpEmailData): string {
           <tr>
             <td style="padding: 40px 30px;">
               <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #374151;">
-                Ciao <strong>${data.clientName}</strong>,
+                ${t.greeting} <strong>${data.clientName}</strong>,
               </p>
               <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #374151;">
-                Ottimo lavoro! La tua ultima visita è andata alla grande. Hai ancora <strong>${data.sessionsRemaining} ${data.sessionsRemaining === 1 ? 'sessione rimasta' : 'sessioni rimaste'}</strong> nel tuo <strong>${data.serviceName}</strong>.
+                ${t.fuBody(data.sessionsRemaining, data.serviceName)}
               </p>
               <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #374151;">
-                Clicca il bottone qui sotto per scegliere data e orario del prossimo appuntamento.
+                ${t.fuIntro}
               </p>
 
               <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
                 <tr>
                   <td align="center">
                     <a href="${bookingUrl}" style="display: inline-block; background-color: #10B981; color: #ffffff; text-decoration: none; padding: 16px 36px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                      Scegli la data
+                      ${t.fuCta}
                     </a>
                   </td>
                 </tr>
               </table>
 
               <p style="margin: 0; font-size: 12px; color: #9CA3AF; text-align: center;">
-                Questo link è personale e valido solo per te.
+                ${t.fuPersonalLink}
               </p>
             </td>
           </tr>
@@ -83,8 +88,8 @@ export function getFollowUpEmailHTML(data: FollowUpEmailData): string {
           <!-- Footer -->
           <tr>
             <td style="background-color: #F9FAFB; padding: 25px 30px; text-align: center; border-top: 1px solid #E5E7EB;">
-              <p style="margin: 0 0 5px; font-size: 12px; color: #9CA3AF;">Questa email è stata inviata da Viva Plant Nutrition</p>
-              <p style="margin: 0; font-size: 12px; color: #9CA3AF;">© 2026 Viva Plant Nutrition. Tutti i diritti riservati.</p>
+              <p style="margin: 0 0 5px; font-size: 12px; color: #9CA3AF;">${t.footer1}</p>
+              <p style="margin: 0; font-size: 12px; color: #9CA3AF;">${t.footer2}</p>
             </td>
           </tr>
         </table>
@@ -97,14 +102,16 @@ export function getFollowUpEmailHTML(data: FollowUpEmailData): string {
 
 export function getFollowUpEmailText(data: FollowUpEmailData): string {
   const appUrl = process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com';
+  const locale = getEmailLocale(data.locale);
+  const t = getT(locale);
   return `
-Ciao ${data.clientName},
+${t.greeting} ${data.clientName},
 
-Ottimo lavoro! Hai ancora ${data.sessionsRemaining} ${data.sessionsRemaining === 1 ? 'sessione rimasta' : 'sessioni rimaste'} nel tuo ${data.serviceName}.
+${t.fuBodyText(data.sessionsRemaining, data.serviceName)}
 
-Prenota il prossimo appuntamento: ${appUrl}/booking/follow-up/${data.followUpToken}
+${t.fuBookText}: ${appUrl}/${locale}/booking/follow-up/${data.followUpToken}
 
-Questo link è personale e valido solo per te.
+${t.fuPersonalLink}
 
 ---
 Viva Plant Nutrition

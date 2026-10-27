@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { resend } from '@/lib/email';
+import { getT } from '@/lib/email-templates/email-i18n';
 import {
   getClientConfirmationEmailHTML,
   getClientConfirmationEmailText,
@@ -37,12 +38,25 @@ interface SendBookingEmailsRequest {
   oldTime?: string;
   newDate?: string;
   newTime?: string;
+  // Locale for client-facing emails
+  locale?: string;
 }
 
 const ADMIN_EMAIL = 'info@vivaplantnutrition.com';
 const FROM = 'Viva Plant Nutrition <info@vivaplantnutrition.com>';
 const IS_PROD = process.env.AUTH_URL === 'https://www.vivaplantnutrition.com';
 const subjectPrefix = IS_PROD ? '' : '[TEST] ';
+
+type SendParams = Parameters<typeof resend.emails.send>[0];
+
+// Resend non lancia eccezioni: restituisce { error }. Lo trasformiamo in eccezione per non perdere i fallimenti.
+async function sendEmail(params: SendParams) {
+  const result = await resend.emails.send(params);
+  if (result.error) {
+    throw new Error(`Resend error (${params.subject}): ${result.error.message}`);
+  }
+  return result;
+}
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('it-IT', {
@@ -57,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     // --- CANCELLAZIONE (notifica Arianna) ---
     if (type === 'cancellation') {
-      await resend.emails.send({
+      await sendEmail({
         from: FROM,
         to: ADMIN_EMAIL,
         subject: `${subjectPrefix}❌ Appuntamento cancellato - ${data.clientName}`,
@@ -82,11 +96,12 @@ export async function POST(request: NextRequest) {
         time: data.time ?? '',
         isRefundable: data.isRefundable,
         isTest: !IS_PROD,
+        locale: data.locale,
       };
-      await resend.emails.send({
+      await sendEmail({
         from: FROM,
         to: data.clientEmail,
-        subject: `${subjectPrefix}Cancellazione confermata`,
+        subject: `${subjectPrefix}${getT(data.locale).subjCancelConfirmed}`,
         html: getClientCancellationEmailHTML(cancellationData),
         text: getClientCancellationEmailText(cancellationData),
       });
@@ -95,7 +110,7 @@ export async function POST(request: NextRequest) {
 
     // --- SPOSTAMENTO ---
     if (type === 'reschedule') {
-      await resend.emails.send({
+      await sendEmail({
         from: FROM,
         to: ADMIN_EMAIL,
         subject: `${subjectPrefix}📅 Appuntamento spostato - ${data.clientName}`,
@@ -135,6 +150,7 @@ export async function POST(request: NextRequest) {
       isBankTransfer,
       managementToken: data.managementToken,
       isTest: !IS_PROD,
+      locale: data.locale,
     };
 
     const adminEmailData = {
@@ -166,18 +182,18 @@ export async function POST(request: NextRequest) {
       },
     ] : [];
 
-    const clientEmailResult = await resend.emails.send({
+    const clientEmailResult = await sendEmail({
       from: FROM,
       to: data.clientEmail,
       subject: isBankTransfer
-        ? `${subjectPrefix}Richiesta Prenotazione Ricevuta - ${data.serviceName}`
-        : `${subjectPrefix}Conferma Prenotazione - ${data.serviceName}`,
+        ? `${subjectPrefix}${getT(data.locale).subjBankRequest(data.serviceName ?? '')}`
+        : `${subjectPrefix}${getT(data.locale).subjConfirm(data.serviceName ?? '')}`,
       html: getClientConfirmationEmailHTML(clientEmailData),
       text: getClientConfirmationEmailText(clientEmailData),
       attachments,
     });
 
-    const adminEmailResult = await resend.emails.send({
+    const adminEmailResult = await sendEmail({
       from: FROM,
       to: ADMIN_EMAIL,
       subject: `${subjectPrefix}🔔 Nuova Prenotazione: ${data.serviceName} - ${data.clientName}`,
