@@ -67,7 +67,7 @@ export async function PATCH(
       })
 
       if (isBundleType && sessionsRemaining > 0 && sub.followUpToken) {
-        const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[sub.type] ?? 'single-session', appointment.locale)
+        const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[sub.type], appointment.locale)
         resend.emails.send({
           from: FROM,
           to: appointment.client.email,

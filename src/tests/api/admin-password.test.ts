@@ -61,3 +61,20 @@ describe('PATCH /api/admin/password', () => {
     expect(mockPrisma.user.update).toHaveBeenCalledOnce()
   })
 })
+
+describe('PATCH /api/admin/password — extra', () => {
+  beforeEach(() => vi.clearAllMocks())
+
+  it('returns 400 when fields are missing', async () => {
+    mockAuth.mockResolvedValue({ user: { email: 'admin@test.com' } } as any)
+    const res = await PATCH(makeRequest({ currentPassword: 'x' }))
+    expect(res.status).toBe(400)
+  })
+
+  it('returns 404 when user not found', async () => {
+    mockAuth.mockResolvedValue({ user: { email: 'admin@test.com' } } as any)
+    mockPrisma.user.findUnique.mockResolvedValue(null)
+    const res = await PATCH(makeRequest({ currentPassword: 'current', newPassword: 'newpass123' }))
+    expect(res.status).toBe(404)
+  })
+})

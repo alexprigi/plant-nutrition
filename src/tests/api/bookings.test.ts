@@ -231,3 +231,118 @@ describe('GET /api/bookings', () => {
     expect(data.slots.every((s: any) => !s.available)).toBe(true)
   })
 })
+
+describe('POST /api/bookings - mapping branches', () => {
+  beforeEach(() => vi.clearAllMocks())
+
+  const run = async (dto: object, tx: any = {}) => {
+    const create = {
+      client: { upsert: vi.fn().mockResolvedValue({ id: 'c' }) },
+      subscription: { create: vi.fn().mockResolvedValue({ id: 's' }), findUnique: vi.fn() },
+      appointment: { create: vi.fn().mockResolvedValue({ id: 'a' }) },
+      ...tx,
+    }
+    mockPrisma.$transaction.mockImplementation(async (fn: any) => fn(create))
+    const res = await POST(makePostRequest({ ...baseDTO, ...dto }))
+    return { res, tx: create }
+  }
+
+  it.each([
+    ['follow-up', 'SINGLE_SESSION', 50],
+    ['first-visit', 'SINGLE_SESSION', 85],
+    ['plan-3-months', 'BUNDLE_3_MONTHS', 237],
+    ['plan-6-months', 'BUNDLE_6_MONTHS', 450],
+  ])('maps %s', async (commercialType, type, price) => {
+    const { res, tx } = await run({ commercialType })
+    expect(res.status).toBe(201)
+    const arg = tx.subscription.create.mock.calls[0][0].data
+    expect(arg.type).toBe(type)
+    expect(arg.price).toBe(price)
+    if (type.startsWith('BUNDLE')) expect(arg.expiresAt).toBeInstanceOf(Date)
+    else expect(arg.expiresAt).toBeUndefined()
+  })
+
+  it.each([
+    ['paypal', 'PAYPAL'],
+    ['bank_transfer', 'BANK_TRANSFER'],
+    ['none', 'NONE'],
+    ['weird', 'NONE'],
+  ])('maps payment method %s', async (paymentMethod, expected) => {
+    const { tx } = await run({ paymentMethod })
+    expect(tx.subscription.create.mock.calls[0][0].data.paymentMethod).toBe(expected)
+  })
+
+  it.each([
+    ['pending', 'PENDING'],
+    ['cancelled', 'CANCELLED'],
+    ['completed', 'COMPLETED'],
+    ['weird', 'PENDING'],
+  ])('maps status %s', async (status, expected) => {
+    const { tx } = await run({ status })
+    expect(tx.appointment.create.mock.calls[0][0].data.status).toBe(expected)
+  })
+
+  it('defaults notes to empty string when undefined', async () => {
+    const { tx } = await run({ notes: undefined })
+    expect(tx.appointment.create.mock.calls[0][0].data.notes).toBe('')
+  })
+
+  it('returns 500 when existing subscription is not found', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const { res } = await run(
+      { existingSubscriptionId: 'missing' },
+      { subscription: { findUnique: vi.fn().mockResolvedValue(null), create: vi.fn() } },
+    )
+    expect(res.status).toBe(500)
+  })
+})
+
+describe('GET /api/bookings - weekend', () => {
+  beforeEach(() => vi.clearAllMocks())
+  const SAT = '2026-05-02'
+
+  const slotsFor = async (blocks: any[], booked: any[] = [], duration = 30) => {
+    mockPrisma.appointment.findMany.mockResolvedValue(booked)
+    mockPrisma.availabilityBlock.findMany.mockResolvedValue(blocks)
+    const res = await GET(new NextRequest(`http://localhost/api/bookings?date=${SAT}&duration=${duration}`))
+    const data = await res.json()
+    return Object.fromEntries(data.slots.map((s: any) => [s.time, s.available]))
+  }
+
+  it('is fully closed on weekend without OPEN blocks', async () => {
+    const s = await slotsFor([])
+    expect(Object.values(s).every((v) => v === false)).toBe(true)
+  })
+
+  it('opens only slots inside an OPEN window, excluding BLOCK windows and booked', async () => {
+    const s = await slotsFor(
+      [
+        { type: 'OPEN', startTime: '09:00', endTime: '12:00' },
+        { type: 'BLOCK', startTime: '10:00', endTime: '10:30' },
+      ],
+      [{ time: '11:00' }],
+    )
+    expect(s['09:00']).toBe(true)
+    expect(s['10:00']).toBe(false)
+    expect(s['11:00']).toBe(false)
+    expect(s['11:30']).toBe(true)
+    expect(s['13:00']).toBe(false)
+  })
+
+  it('treats OPEN/BLOCK without times as whole-day', async () => {
+    const open = await slotsFor([{ type: 'OPEN', startTime: null, endTime: null }])
+    expect(open['08:00']).toBe(true)
+    const blocked = await slotsFor([
+      { type: 'OPEN', startTime: null, endTime: null },
+      { type: 'BLOCK', startTime: null, endTime: null },
+    ])
+    expect(Object.values(blocked).every((v) => v === false)).toBe(true)
+  })
+
+  it('uses default duration of 30 when not provided', async () => {
+    mockPrisma.appointment.findMany.mockResolvedValue([])
+    mockPrisma.availabilityBlock.findMany.mockResolvedValue([])
+    const res = await GET(new NextRequest('http://localhost/api/bookings?date=2026-05-04'))
+    expect((await res.json()).slots[0].available).toBe(true)
+  })
+})

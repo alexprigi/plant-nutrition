@@ -229,3 +229,37 @@ describe('GET /api/bookings — weekend availability', () => {
     expect(slot1100.available).toBe(true)
   })
 })
+
+describe('POST /api/admin/availability — errors', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockAuth.mockResolvedValue({ user: { name: 'Arianna' } } as any)
+  })
+
+  it('returns 500 when DB create fails', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    mockPrisma.availabilityBlock.create.mockRejectedValue(new Error('boom'))
+    const res = await POST(makePostRequest({ date: '2026-06-10' }))
+    const data = await res.json()
+    expect(res.status).toBe(500)
+    expect(data.error).toBe('boom')
+  })
+
+  it('applies defaults for bulk creation with note and times', async () => {
+    mockPrisma.availabilityBlock.createMany.mockResolvedValue({ count: 1 } as any)
+    await POST(makePostRequest({ dates: ['2026-06-10'] }))
+    expect(mockPrisma.availabilityBlock.createMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: [{ date: '2026-06-10', type: 'BLOCK', startTime: null, endTime: null, note: '' }],
+      })
+    )
+  })
+
+  it('keeps provided note on single create', async () => {
+    mockPrisma.availabilityBlock.create.mockResolvedValue({} as any)
+    await POST(makePostRequest({ date: '2026-06-10', note: 'ferie' }))
+    expect(mockPrisma.availabilityBlock.create).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ note: 'ferie' }) })
+    )
+  })
+})

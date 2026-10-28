@@ -162,3 +162,74 @@ describe('GET /api/cron/reminders', () => {
     expect(data.errors).toBe(0)
   })
 })
+
+describe('GET /api/cron/reminders - error handling and fallbacks', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.stubEnv('CRON_SECRET', 'test-secret')
+    vi.stubEnv('AUTH_URL', 'http://localhost:3000')
+    mockPrisma.subscription.updateMany.mockResolvedValue({ count: 0 } as any)
+  })
+
+  it('counts an error when a reminder email fails', async () => {
+    const { resend } = await import('@/lib/email')
+    vi.mocked(resend.emails.send).mockRejectedValueOnce(new Error('resend down'))
+    mockPrisma.appointment.findMany
+      .mockResolvedValueOnce([baseAppointment() as any])
+      .mockResolvedValueOnce([])
+    const data = await (await GET(makeRequest())).json()
+    expect(data.errors).toBe(1)
+    expect(data.reminders).toBe(0)
+  })
+
+  it('counts an error when processing an expired appointment fails', async () => {
+    mockPrisma.appointment.findMany
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([baseAppointment({ status: 'PENDING' }) as any])
+    mockPrisma.appointment.update.mockRejectedValueOnce(new Error('db'))
+    const data = await (await GET(makeRequest())).json()
+    expect(data.errors).toBe(1)
+    expect(data.expired).toBe(0)
+  })
+
+  it('falls back for unknown subscription type and missing phone', async () => {
+    const unknown = { subscription: { type: 'WEIRD' }, client: { name: 'A', surname: 'B', email: 'a@b.com', phone: null } }
+    mockPrisma.appointment.findMany
+      .mockResolvedValueOnce([baseAppointment(unknown) as any])
+      .mockResolvedValueOnce([baseAppointment({ status: 'PENDING', ...unknown }) as any])
+    mockPrisma.appointment.update.mockResolvedValue({} as any)
+    const data = await (await GET(makeRequest())).json()
+    expect(data.reminders).toBe(1)
+    expect(data.expired).toBe(1)
+  })
+
+  it('treats FREE_CONSULTATION reminders as free', async () => {
+    mockPrisma.appointment.findMany
+      .mockResolvedValueOnce([baseAppointment({ subscription: { type: 'FREE_CONSULTATION' } }) as any])
+      .mockResolvedValueOnce([])
+    const data = await (await GET(makeRequest())).json()
+    expect(data.reminders).toBe(1)
+  })
+})
+
+describe('GET /api/cron/reminders - production mode', () => {
+  it('omits the [TEST] subject prefix when AUTH_URL is the production URL', async () => {
+    vi.resetModules()
+    vi.stubEnv('CRON_SECRET', 'test-secret')
+    vi.stubEnv('AUTH_URL', 'https://www.vivaplantnutrition.com')
+    const { GET: prodGET } = await import('@/app/api/cron/reminders/route')
+    const { prisma: p } = await import('@/lib/prisma')
+    const { resend } = await import('@/lib/email')
+    const prodPrisma = vi.mocked(p, { deep: true })
+    prodPrisma.appointment.findMany
+      .mockResolvedValueOnce([baseAppointment() as any])
+      .mockResolvedValueOnce([])
+    prodPrisma.subscription.updateMany.mockResolvedValue({ count: 0 } as any)
+    vi.mocked(resend.emails.send).mockClear()
+    const res = await prodGET(makeRequest())
+    expect((await res.json()).reminders).toBe(1)
+    const subject = (vi.mocked(resend.emails.send).mock.calls[0][0] as any).subject as string
+    expect(subject.startsWith('[TEST] ')).toBe(false)
+    vi.unstubAllEnvs()
+  })
+})

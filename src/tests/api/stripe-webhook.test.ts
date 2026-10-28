@@ -98,3 +98,105 @@ describe('POST /api/stripe-webhook — confirmation email', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 })
+
+describe('POST /api/stripe-webhook — validation and edge cases', () => {
+  const fetchMock = vi.fn()
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.stubEnv('AUTH_URL', 'http://localhost:3000')
+    vi.stubGlobal('fetch', fetchMock)
+    fetchMock.mockResolvedValue({ ok: true, status: 200, text: async () => '' })
+    mockPrisma.$transaction.mockResolvedValue([] as any)
+    mockPrisma.appointment.findUnique.mockResolvedValue({ managementToken: 'tok' } as any)
+    mockConstructEvent.mockReturnValue(completedEvent())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.unstubAllEnvs()
+  })
+
+  it('returns 400 when the signature header is missing', async () => {
+    const res = await POST(new NextRequest('http://localhost/api/stripe-webhook', { method: 'POST', body: '{}' }))
+    expect(res.status).toBe(400)
+    expect(mockConstructEvent).not.toHaveBeenCalled()
+  })
+
+  it.each([new Error('bad sig'), 'bad sig'])('returns 400 for an invalid signature (%s)', async (err) => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    mockConstructEvent.mockImplementation(() => { throw err })
+    const res = await POST(makeRequest())
+    expect(res.status).toBe(400)
+    expect(spy).toHaveBeenCalledWith('Webhook signature verification failed:', 'bad sig')
+    spy.mockRestore()
+  })
+
+  it('ignores other event types', async () => {
+    mockConstructEvent.mockReturnValue({ type: 'payment_intent.created', data: { object: {} } })
+    const res = await POST(makeRequest())
+    expect(await res.json()).toEqual({ received: true })
+    expect(mockPrisma.$transaction).not.toHaveBeenCalled()
+  })
+
+  it('returns 200 without side effects when unpaid', async () => {
+    const ev = completedEvent()
+    ;(ev.data.object as any).payment_status = 'unpaid'
+    mockConstructEvent.mockReturnValue(ev)
+    const res = await POST(makeRequest())
+    expect(res.status).toBe(200)
+    expect(mockPrisma.$transaction).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    ['subscriptionId', { subscriptionId: '' }],
+    ['appointmentId', { appointmentId: '' }],
+  ])('returns 400 when %s metadata is missing', async (_n, md) => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    mockConstructEvent.mockReturnValue(completedEvent(md))
+    const res = await POST(makeRequest())
+    expect(res.status).toBe(400)
+    expect(mockPrisma.$transaction).not.toHaveBeenCalled()
+    spy.mockRestore()
+  })
+
+  it('returns 400 when metadata is undefined', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const ev = completedEvent()
+    ;(ev.data.object as any).metadata = undefined
+    mockConstructEvent.mockReturnValue(ev)
+    expect((await POST(makeRequest())).status).toBe(400)
+    spy.mockRestore()
+  })
+
+  it('handles missing optional metadata, null amount, missing appointment and no AUTH_URL', async () => {
+    vi.unstubAllEnvs()
+    delete process.env.AUTH_URL
+    const ev = completedEvent()
+    const obj = ev.data.object as any
+    obj.amount_total = null
+    obj.metadata = { subscriptionId: 'sub_1', appointmentId: 'appt_1' }
+    mockConstructEvent.mockReturnValue(ev)
+    mockPrisma.appointment.findUnique.mockResolvedValue(null)
+    const res = await POST(makeRequest())
+    expect(res.status).toBe(200)
+    const [url, init] = fetchMock.mock.calls[0]
+    expect(url).toBe('http://localhost:3000/api/send-booking-emails')
+    expect(JSON.parse(init.body)).toMatchObject({ price: 0, durationMinutes: 60 })
+  })
+
+  it('strips a trailing slash from AUTH_URL', async () => {
+    vi.stubEnv('AUTH_URL', 'https://example.com/')
+    await POST(makeRequest())
+    expect(fetchMock.mock.calls[0][0]).toBe('https://example.com/api/send-booking-emails')
+  })
+
+  it('logs an empty body when reading the error response fails', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    fetchMock.mockResolvedValue({ ok: false, status: 502, text: async () => { throw new Error('x') } })
+    const res = await POST(makeRequest())
+    expect(res.status).toBe(200)
+    expect(spy).toHaveBeenCalledWith('send-booking-emails failed:', 502, '', 'appointmentId:', 'appt_1')
+    spy.mockRestore()
+  })
+})

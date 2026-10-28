@@ -110,3 +110,19 @@ describe('GET /api/follow-up', () => {
     expect(res.status).toBe(200)
   })
 })
+
+describe('GET /api/follow-up - serviceType mapping', () => {
+  beforeEach(() => vi.clearAllMocks())
+
+  it('falls back to follow-up for unknown subscription type', async () => {
+    mockPrisma.subscription.findUnique.mockResolvedValue(baseSubscription({ type: 'UNKNOWN' }) as any)
+    const data = await (await GET(makeRequest('valid-token'))).json()
+    expect(data.serviceType).toBe('follow-up')
+  })
+
+  it('maps FREE_CONSULTATION to free-consultation', async () => {
+    mockPrisma.subscription.findUnique.mockResolvedValue(baseSubscription({ type: 'FREE_CONSULTATION' }) as any)
+    const data = await (await GET(makeRequest('valid-token'))).json()
+    expect(data.serviceType).toBe('free-consultation')
+  })
+})

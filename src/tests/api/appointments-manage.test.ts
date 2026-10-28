@@ -281,3 +281,138 @@ describe('POST /api/appointments/manage — reschedule', () => {
     expect(res.status).toBe(400)
   })
 })
+
+describe('POST /api/appointments/manage - extra branches', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true }))
+    mockPrisma.appointment.update.mockResolvedValue({} as any)
+  })
+
+  it('returns 400 when token or action is missing', async () => {
+    expect((await POST(makePostRequest({ action: 'cancel' }))).status).toBe(400)
+    expect((await POST(makePostRequest({ token: 't' }))).status).toBe(400)
+  })
+
+  it('returns 404 when appointment not found', async () => {
+    mockPrisma.appointment.findUnique.mockResolvedValue(null)
+    const res = await POST(makePostRequest({ token: 't', action: 'cancel' }))
+    expect(res.status).toBe(404)
+  })
+
+  it('returns 409 for completed appointment', async () => {
+    mockPrisma.appointment.findUnique.mockResolvedValue(baseAppointment({ status: 'COMPLETED' }) as any)
+    const res = await POST(makePostRequest({ token: 't', action: 'cancel' }))
+    expect(res.status).toBe(409)
+  })
+
+  it('returns 400 for unknown action', async () => {
+    mockPrisma.appointment.findUnique.mockResolvedValue(baseAppointment() as any)
+    const res = await POST(makePostRequest({ token: 't', action: 'bogus' }))
+    expect(res.status).toBe(400)
+  })
+
+  it('cancels a free appointment close to the date (not refundable)', async () => {
+    mockPrisma.appointment.findUnique.mockResolvedValue(
+      baseAppointment({ date: dateInDays(2), subscription: { paymentMethod: 'NONE', isPaid: false, price: 0 } }) as any,
+    )
+    const res = await POST(makePostRequest({ token: 't', action: 'cancel' }))
+    expect(res.status).toBe(200)
+    const body = JSON.parse((vi.mocked(fetch).mock.calls[0][1] as any).body)
+    expect(body.isRefundable).toBe(false)
+  })
+
+  it('cancels an unpaid non-free confirmed appointment', async () => {
+    mockPrisma.appointment.findUnique.mockResolvedValue(
+      baseAppointment({ date: dateInDays(2), subscription: { paymentMethod: 'BANK_TRANSFER', isPaid: false, price: 85 } }) as any,
+    )
+    const res = await POST(makePostRequest({ token: 't', action: 'cancel' }))
+    expect(res.status).toBe(200)
+  })
+
+  it('swallows fetch failures when sending cancellation/reschedule notifications', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network')))
+    mockPrisma.appointment.findUnique.mockResolvedValue(baseAppointment() as any)
+    expect((await POST(makePostRequest({ token: 't', action: 'cancel' }))).status).toBe(200)
+    expect(
+      (await POST(makePostRequest({ token: 't', action: 'reschedule', date: dateInDays(12), time: '11:00' }))).status,
+    ).toBe(200)
+    await new Promise((r) => setTimeout(r, 0))
+  })
+
+  it('awaits the notification emails before responding', async () => {
+    let sent = 0
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(
+      () => new Promise((r) => setTimeout(() => { sent++; r({ ok: true }) }, 10)),
+    ))
+    mockPrisma.appointment.findUnique.mockResolvedValue(baseAppointment() as any)
+    await POST(makePostRequest({ token: 't', action: 'cancel' }))
+    expect(sent).toBe(2)
+    await POST(makePostRequest({ token: 't', action: 'reschedule', date: dateInDays(12), time: '11:00' }))
+    expect(sent).toBe(3)
+  })
+
+  it('logs when send-booking-emails answers with an error', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500, text: async () => 'boom' }))
+    mockPrisma.appointment.findUnique.mockResolvedValue(baseAppointment() as any)
+    expect((await POST(makePostRequest({ token: 't', action: 'cancel' }))).status).toBe(200)
+    expect(spy).toHaveBeenCalledWith('send-booking-emails failed:', 500, 'boom', 'cancellation')
+    spy.mockRestore()
+  })
+
+  it('logs even when the error body cannot be read', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 502, text: async () => { throw new Error('x') } }))
+    mockPrisma.appointment.findUnique.mockResolvedValue(baseAppointment() as any)
+    await POST(makePostRequest({ token: 't', action: 'cancel' }))
+    expect(spy).toHaveBeenCalledWith('send-booking-emails failed:', 502, '', 'cancellation')
+    spy.mockRestore()
+  })
+
+  it('logs network failures', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network')))
+    mockPrisma.appointment.findUnique.mockResolvedValue(baseAppointment() as any)
+    await POST(makePostRequest({ token: 't', action: 'cancel' }))
+    expect(spy).toHaveBeenCalledWith('Failed to send booking email:', expect.any(Error))
+    spy.mockRestore()
+  })
+})
+
+describe('GET /api/appointments/manage - extra branches', () => {
+  beforeEach(() => vi.clearAllMocks())
+
+  it('computes flags for unpaid, non-free appointment within 24h', async () => {
+    mockPrisma.appointment.findUnique.mockResolvedValue(
+      baseAppointment({
+        date: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+        subscription: { paymentMethod: 'BANK_TRANSFER', isPaid: false, price: 85, type: 'SINGLE_SESSION' },
+      }) as any,
+    )
+    const data = await (await GET(makeGetRequest('t'))).json()
+    expect(data.canReschedule).toBe(false)
+    expect(data.contactRequired).toBe(true)
+  })
+
+  it('contactRequired when reschedule is blocked and >24h', async () => {
+    mockPrisma.appointment.findUnique.mockResolvedValue(baseAppointment({ rescheduleCount: 3 }) as any)
+    const data = await (await GET(makeGetRequest('t'))).json()
+    expect(data.contactRequired).toBe(true)
+  })
+
+  it('allows reschedule in restricted zone with no previous restricted reschedule', async () => {
+    mockPrisma.appointment.findUnique.mockResolvedValue(baseAppointment({ date: dateInDays(4) }) as any)
+    const data = await (await GET(makeGetRequest('t'))).json()
+    expect(data.canReschedule).toBe(true)
+  })
+
+  it('free appointment is cancellable and never requires contact', async () => {
+    mockPrisma.appointment.findUnique.mockResolvedValue(
+      baseAppointment({ subscription: { paymentMethod: 'NONE', isPaid: false, price: 0, type: 'FREE_CONSULTATION' } }) as any,
+    )
+    const data = await (await GET(makeGetRequest('t'))).json()
+    expect(data.contactRequired).toBe(false)
+    expect(data.canCancel).toBe(true)
+  })
+})

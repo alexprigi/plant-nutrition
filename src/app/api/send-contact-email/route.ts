@@ -43,11 +43,11 @@ export async function POST(request: NextRequest) {
             <tr style="background:#f9f9f9;"><td style="padding: 8px; font-weight: bold;">Email:</td><td style="padding: 8px;"><a href="mailto:${data.email}">${data.email}</a></td></tr>
             <tr><td style="padding: 8px; font-weight: bold;">Telefono:</td><td style="padding: 8px;">${data.telefono || '—'}</td></tr>
             <tr style="background:#f9f9f9;"><td style="padding: 8px; font-weight: bold;">Servizio:</td><td style="padding: 8px;">${servizioLabel}</td></tr>
-            <tr><td style="padding: 8px; font-weight: bold; vertical-align: top;">Messaggio:</td><td style="padding: 8px; white-space: pre-wrap;">${data.messaggio || '—'}</td></tr>
+            <tr><td style="padding: 8px; font-weight: bold; vertical-align: top;">Messaggio:</td><td style="padding: 8px; white-space: pre-wrap;">${data.messaggio}</td></tr>
           </table>
         </div>
       `,
-      text: `Nuovo messaggio dal form di contatto\n\nNome: ${data.nome}\nEmail: ${data.email}\nTelefono: ${data.telefono || '—'}\nServizio: ${servizioLabel}\nMessaggio: ${data.messaggio || '—'}`,
+      text: `Nuovo messaggio dal form di contatto\n\nNome: ${data.nome}\nEmail: ${data.email}\nTelefono: ${data.telefono || '—'}\nServizio: ${servizioLabel}\nMessaggio: ${data.messaggio}`,
     });
 
     return NextResponse.json({ success: true }, { status: 200 });

@@ -55,3 +55,12 @@ describe('POST /api/clients/check-eligibility', () => {
     )
   })
 })
+
+describe('POST /api/clients/check-eligibility - errors', () => {
+  it('returns 500 when the database fails', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    mockPrisma.client.findUnique.mockRejectedValue(new Error('db'))
+    const res = await POST(makeRequest({ email: 'a@b.com' }))
+    expect(res.status).toBe(500)
+  })
+})
