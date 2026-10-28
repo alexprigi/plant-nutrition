@@ -168,6 +168,7 @@ export default function FollowUpBookingPage() {
           isPaid: true,
           managementToken: result?.appointment?.managementToken,
           durationMinutes: 30,
+          isFollowUp: true,
           locale,
         }),
       }).catch(() => {});

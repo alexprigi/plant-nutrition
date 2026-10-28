@@ -31,6 +31,8 @@ interface SendBookingEmailsRequest {
   // Payment info
   paymentMethod?: 'stripe' | 'paypal' | 'bank_transfer' | 'none';
   isPaid?: boolean;
+  // Sessione di un percorso già pagato (prezzo 0, ma non è un colloquio gratuito)
+  isFollowUp?: boolean;
   managementToken?: string;
   durationMinutes?: number;
   // Reschedule
@@ -147,6 +149,7 @@ export async function POST(request: NextRequest) {
       time: data.time ?? '',
       notes: data.notes,
       isFree,
+      isFollowUp: data.isFollowUp,
       isBankTransfer,
       managementToken: data.managementToken,
       isTest: !IS_PROD,

@@ -3,6 +3,20 @@ import { prisma } from '@/lib/prisma'
 
 // GET /api/appointments/manage?token=xxx
 // Restituisce i dati dell'appuntamento per la pagina di gestione
+// Le funzioni serverless possono terminare appena la risposta è inviata: le email vanno attese.
+async function sendBookingEmail(payload: Record<string, unknown>) {
+  try {
+    const res = await fetch(`${process.env.AUTH_URL}/api/send-booking-emails`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) console.error('send-booking-emails failed:', res.status, await res.text().catch(() => ''), payload.type)
+  } catch (err) {
+    console.error('Failed to send booking email:', err)
+  }
+}
+
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token')
 
@@ -114,33 +128,25 @@ export async function POST(request: NextRequest) {
     const isRefundable = !isPending && !isFree && isPaid && daysUntil > 7
 
     // Notifica ad Arianna
-    fetch(`${process.env.AUTH_URL}/api/send-booking-emails`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'cancellation',
-        clientName: `${appointment.client.name} ${appointment.client.surname}`,
-        clientEmail: appointment.client.email,
-        date: appointment.date,
-        time: appointment.time,
-        isRefundable,
-      }),
-    }).catch(() => {})
+    await sendBookingEmail({
+      type: 'cancellation',
+      clientName: `${appointment.client.name} ${appointment.client.surname}`,
+      clientEmail: appointment.client.email,
+      date: appointment.date,
+      time: appointment.time,
+      isRefundable,
+    })
 
     // Conferma cancellazione al cliente
-    fetch(`${process.env.AUTH_URL}/api/send-booking-emails`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'cancellation-client',
-        clientName: `${appointment.client.name} ${appointment.client.surname}`,
-        clientEmail: appointment.client.email,
-        date: appointment.date,
-        time: appointment.time,
-        isRefundable,
-        locale: appointment.locale,
-      }),
-    }).catch(() => {})
+    await sendBookingEmail({
+      type: 'cancellation-client',
+      clientName: `${appointment.client.name} ${appointment.client.surname}`,
+      clientEmail: appointment.client.email,
+      date: appointment.date,
+      time: appointment.time,
+      isRefundable,
+      locale: appointment.locale,
+    })
 
     return NextResponse.json({ success: true, action: 'cancelled' })
   }
@@ -175,20 +181,16 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Notifica ad Arianna via email (fire and forget)
-    fetch(`${process.env.AUTH_URL}/api/send-booking-emails`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'reschedule',
-        clientName: `${appointment.client.name} ${appointment.client.surname}`,
-        clientEmail: appointment.client.email,
-        oldDate: appointment.date,
-        oldTime: appointment.time,
-        newDate: date,
-        newTime: time,
-      }),
-    }).catch(() => {})
+    // Notifica ad Arianna via email
+    await sendBookingEmail({
+      type: 'reschedule',
+      clientName: `${appointment.client.name} ${appointment.client.surname}`,
+      clientEmail: appointment.client.email,
+      oldDate: appointment.date,
+      oldTime: appointment.time,
+      newDate: date,
+      newTime: time,
+    })
 
     return NextResponse.json({ success: true, action: 'rescheduled', date, time })
   }

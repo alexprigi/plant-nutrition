@@ -8,6 +8,7 @@ interface EmailClientData {
   time: string;
   notes?: string;
   isFree: boolean;
+  isFollowUp?: boolean;
   isBankTransfer: boolean;
   managementToken?: string;
   isTest?: boolean;
@@ -73,7 +74,7 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                 </p>
               ` : `
                 <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #374151;">
-                  ${data.isFree ? t.bodyFree : t.bodyPaid}
+                  ${data.isFollowUp ? t.bodyFollowUp : data.isFree ? t.bodyFree : t.bodyPaid}
                 </p>
               `}
 
@@ -258,9 +259,11 @@ ${t.greeting} ${data.clientName},
 
 ${data.isBankTransfer
   ? t.bodyBankTransfer
-  : data.isFree
-    ? t.bodyFree
-    : t.bodyPaid
+  : data.isFollowUp
+    ? t.bodyFollowUp
+    : data.isFree
+      ? t.bodyFree
+      : t.bodyPaid
 }
 
 ${t.detailsTitle}
