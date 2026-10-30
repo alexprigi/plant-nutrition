@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
-import { resend } from '@/lib/email'
 import type { AppointmentStatus } from '@prisma/client'
 import { getSubscriptionLabel } from '@/lib/bookingService'
 import type { SubscriptionType } from '@/lib/bookingService'
 import { getT } from '@/lib/email-templates/email-i18n'
+import { postBookingEmail, sendClientEmail } from '@/lib/booking-emails'
 import { getFollowUpEmailHTML, getFollowUpEmailText } from '@/lib/email-templates/follow-up'
 
 const FROM = 'Viva Plant Nutrition <info@vivaplantnutrition.com>'
@@ -68,7 +68,7 @@ export async function PATCH(
 
       if (isBundleType && sessionsRemaining > 0 && sub.followUpToken) {
         const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[sub.type], appointment.locale)
-        resend.emails.send({
+        await sendClientEmail({
           from: FROM,
           to: appointment.client.email,
           subject: `${subjectPrefix}${getT(appointment.locale).fuSubject(sessionsRemaining)}`,
@@ -88,7 +88,7 @@ export async function PATCH(
             isTest: !IS_PROD,
             locale: appointment.locale,
           }),
-        }).catch(() => {})
+        })
       }
     }
 
@@ -129,24 +129,20 @@ export async function PATCH(
       BUNDLE_3_MONTHS: 'bundle-3-months',
       BUNDLE_6_MONTHS: 'bundle-6-months',
     }
-    fetch(`${process.env.AUTH_URL}/api/send-booking-emails`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        clientName: `${appointment.client.name} ${appointment.client.surname}`,
-        clientEmail: appointment.client.email,
-        clientPhone: appointment.client.phone,
-        serviceName: getSubscriptionLabel(subTypeMap[appointment.subscription.type] ?? 'single-session', appointment.locale),
-        price: appointment.subscription.price,
-        date: appointment.date,
-        time: appointment.time,
-        notes: appointment.notes,
-        paymentMethod: appointment.subscription.paymentMethod.toLowerCase(),
-        isPaid: true,
-        managementToken: appointment.managementToken,
-        locale: appointment.locale,
-      }),
-    }).catch(() => {})
+    await postBookingEmail({
+      clientName: `${appointment.client.name} ${appointment.client.surname}`,
+      clientEmail: appointment.client.email,
+      clientPhone: appointment.client.phone,
+      serviceName: getSubscriptionLabel(subTypeMap[appointment.subscription.type] ?? 'single-session', appointment.locale),
+      price: appointment.subscription.price,
+      date: appointment.date,
+      time: appointment.time,
+      notes: appointment.notes,
+      paymentMethod: appointment.subscription.paymentMethod.toLowerCase(),
+      isPaid: true,
+      managementToken: appointment.managementToken,
+      locale: appointment.locale,
+    })
 
     return NextResponse.json({ success: true })
   }
@@ -175,13 +171,13 @@ export async function PATCH(
     // Email al cliente con nuovi dettagli
     const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[appointment.subscription.type] ?? 'single-session', appointment.locale)
     const t = getT(appointment.locale)
-    resend.emails.send({
+    await sendClientEmail({
       from: FROM,
       to: appointment.client.email,
       subject: `${subjectPrefix}${t.subjRescheduled}`,
       html: `<p>${t.rescheduledBody(appointment.client.name, serviceName, date, time)}</p><p>${t.rescheduledContact} <a href="mailto:info@vivaplantnutrition.com">info@vivaplantnutrition.com</a>.</p>`,
       text: `${t.rescheduledText(appointment.client.name, serviceName, date, time)}\n\ninfo@vivaplantnutrition.com`,
-    }).catch(() => {})
+    })
 
     return NextResponse.json({ success: true })
   }
@@ -205,7 +201,7 @@ export async function PATCH(
     }
 
     const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[sub.type] ?? 'single-session', appointment.locale)
-    await resend.emails.send({
+    const sent = await sendClientEmail({
       from: FROM,
       to: appointment.client.email,
       subject: `${subjectPrefix}${getT(appointment.locale).fuSubject(sessionsRemaining)}`,
@@ -227,6 +223,9 @@ export async function PATCH(
       }),
     })
 
+    if (!sent) {
+      return NextResponse.json({ error: 'Invio email fallito' }, { status: 502 })
+    }
     return NextResponse.json({ success: true })
   }
 

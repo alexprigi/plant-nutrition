@@ -38,3 +38,8 @@ vi.mock('@/lib/prisma', () => ({
 vi.mock('@/lib/auth', () => ({
   auth: vi.fn(),
 }))
+
+// Nessun test deve creare un client Resend reale (richiede RESEND_API_KEY)
+vi.mock('@/lib/email', () => ({
+  resend: { emails: { send: vi.fn().mockResolvedValue({ data: { id: 'email_1' }, error: null }) } },
+}))

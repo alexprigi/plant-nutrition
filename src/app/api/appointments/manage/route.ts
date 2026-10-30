@@ -1,22 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { postBookingEmail } from '@/lib/booking-emails'
 
 // GET /api/appointments/manage?token=xxx
 // Restituisce i dati dell'appuntamento per la pagina di gestione
-// Le funzioni serverless possono terminare appena la risposta è inviata: le email vanno attese.
-async function sendBookingEmail(payload: Record<string, unknown>) {
-  try {
-    const res = await fetch(`${process.env.AUTH_URL}/api/send-booking-emails`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    if (!res.ok) console.error('send-booking-emails failed:', res.status, await res.text().catch(() => ''), payload.type)
-  } catch (err) {
-    console.error('Failed to send booking email:', err)
-  }
-}
-
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token')
 
@@ -128,7 +115,7 @@ export async function POST(request: NextRequest) {
     const isRefundable = !isPending && !isFree && isPaid && daysUntil > 7
 
     // Notifica ad Arianna
-    await sendBookingEmail({
+    await postBookingEmail({
       type: 'cancellation',
       clientName: `${appointment.client.name} ${appointment.client.surname}`,
       clientEmail: appointment.client.email,
@@ -138,7 +125,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Conferma cancellazione al cliente
-    await sendBookingEmail({
+    await postBookingEmail({
       type: 'cancellation-client',
       clientName: `${appointment.client.name} ${appointment.client.surname}`,
       clientEmail: appointment.client.email,
@@ -182,7 +169,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Notifica ad Arianna via email
-    await sendBookingEmail({
+    await postBookingEmail({
       type: 'reschedule',
       clientName: `${appointment.client.name} ${appointment.client.surname}`,
       clientEmail: appointment.client.email,
