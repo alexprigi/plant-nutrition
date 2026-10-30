@@ -106,6 +106,21 @@ export const getSubscriptionLabel = (type: SubscriptionType, locale?: string | n
   }
 };
 
+export type AppointmentTypeName = "FREE_CONSULTATION" | "FIRST_VISIT" | "FOLLOW_UP";
+
+// Nome del servizio di un singolo appuntamento. Il tipo di abbonamento da solo non basta:
+// una prima visita e una visita singola sono entrambe SINGLE_SESSION.
+export const getAppointmentLabel = (
+  appointmentType: AppointmentTypeName,
+  subscriptionType: SubscriptionType,
+  locale?: string | null,
+): string => {
+  const t = getT(locale);
+  if (appointmentType === "FREE_CONSULTATION") return t.svcFree;
+  if (appointmentType === "FOLLOW_UP") return t.svcFollowUp;
+  return subscriptionType === "single-session" ? t.svcFirstVisit : getSubscriptionLabel(subscriptionType, locale);
+};
+
 // --- 5. API FUNCTIONS ---
 
 export const checkEligibility = async (

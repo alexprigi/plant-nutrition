@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import {
-  getSubscriptionLabel, checkEligibility, createFullBooking, getAdminAppointments,
+  getSubscriptionLabel, getAppointmentLabel, checkEligibility, createFullBooking, getAdminAppointments,
   updateAppointmentStatus, markSubscriptionAsPaid, rescheduleAppointment, resendFollowUpLink,
   type CreateBookingDTO, type SubscriptionType,
 } from '@/lib/bookingService'
@@ -62,5 +62,23 @@ describe.each([
     expect(fetchMock).toHaveBeenCalledWith('/api/admin/appointments/1', expect.objectContaining({ method: 'PATCH', body: JSON.stringify(body) }))
     fetchMock.mockResolvedValue({ ok: false })
     expect(await call()).toBe(false)
+  })
+})
+
+describe('getAppointmentLabel', () => {
+  it('uses the appointment type, not only the subscription type', () => {
+    expect(getAppointmentLabel('FIRST_VISIT', 'single-session', 'en')).toBe('Full First Visit')
+    expect(getAppointmentLabel('FOLLOW_UP', 'single-session', 'de')).toBe('Kontrolltermin')
+    expect(getAppointmentLabel('FOLLOW_UP', 'bundle-3-months', 'it')).toBe('Visita di Controllo')
+    expect(getAppointmentLabel('FREE_CONSULTATION', 'free-consultation', 'en')).toBe('Free Consultation')
+  })
+
+  it('names the first visit of a bundle after the bundle', () => {
+    expect(getAppointmentLabel('FIRST_VISIT', 'bundle-3-months', 'en')).toBe('3-Month Program')
+    expect(getAppointmentLabel('FIRST_VISIT', 'bundle-6-months', 'de')).toBe('6-Monats-VIP-Programm')
+  })
+
+  it('falls back to the default locale', () => {
+    expect(getAppointmentLabel('FIRST_VISIT', 'single-session')).toBe('Vollständige Erstberatung')
   })
 })

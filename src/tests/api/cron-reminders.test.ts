@@ -27,6 +27,7 @@ function dateInDays(n: number): string {
 
 const baseAppointment = (overrides = {}) => ({
   id: 'appt_1',
+  type: 'FIRST_VISIT',
   date: dateInDays(3),
   time: '10:00',
   status: 'CONFIRMED',
@@ -88,7 +89,7 @@ describe('GET /api/cron/reminders', () => {
     const call = mockSend.mock.calls[0][0] as any
     expect(call.subject).toContain('Reminder')
     expect(call.html).toContain('<html lang="en">')
-    expect(call.html).toContain('Single Consultation')
+    expect(call.html).toContain('Full First Visit')
   })
 
   it('sends the expired booking email to the client in the appointment locale', async () => {
@@ -105,7 +106,7 @@ describe('GET /api/cron/reminders', () => {
 
     const clientCall = mockSend.mock.calls.map(([p]) => p as any).find((p) => p.to === 'mario@test.com')
     expect(clientCall.subject).toContain('Prenotazione annullata')
-    expect(clientCall.subject).toContain('Visita Singola')
+    expect(clientCall.subject).toContain('Prima Visita Completa')
   })
 
   it('cancels expired PENDING appointments (>72h)', async () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { postBookingEmail, sendClientEmail } from '@/lib/booking-emails'
+import { postBookingEmail, sendClientEmail, sendWithRetry, RATE_LIMIT_RETRY_MS } from '@/lib/booking-emails'
 import { resend } from '@/lib/email'
 
 const mockSend = vi.mocked(resend.emails.send) as unknown as ReturnType<typeof vi.fn>
@@ -73,5 +73,44 @@ describe('sendClientEmail', () => {
     expect(await sendClientEmail(params)).toBe(false)
     expect(spy).toHaveBeenCalledWith('Failed to send email:', 'Subj', expect.any(Error))
     spy.mockRestore()
+  })
+})
+
+describe('sendWithRetry', () => {
+  beforeEach(() => { vi.clearAllMocks(); vi.useFakeTimers() })
+  afterEach(() => vi.useRealTimers())
+
+  it('does not retry when the first attempt succeeds', async () => {
+    mockSend.mockResolvedValue({ data: { id: 'e' }, error: null })
+    expect((await sendWithRetry(params)).error).toBeNull()
+    expect(mockSend).toHaveBeenCalledTimes(1)
+  })
+
+  it.each([
+    ['name', { message: 'slow down', name: 'rate_limit_exceeded' }],
+    ['status code', { message: 'slow down', name: 'application_error', statusCode: 429 }],
+  ])('retries once after a rate limit (%s) and returns the second result', async (_label, error) => {
+    mockSend
+      .mockResolvedValueOnce({ data: null, error })
+      .mockResolvedValueOnce({ data: { id: 'e' }, error: null })
+    const pending = sendWithRetry(params)
+    await vi.advanceTimersByTimeAsync(RATE_LIMIT_RETRY_MS + 10)
+    expect((await pending).data).toEqual({ id: 'e' })
+    expect(mockSend).toHaveBeenCalledTimes(2)
+  })
+
+  it('retries only once', async () => {
+    const error = { message: 'slow down', name: 'rate_limit_exceeded' }
+    mockSend.mockResolvedValue({ data: null, error })
+    const pending = sendWithRetry(params)
+    await vi.advanceTimersByTimeAsync(RATE_LIMIT_RETRY_MS + 10)
+    expect((await pending).error).toEqual(error)
+    expect(mockSend).toHaveBeenCalledTimes(2)
+  })
+
+  it('does not retry other errors', async () => {
+    mockSend.mockResolvedValue({ data: null, error: { message: 'bad', name: 'validation_error' } })
+    expect((await sendWithRetry(params)).error?.name).toBe('validation_error')
+    expect(mockSend).toHaveBeenCalledTimes(1)
   })
 })

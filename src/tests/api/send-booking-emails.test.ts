@@ -72,11 +72,25 @@ describe('POST /api/send-booking-emails', () => {
     spy.mockRestore()
   })
 
+  it('retries once when Resend rate limits and succeeds', async () => {
+    vi.useFakeTimers()
+    mockSend
+      .mockResolvedValueOnce({ data: { id: 'c' }, error: null })
+      .mockResolvedValueOnce({ data: null, error: { message: 'rate limited', name: 'rate_limit_exceeded' } })
+      .mockResolvedValueOnce({ data: { id: 'a' }, error: null })
+    const pending = POST(makeRequest(booking))
+    await vi.advanceTimersByTimeAsync(1200)
+    const res = await pending
+    vi.useRealTimers()
+    expect(res.status).toBe(200)
+    expect(mockSend).toHaveBeenCalledTimes(3)
+  })
+
   it('returns 500 when only the admin email fails', async () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
     mockSend
       .mockResolvedValueOnce({ data: { id: 'c' }, error: null })
-      .mockResolvedValueOnce({ data: null, error: { message: 'rate limited', name: 'rate_limit_exceeded' } })
+      .mockResolvedValueOnce({ data: null, error: { message: 'invalid recipient', name: 'validation_error' } })
     const res = await POST(makeRequest(booking))
     expect(res.status).toBe(500)
     spy.mockRestore()

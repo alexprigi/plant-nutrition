@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import type { AppointmentStatus } from '@prisma/client'
-import { getSubscriptionLabel } from '@/lib/bookingService'
+import { getSubscriptionLabel, getAppointmentLabel } from '@/lib/bookingService'
 import type { SubscriptionType } from '@/lib/bookingService'
 import { getT } from '@/lib/email-templates/email-i18n'
 import { postBookingEmail, sendClientEmail } from '@/lib/booking-emails'
@@ -133,7 +133,7 @@ export async function PATCH(
       clientName: `${appointment.client.name} ${appointment.client.surname}`,
       clientEmail: appointment.client.email,
       clientPhone: appointment.client.phone,
-      serviceName: getSubscriptionLabel(subTypeMap[appointment.subscription.type] ?? 'single-session', appointment.locale),
+      serviceName: getAppointmentLabel(appointment.type, subTypeMap[appointment.subscription.type] ?? 'single-session', appointment.locale),
       price: appointment.subscription.price,
       date: appointment.date,
       time: appointment.time,
@@ -169,7 +169,7 @@ export async function PATCH(
     })
 
     // Email al cliente con nuovi dettagli
-    const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[appointment.subscription.type] ?? 'single-session', appointment.locale)
+    const serviceName = getAppointmentLabel(appointment.type, SUB_TYPE_MAP[appointment.subscription.type] ?? 'single-session', appointment.locale)
     const t = getT(appointment.locale)
     await sendClientEmail({
       from: FROM,

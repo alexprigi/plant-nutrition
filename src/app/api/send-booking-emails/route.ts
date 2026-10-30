@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { resend } from '@/lib/email';
 import { getT } from '@/lib/email-templates/email-i18n';
+import { sendWithRetry } from '@/lib/booking-emails';
 import {
   getClientConfirmationEmailHTML,
   getClientConfirmationEmailText,
@@ -53,7 +54,7 @@ type SendParams = Parameters<typeof resend.emails.send>[0];
 
 // Resend non lancia eccezioni: restituisce { error }. Lo trasformiamo in eccezione per non perdere i fallimenti.
 async function sendEmail(params: SendParams) {
-  const result = await resend.emails.send(params);
+  const result = await sendWithRetry(params);
   if (result.error) {
     throw new Error(`Resend error (${params.subject}): ${result.error.message}`);
   }

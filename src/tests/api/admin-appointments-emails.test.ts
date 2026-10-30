@@ -59,6 +59,16 @@ describe('admin appointments — emails are awaited and failures are logged', ()
     expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toMatchObject({ locale: 'en', isPaid: true })
   })
 
+  it.each([
+    ['FIRST_VISIT', 'SINGLE_SESSION', 'Full First Visit'],
+    ['FIRST_VISIT', 'BUNDLE_3_MONTHS', '3-Month Program'],
+    ['FOLLOW_UP', 'BUNDLE_3_MONTHS', 'Follow-up Visit'],
+  ])('names a %s appointment of a %s subscription "%s" in the confirmation', async (type, subType, label) => {
+    mockPrisma.appointment.findUnique.mockResolvedValue({ ...appt({ type: subType }), type } as any)
+    await PATCH(makeRequest({ isPaid: true }), makeParams())
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).serviceName).toBe(label)
+  })
+
   it('logs but still succeeds when the confirmation email fails', async () => {
     fetchMock.mockResolvedValue({ ok: false, status: 500, text: async () => 'boom' })
     const res = await PATCH(makeRequest({ isPaid: true }), makeParams())

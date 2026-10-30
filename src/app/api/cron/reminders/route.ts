@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { resend } from '@/lib/email'
-import { getSubscriptionLabel } from '@/lib/bookingService'
+import { getAppointmentLabel } from '@/lib/bookingService'
 import { getT } from '@/lib/email-templates/email-i18n'
 import type { SubscriptionType } from '@/lib/bookingService'
 import {
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
 
   for (const appt of appointmentsTomorrow) {
     try {
-      const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[appt.subscription.type] ?? 'single-session', appt.locale)
+      const serviceName = getAppointmentLabel(appt.type, SUB_TYPE_MAP[appt.subscription.type] ?? 'single-session', appt.locale)
       const isFree = appt.subscription.type === 'FREE_CONSULTATION'
       const clientName = `${appt.client.name} ${appt.client.surname}`
       await resend.emails.send({
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
         data: { status: 'CANCELLED' },
       })
 
-      const serviceName = getSubscriptionLabel(SUB_TYPE_MAP[appt.subscription.type] ?? 'single-session', appt.locale)
+      const serviceName = getAppointmentLabel(appt.type, SUB_TYPE_MAP[appt.subscription.type] ?? 'single-session', appt.locale)
       const clientName = `${appt.client.name} ${appt.client.surname}`
 
       // Email al cliente
