@@ -1,4 +1,8 @@
 {
+  "sito": {
+    "meta-titolo": "Viva Plant Nutrition - Arianna Ciervo Nutrizionista Vegana",
+    "meta-descrizione": "Centro specializzato in nutrizione vegana. Consulenze personalizzate, piani alimentari e supporto per uno stile di vita sano, equilibrato e sostenibile."
+  },
   "navigazione": {
     "home": "Home",
     "chi-sono": "Chi Sono",
@@ -130,6 +134,8 @@
     }
   },
   "chi-sono": {
+    "meta-titolo": "Chi sono - Viva Plant Nutrition | Arianna Ciervo, Nutrizionista Vegana",
+    "meta-descrizione": "Conosci Arianna Ciervo, nutrizionista specializzata in alimentazione plant-based, e l'approccio di Viva Plant Nutrition.",
     "hero": {
       "titolo": "Ciao, sono Arianna",
       "sottotitolo": "Benvenuta/o nel mondo di Viva Plant Nutrition! Sono Arianna, e sono entusiasta di accompagnarti nel tuo percorso verso una nutrizione vegana consapevole, sana e gioiosa.",
@@ -340,6 +346,8 @@
     }
   },
   "contatti": {
+    "meta-titolo": "Contatti - Viva Plant Nutrition | Prenota una Consulenza",
+    "meta-descrizione": "Contatta Viva Plant Nutrition per informazioni sulle consulenze di nutrizione vegana o per prenotare un colloquio.",
     "hero": {
       "titolo": "Contattami",
       "sottotitolo": "Siamo qui per rispondere alle tue domande e aiutarti a iniziare il tuo percorso verso il benessere con Viva Plant Nutrition."
@@ -406,6 +414,8 @@
     }
   },
   "prenota": {
+    "meta-titolo": "Prenota - Viva Plant Nutrition | Consulenza Nutrizionale Vegana",
+    "meta-descrizione": "Prenota online la tua consulenza di nutrizione vegana con Arianna Ciervo: scegli servizio, data e orario.",
     "step1-label": "Servizio",
     "step2-label": "Dati",
     "step3-label": "Calendario",
@@ -548,6 +558,8 @@
     "salva": "Salva Preferenze"
   },
   "cookie-policy": {
+    "meta-titolo": "Cookie Policy - Viva Plant Nutrition",
+    "meta-descrizione": "Informazioni sui cookie utilizzati dal sito di Viva Plant Nutrition e su come gestirli.",
     "titolo": "Cookie Policy",
     "aggiornamento": "Ultimo aggiornamento: 6 Gennaio 2026",
     "intro": "Questa pagina descrive l'uso dei cookie su questo sito web. I cookie sono piccoli file di testo che vengono memorizzati sul tuo dispositivo per migliorare l'esperienza di navigazione.",
@@ -660,6 +672,8 @@
     "torna-home": "Torna alla home"
   },
   "gestisci": {
+    "meta-titolo": "Gestisci appuntamento - Viva Plant Nutrition",
+    "meta-descrizione": "Sposta o cancella il tuo appuntamento con Viva Plant Nutrition.",
     "caricamento": "Caricamento appuntamento...",
     "errore-titolo": "Link non valido",
     "torna-home": "Torna alla Home",

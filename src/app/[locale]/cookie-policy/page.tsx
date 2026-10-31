@@ -1,5 +1,10 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
+import { localizedMetadata } from '@/lib/metadata';
+
+export function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  return localizedMetadata(params, 'cookie-policy');
+}
 
 export default async function CookiePolicyPage() {
   const t = await getTranslations('cookie-policy');

@@ -1,4 +1,8 @@
 {
+  "sito": {
+    "meta-titolo": "Viva Plant Nutrition - Arianna Ciervo, Vegan Nutritionist",
+    "meta-descrizione": "Specialised centre for vegan nutrition. Personalised consultations, meal plans and support for a healthy, balanced and sustainable lifestyle."
+  },
   "navigazione": {
     "home": "Home",
     "chi-sono": "About Me",
@@ -130,6 +134,8 @@
     }
   },
   "chi-sono": {
+    "meta-titolo": "About me - Viva Plant Nutrition | Arianna Ciervo, Vegan Nutritionist",
+    "meta-descrizione": "Meet Arianna Ciervo, a nutritionist specialised in plant-based eating, and the approach behind Viva Plant Nutrition.",
     "hero": {
       "titolo": "Hello, I'm Arianna",
       "sottotitolo": "Welcome to the world of Viva Plant Nutrition! I'm Arianna, and I'm excited to guide you on your journey towards conscious, healthy and joyful vegan nutrition.",
@@ -340,6 +346,8 @@
     }
   },
   "contatti": {
+    "meta-titolo": "Contact - Viva Plant Nutrition | Book a Consultation",
+    "meta-descrizione": "Get in touch with Viva Plant Nutrition for information about vegan nutrition consultations or to book a call.",
     "hero": {
       "titolo": "Contact Me",
       "sottotitolo": "We're here to answer your questions and help you start your wellness journey with Viva Plant Nutrition."
@@ -406,6 +414,8 @@
     }
   },
   "prenota": {
+    "meta-titolo": "Book - Viva Plant Nutrition | Vegan Nutrition Consultation",
+    "meta-descrizione": "Book your vegan nutrition consultation with Arianna Ciervo online: choose the service, date and time.",
     "step1-label": "Service",
     "step2-label": "Details",
     "step3-label": "Calendar",
@@ -548,6 +558,8 @@
     "salva": "Save Preferences"
   },
   "cookie-policy": {
+    "meta-titolo": "Cookie Policy - Viva Plant Nutrition",
+    "meta-descrizione": "Information about the cookies used on the Viva Plant Nutrition website and how to manage them.",
     "titolo": "Cookie Policy",
     "aggiornamento": "Last updated: January 6, 2026",
     "intro": "This page describes the use of cookies on this website. Cookies are small text files stored on your device to improve your browsing experience.",
@@ -660,6 +672,8 @@
     "torna-home": "Back to home"
   },
   "gestisci": {
+    "meta-titolo": "Manage appointment - Viva Plant Nutrition",
+    "meta-descrizione": "Reschedule or cancel your appointment with Viva Plant Nutrition.",
     "caricamento": "Loading appointment...",
     "errore-titolo": "Invalid link",
     "torna-home": "Back to Home",

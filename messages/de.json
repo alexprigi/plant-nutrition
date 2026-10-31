@@ -1,4 +1,8 @@
 {
+  "sito": {
+    "meta-titolo": "Viva Plant Nutrition - Arianna Ciervo, Vegane Ernährungsberaterin",
+    "meta-descrizione": "Spezialisiertes Zentrum für vegane Ernährung. Individuelle Beratungen, Ernährungspläne und Unterstützung für einen gesunden, ausgewogenen und nachhaltigen Lebensstil."
+  },
   "navigazione": {
     "home": "Home",
     "chi-sono": "Über mich",
@@ -130,6 +134,8 @@
     }
   },
   "chi-sono": {
+    "meta-titolo": "Über mich - Viva Plant Nutrition | Arianna Ciervo, Vegane Ernährungsberaterin",
+    "meta-descrizione": "Lerne Arianna Ciervo kennen, Ernährungsberaterin mit Schwerpunkt pflanzliche Ernährung, und den Ansatz von Viva Plant Nutrition.",
     "hero": {
       "titolo": "Hallo, ich bin Arianna",
       "sottotitolo": "Willkommen in der Welt von Viva Plant Nutrition! Ich bin Arianna und freue mich darauf, dich auf deinem Weg zu einer bewussten, gesunden und freudvollen veganen Ernährung zu begleiten.",
@@ -340,6 +346,8 @@
     }
   },
   "contatti": {
+    "meta-titolo": "Kontakt - Viva Plant Nutrition | Beratung buchen",
+    "meta-descrizione": "Kontaktiere Viva Plant Nutrition für Informationen zur veganen Ernährungsberatung oder um ein Gespräch zu vereinbaren.",
     "hero": {
       "titolo": "Kontaktiere mich",
       "sottotitolo": "Wir sind hier, um deine Fragen zu beantworten und dir beim Start deiner Wellness-Reise mit Viva Plant Nutrition zu helfen."
@@ -406,6 +414,8 @@
     }
   },
   "prenota": {
+    "meta-titolo": "Buchen - Viva Plant Nutrition | Vegane Ernährungsberatung",
+    "meta-descrizione": "Buche online deine vegane Ernährungsberatung bei Arianna Ciervo: Leistung, Datum und Uhrzeit wählen.",
     "step1-label": "Leistung",
     "step2-label": "Daten",
     "step3-label": "Kalender",
@@ -548,6 +558,8 @@
     "salva": "Einstellungen speichern"
   },
   "cookie-policy": {
+    "meta-titolo": "Cookie-Richtlinie - Viva Plant Nutrition",
+    "meta-descrizione": "Informationen zu den Cookies auf der Website von Viva Plant Nutrition und zu ihrer Verwaltung.",
     "titolo": "Cookie-Richtlinie",
     "aggiornamento": "Letzte Aktualisierung: 6. Januar 2026",
     "intro": "Diese Seite beschreibt die Verwendung von Cookies auf dieser Website. Cookies sind kleine Textdateien, die auf deinem Gerät gespeichert werden, um das Surferlebnis zu verbessern.",
@@ -660,6 +672,8 @@
     "torna-home": "Zurück zur Startseite"
   },
   "gestisci": {
+    "meta-titolo": "Termin verwalten - Viva Plant Nutrition",
+    "meta-descrizione": "Verschiebe oder storniere deinen Termin bei Viva Plant Nutrition.",
     "caricamento": "Termin wird geladen...",
     "errore-titolo": "Ungültiger Link",
     "torna-home": "Zurück zur Startseite",

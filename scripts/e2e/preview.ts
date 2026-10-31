@@ -164,6 +164,32 @@ test('ogni pagina dichiara la propria lingua in <html lang>', async () => {
   expect(wrong.length === 0, `lang errato: ${wrong.join('; ')}`)
 })
 
+// Titolo e descrizione devono essere nella lingua della pagina (SEO e anteprime nei risultati di ricerca)
+const decodeAll = (s: string) => decodeEntities(s).replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+const PAGES: [path: string, namespace: string][] = [
+  ['', 'sito'], ['about', 'chi-sono'], ['contact', 'contatti'], ['booking', 'prenota'],
+  ['services', 'servizi'], ['cookie-policy', 'cookie-policy'], ['privacy-policy', 'privacy-policy'], ['gestisci/token-inesistente', 'gestisci'],
+]
+for (const locale of LOCALES) {
+  test(`metadati (${locale}): titolo e descrizione tradotti in ogni pagina`, async () => {
+    const messages = JSON.parse(readFileSync(`messages/${locale}.json`, 'utf8'))
+    const problems: string[] = []
+    for (const [path, ns] of PAGES) {
+      const html = decodeAll(String((await api(`/${locale}${path ? `/${path}` : ''}`)).body))
+      const title = html.match(/<title>([^<]*)<\/title>/)?.[1]
+      const description = html.match(/<meta name="description" content="([^"]*)"/)?.[1]
+      if (title !== messages[ns]['meta-titolo']) problems.push(`/${locale}/${path}: title "${title}"`)
+      if (description !== messages[ns]['meta-descrizione']) problems.push(`/${locale}/${path}: description "${description?.slice(0, 40)}..."`)
+    }
+    expect(problems.length === 0, problems.join(' | '))
+  })
+}
+
+test('pagina gestisci: non indicizzabile (noindex)', async () => {
+  const html = String((await api('/en/gestisci/token-inesistente')).body)
+  expect(/<meta name="robots" content="noindex/.test(html), 'meta robots noindex assente')
+})
+
 test('vecchio link /gestisci/<token>: reindirizza alla lingua predefinita con ?auto=1', async () => {
   const res = await api('/gestisci/abc123')
   expect(res.status === 307, `redirect -> ${res.status}`)
