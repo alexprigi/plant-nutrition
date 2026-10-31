@@ -101,7 +101,12 @@ export async function adminSession(): Promise<Map<string, string>> {
     },
   })
   const check = await api('/api/admin/appointments', { cookies })
-  if (login.status >= 400 || check.status !== 200) throw new Error(`Login admin fallito (${login.status}/${check.status})`)
+  if (login.status >= 400 || check.status !== 200) {
+    throw new Error(
+      `Login admin fallito (${login.status}/${check.status}). L'utente di prova esiste? Crealo con ` +
+        '`npx tsx scripts/e2e/admin-user.ts` e incolla lo SQL nell\'SQL Editor di Supabase (progetto preview).',
+    )
+  }
   return cookies
 }
 
