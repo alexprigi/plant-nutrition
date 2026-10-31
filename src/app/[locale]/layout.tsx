@@ -4,6 +4,7 @@ import { getMessages } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import PublicShell from '@/components/layout/PublicShell';
 import { localizedMetadata } from '@/lib/metadata';
+import LangSync from '@/components/LangSync';
 
 // Predefiniti di tutte le pagine /{lingua}/...; le pagine con metadati propri li sostituiscono
 export function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -27,6 +28,7 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
+      <LangSync />
       <PublicShell>{children}</PublicShell>
     </NextIntlClientProvider>
   );
