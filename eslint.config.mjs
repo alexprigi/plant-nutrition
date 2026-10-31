@@ -1,16 +1,22 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+import coreWebVitals from "eslint-config-next/core-web-vitals";
+import typescript from "eslint-config-next/typescript";
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...coreWebVitals,
+  ...typescript,
+  {
+    // Regole del React compiler introdotte con i nuovi plugin: segnalate ma non bloccanti
+    // finché gli effetti esistenti non vengono rivisti.
+    rules: {
+      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/purity": "warn",
+      "react-hooks/immutability": "warn",
+    },
+  },
+  {
+    files: ["src/tests/**", "scripts/**"],
+    rules: { "@typescript-eslint/no-explicit-any": "off" },
+  },
 ];
 
 export default eslintConfig;
