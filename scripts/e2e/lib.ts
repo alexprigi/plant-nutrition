@@ -175,6 +175,9 @@ export function dateIn(days: number): string {
   return d.toISOString().slice(0, 10)
 }
 
+// Un test lancia SkipTest quando manca un prerequisito (es. Chrome): viene saltato, non fallisce
+export class SkipTest extends Error {}
+
 export function expect(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message)
 }

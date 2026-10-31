@@ -1,9 +1,10 @@
 import { readFileSync } from 'fs'
+import { withPage, rejectCookies } from './browser'
 import { getT } from '../../src/lib/email-templates/email-i18n'
 import { DEFAULT_LOCALE } from '../../src/i18n/locales'
 import {
   BASE_URL, Mailbox, adminSession, api, assertSafeTarget, bookingPayload, dateIn, expect,
-  requireSecret, secret, stripeSignature, type BookingInput,
+  requireSecret, secret, SkipTest, stripeSignature, type BookingInput,
 } from './lib'
 
 // Test end-to-end sulla PREVIEW: creano prenotazioni di prova, mandano email vere a caselle temporanee
@@ -221,6 +222,43 @@ test('API gestisci: locale dell\'appuntamento e codici di errore', async () => {
   expect(again.status === 409 && again.body.code === 'notAllowed', `secondo cancel -> ${again.status} ${again.body?.code}`)
 })
 
+// ---------- Browser (Chrome) ----------
+// Servono per cio' che il server non mostra: navigazione dentro il sito e codice che gira nel browser.
+
+test('browser: il selettore di lingua tiene allineato <html lang>', async () => {
+  const messages = JSON.parse(readFileSync('messages/it.json', 'utf8'))
+  await withPage(async (page) => {
+    await page.goto(`${BASE_URL}/it`)
+    await rejectCookies(page, messages.cookie.rifiuta)
+    expect((await page.getAttribute('html', 'lang')) === 'it', 'lang iniziale diverso da it')
+    for (const [label, locale] of [['DE', 'de'], ['IT', 'it'], ['DE', 'de']] as const) {
+      await page.getByRole('button', { name: new RegExp(`\\b${label}\\b`) }).first().click()
+      await page.waitForURL(new RegExp(`/${locale}$`))
+      await page.waitForFunction((l) => document.documentElement.lang === l, locale, { timeout: 5000 }).catch(() => undefined)
+      const lang = await page.getAttribute('html', 'lang')
+      expect(lang === locale, `dopo il clic su ${label}: lang="${lang}", atteso "${locale}"`)
+    }
+  })
+})
+
+test('browser: vecchio link /gestisci/<token> porta alla lingua dell\'appuntamento', async () => {
+  const messages = JSON.parse(readFileSync('messages/en.json', 'utf8')).gestisci
+  const box = new Mailbox('browser')
+  const created = await createBooking(box, { locale: 'en', commercialType: 'free-consultation', paymentMethod: 'none', date: dateIn(43), time: '10:00', isPaid: true })
+  const token = created.appointment.managementToken
+
+  await withPage(async (page) => {
+    await page.goto(`${BASE_URL}/gestisci/${token}`)
+    await page.waitForURL(new RegExp(`/en/gestisci/${token}`), { timeout: 15_000 })
+    await page.getByText(messages['tuo-appuntamento'], { exact: false }).first().waitFor({ timeout: 15_000 })
+    const lang = await page.getAttribute('html', 'lang')
+    expect(lang === 'en', `<html lang="${lang}">, atteso "en"`)
+    const body = await page.innerText('body')
+    expect(body.includes(messages.sposta) || body.includes(messages['solo-spostamento']), 'azione di spostamento non mostrata')
+    expect(body.includes(messages.cancella), 'azione di cancellazione non mostrata')
+  })
+})
+
 // ---------- Azioni admin ----------
 
 const ADMIN = ['ADMIN_EMAIL', 'ADMIN_PASSWORD']
@@ -338,6 +376,11 @@ async function main() {
       passed++
       console.log(`✓ PASS  ${t.name}  (${Math.round((Date.now() - started) / 1000)}s)`)
     } catch (err) {
+      if (err instanceof SkipTest) {
+        skipped++
+        console.log(`- SKIP  ${t.name}  (${err.message})`)
+        continue
+      }
       failed++
       console.log(`✗ FAIL  ${t.name}\n        ${err instanceof Error ? err.message : err}`)
     }
