@@ -35,6 +35,7 @@ export function assertSafeTarget(): void {
 export interface ApiResponse {
   status: number
   ok: boolean
+  headers: Headers
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body: any
 }
@@ -84,7 +85,7 @@ export async function api(path: string, options: ApiOptions = {}): Promise<ApiRe
   const text = await res.text()
   let parsed: unknown = text
   try { parsed = JSON.parse(text) } catch { /* resta testo */ }
-  return { status: res.status, ok: res.ok, body: parsed }
+  return { status: res.status, ok: res.ok, headers: res.headers, body: parsed }
 }
 
 // Sessione admin (NextAuth, credentials)

@@ -1,4 +1,6 @@
+import { readFileSync } from 'fs'
 import { getT } from '../../src/lib/email-templates/email-i18n'
+import { DEFAULT_LOCALE } from '../../src/i18n/locales'
 import {
   BASE_URL, Mailbox, adminSession, api, assertSafeTarget, bookingPayload, dateIn, expect,
   requireSecret, secret, stripeSignature, type BookingInput,
@@ -131,6 +133,66 @@ test('follow-up da link (en): locale salvato e testo dedicato', async () => {
   const content = await box.read(mail)
   expect(content.text.includes(t.bodyFollowUp), 'testo del follow-up mancante')
   expect(!content.text.includes(t.bodyFree), 'il follow-up non deve dire "consulenza gratuita"')
+})
+
+// ---------- Pagina "Gestisci appuntamento" ----------
+
+const decodeEntities = (html: string) =>
+  html.replace(/&#x27;|&#39;|&apos;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+
+for (const locale of LOCALES) {
+  test(`pagina gestisci (${locale}): servita nella lingua giusta`, async () => {
+    const messages = JSON.parse(readFileSync(`messages/${locale}.json`, 'utf8'))
+    const res = await api(`/${locale}/gestisci/token-inesistente`)
+    expect(res.status === 200, `GET /${locale}/gestisci/... -> ${res.status}`)
+    const html = String(res.body)
+    // Il rendering sul server mostra lo stato iniziale, che e' tradotto
+    expect(decodeEntities(html).includes(messages.gestisci.caricamento), `testo "${messages.gestisci.caricamento}" assente nella pagina`)
+  })
+}
+
+// Screen reader, motori di ricerca e traduzione automatica del browser si basano su <html lang>
+test('ogni pagina dichiara la propria lingua in <html lang>', async () => {
+  const wrong: string[] = []
+  for (const locale of LOCALES) {
+    for (const path of ['gestisci/token-inesistente', 'booking']) {
+      const html = String((await api(`/${locale}/${path}`)).body)
+      const lang = html.match(/<html[^>]*\blang="([^"]*)"/)?.[1]
+      if (lang !== locale) wrong.push(`/${locale}/${path} -> lang="${lang}"`)
+    }
+  }
+  expect(wrong.length === 0, `lang errato: ${wrong.join('; ')}`)
+})
+
+test('vecchio link /gestisci/<token>: reindirizza alla lingua predefinita con ?auto=1', async () => {
+  const res = await api('/gestisci/abc123')
+  expect(res.status === 307, `redirect -> ${res.status}`)
+  const location = new URL(res.headers.get('location') ?? '', BASE_URL)
+  expect(location.pathname.replace(/\/$/, '') === `/${DEFAULT_LOCALE}/gestisci/abc123`, `Location: ${location.pathname}`)
+  expect(location.searchParams.get('auto') === '1', 'manca ?auto=1')
+})
+
+test('API gestisci: locale dell\'appuntamento e codici di errore', async () => {
+  const box = new Mailbox('manage')
+  const created = await createBooking(box, { locale: 'it', commercialType: 'free-consultation', paymentMethod: 'none', date: dateIn(42), time: '10:00', isPaid: true })
+  const token = created.appointment.managementToken
+
+  const info = await api(`/api/appointments/manage?token=${token}`)
+  expect(info.status === 200 && info.body.locale === 'it', `GET -> ${info.status} locale=${info.body?.locale}`)
+
+  const noToken = await api('/api/appointments/manage')
+  expect(noToken.status === 400 && noToken.body.code === 'missingToken', `senza token -> ${noToken.status} ${noToken.body?.code}`)
+
+  const unknown = await api('/api/appointments/manage?token=non-esiste')
+  expect(unknown.status === 404 && unknown.body.code === 'notFound', `token sconosciuto -> ${unknown.status} ${unknown.body?.code}`)
+
+  const cancel = await api('/api/appointments/manage', { json: { token, action: 'cancel' } })
+  expect(cancel.status === 200, `cancel -> ${cancel.status}`)
+
+  const after = await api(`/api/appointments/manage?token=${token}`)
+  expect(after.status === 410 && after.body.code === 'alreadyCancelled', `GET dopo cancel -> ${after.status} ${after.body?.code}`)
+  const again = await api('/api/appointments/manage', { json: { token, action: 'cancel' } })
+  expect(again.status === 409 && again.body.code === 'notAllowed', `secondo cancel -> ${again.status} ${again.body?.code}`)
 })
 
 // ---------- Azioni admin ----------
