@@ -13,7 +13,8 @@
     "db:migrate": "prisma migrate dev",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "e2e:preview": "NODE_OPTIONS=--use-system-ca tsx scripts/e2e/preview.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",

@@ -2,12 +2,12 @@ import bcrypt from "bcryptjs";
 import { randomBytes } from "crypto";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 
-// Alternativa a e2e-admin.ts quando il database non è raggiungibile da questo computer (VPN).
+// Crea l utente admin usato dai test e2e (scripts/e2e/preview.ts).
 // Non si connette a nessun database e non legge .env.local: genera una password casuale,
 // la scrive in .env.e2e.local (ignorato da git) e stampa lo SQL da incollare nell'SQL Editor
 // di Supabase del progetto PREVIEW. Lo SQL contiene solo l'hash bcrypt, non la password.
-//   npx tsx scripts/e2e-admin-sql.ts            # crea/aggiorna
-//   npx tsx scripts/e2e-admin-sql.ts --remove   # stampa lo SQL per rimuovere l'utente
+//   npx tsx scripts/e2e/admin-user.ts            # crea/aggiorna
+//   npx tsx scripts/e2e/admin-user.ts --remove   # stampa lo SQL per rimuovere l'utente
 
 const EMAIL = "e2e-admin@example.test";
 const OUT_FILE = ".env.e2e.local";
