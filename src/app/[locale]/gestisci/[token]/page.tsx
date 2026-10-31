@@ -1,7 +1,10 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
+import { Link, useRouter } from '@/i18n/navigation';
+import { LOCALES, type Locale } from '@/i18n/locales';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/icons/Icon';
 
@@ -27,12 +30,20 @@ type AppointmentData = {
   canReschedule: boolean;
   canCancel: boolean;
   contactRequired: boolean;
+  locale?: string;
 };
+
+const DATE_LOCALES: Record<Locale, string> = { it: 'it-IT', de: 'de-DE', en: 'en-GB' };
 
 type View = 'loading' | 'error' | 'main' | 'reschedule' | 'confirm-cancel' | 'done-cancel' | 'done-reschedule';
 
 export default function GestisciPage() {
   const { token } = useParams<{ token: string }>();
+  const t = useTranslations('gestisci');
+  const locale = useLocale() as Locale;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const dateLocale = DATE_LOCALES[locale];
 
   const [view, setView] = useState<View>('loading');
   const [appointment, setAppointment] = useState<AppointmentData | null>(null);
@@ -49,23 +60,39 @@ export default function GestisciPage() {
     return now;
   });
 
+  const errorMessage = (data: { code?: string; error?: string }, fallbackKey?: 'errore-cancellazione' | 'errore-spostamento') =>
+    data.code && t.has(`errori.${data.code}`) ? t(`errori.${data.code}`) : data.error || (fallbackKey ? t(fallbackKey) : t('errore-connessione'));
+
   useEffect(() => {
     fetch(`/api/appointments/manage?token=${token}`)
       .then(r => r.json())
       .then(data => {
         if (data.error) {
-          setErrorMsg(data.error);
+          setErrorMsg(errorMessage(data));
           setView('error');
         } else {
+          // Link vecchi senza lingua arrivano qui con ?auto=1: portiamo il cliente nella lingua del suo appuntamento
+          const apptLocale = data.locale as Locale | undefined;
+          if (searchParams.get('auto') && apptLocale && apptLocale !== locale && LOCALES.includes(apptLocale)) {
+            router.replace(`/gestisci/${token}`, { locale: apptLocale });
+            return;
+          }
           setAppointment(data);
           setView('main');
         }
       })
       .catch(() => {
-        setErrorMsg('Errore di connessione. Riprova più tardi.');
+        setErrorMsg(t('errore-connessione'));
         setView('error');
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
+
+
+  const weekdayInitials = useMemo(
+    () => Array.from({ length: 7 }, (_, i) => new Date(2024, 0, 1 + i).toLocaleDateString(dateLocale, { weekday: 'narrow' })),
+    [dateLocale],
+  );
 
   const calendarDays = useMemo(() => {
     const year = currentMonthDate.getFullYear();
@@ -91,7 +118,7 @@ export default function GestisciPage() {
     if (data.success) {
       setView('done-cancel');
     } else {
-      setErrorMsg(data.error || 'Errore durante la cancellazione.');
+      setErrorMsg(errorMessage(data, 'errore-cancellazione'));
       setView('error');
     }
   };
@@ -109,13 +136,13 @@ export default function GestisciPage() {
     if (data.success) {
       setView('done-reschedule');
     } else {
-      setErrorMsg(data.error || 'Errore durante lo spostamento.');
+      setErrorMsg(errorMessage(data, 'errore-spostamento'));
       setView('error');
     }
   };
 
   const formattedDate = (dateStr: string) =>
-    new Date(dateStr).toLocaleDateString('it-IT', {
+    new Date(dateStr).toLocaleDateString(dateLocale, {
       weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
     });
 
@@ -125,7 +152,7 @@ export default function GestisciPage() {
       <div className="min-h-screen bg-[#F5F7F5] flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-[var(--brand-title)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-medium">Caricamento appuntamento...</p>
+          <p className="text-gray-600 font-medium">{t('caricamento')}</p>
         </div>
       </div>
     );
@@ -139,9 +166,9 @@ export default function GestisciPage() {
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="alert" size={32} className="text-red-500" />
           </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Link non valido</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">{t('errore-titolo')}</h2>
           <p className="text-gray-500 text-sm mb-6">{errorMsg}</p>
-          <Button href="/it" className="bg-[var(--brand-title)] text-white w-full">Torna alla Home</Button>
+          <Button href="/" className="bg-[var(--brand-title)] text-white w-full">{t('torna-home')}</Button>
         </div>
       </div>
     );
@@ -156,11 +183,11 @@ export default function GestisciPage() {
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="check" size={32} className="text-green-600" />
           </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Appuntamento cancellato</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">{t('cancellato-titolo')}</h2>
           {wasRefundable ? (
             <>
               <p className="text-gray-500 text-sm mb-3">
-                Hai diritto al rimborso completo. Contatta Arianna Ciervo per riceverlo:
+                {t('rimborso-contatto')}
               </p>
               <a href="mailto:info@vivaplantnutrition.com" className="text-sm font-semibold mb-6 block" style={{ color: 'var(--brand-title)' }}>
                 info@vivaplantnutrition.com
@@ -168,10 +195,10 @@ export default function GestisciPage() {
             </>
           ) : (
             <p className="text-gray-500 text-sm mb-6">
-              Il tuo appuntamento è stato cancellato. Puoi prenotarne uno nuovo quando vuoi.
+              {t('cancellato-testo')}
             </p>
           )}
-          <Button href="/booking" className="bg-[var(--brand-title)] text-white w-full">Prenota un nuovo appuntamento</Button>
+          <Button href="/booking" className="bg-[var(--brand-title)] text-white w-full">{t('prenota-nuovo')}</Button>
         </div>
       </div>
     );
@@ -185,12 +212,12 @@ export default function GestisciPage() {
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="check" size={32} className="text-green-600" />
           </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Appuntamento spostato</h2>
-          <p className="text-gray-500 text-sm mb-2">Il tuo appuntamento è stato spostato a:</p>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">{t('spostato-titolo')}</h2>
+          <p className="text-gray-500 text-sm mb-2">{t('spostato-a')}</p>
           <p className="font-bold text-gray-800 mb-6">
-            {formattedDate(newDate)} alle {newTime}
+            {t('data-ora', { data: formattedDate(newDate), ora: newTime })}
           </p>
-          <Button href="/it" className="bg-[var(--brand-title)] text-white w-full">Torna alla Home</Button>
+          <Button href="/" className="bg-[var(--brand-title)] text-white w-full">{t('torna-home')}</Button>
         </div>
       </div>
     );
@@ -204,25 +231,27 @@ export default function GestisciPage() {
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="alert" size={32} className="text-red-500" />
           </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Conferma cancellazione</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">{t('conferma-cancellazione-titolo')}</h2>
           <p className="text-gray-500 text-sm mb-6">
-            Sei sicuro di voler cancellare l'appuntamento del{' '}
-            <strong>{appointment && formattedDate(appointment.date)}</strong> alle{' '}
-            <strong>{appointment?.time}</strong>?
+            {t.rich('conferma-cancellazione-testo', {
+              data: appointment ? formattedDate(appointment.date) : '',
+              ora: appointment?.time ?? '',
+              b: (chunks) => <strong>{chunks}</strong>,
+            })}
           </p>
           <div className="flex gap-3">
             <button
               onClick={() => setView('main')}
               className="flex-1 py-3 border border-gray-200 rounded-xl text-gray-600 font-medium hover:bg-gray-50 transition-colors"
             >
-              Annulla
+              {t('annulla')}
             </button>
             <Button
               onClick={handleCancel}
               disabled={isProcessing}
               className="flex-1 bg-red-500 text-white rounded-xl hover:bg-red-600"
             >
-              {isProcessing ? 'Cancellazione...' : 'Sì, cancella'}
+              {isProcessing ? t('cancellazione-in-corso') : t('si-cancella')}
             </Button>
           </div>
         </div>
@@ -242,12 +271,16 @@ export default function GestisciPage() {
             onClick={() => setView('main')}
             className="flex items-center gap-2 text-gray-500 hover:text-gray-800 mb-6 text-sm font-medium transition-colors"
           >
-            <Icon name="chevronLeft" size={16} /> Indietro
+            <Icon name="chevronLeft" size={16} /> {t('indietro')}
           </button>
 
-          <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">Scegli la nuova data</h1>
+          <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">{t('nuova-data-titolo')}</h1>
           <p className="text-center text-gray-500 mb-8 text-sm">
-            Appuntamento attuale: <strong>{appointment && formattedDate(appointment.date)}</strong> alle <strong>{appointment?.time}</strong>
+            {t.rich('appuntamento-attuale', {
+              data: appointment ? formattedDate(appointment.date) : '',
+              ora: appointment?.time ?? '',
+              b: (chunks) => <strong>{chunks}</strong>,
+            })}
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -258,14 +291,14 @@ export default function GestisciPage() {
                   <Icon name="chevronLeft" />
                 </button>
                 <span className="font-bold capitalize text-lg text-gray-900">
-                  {currentMonthDate.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })}
+                  {currentMonthDate.toLocaleDateString(dateLocale, { month: 'long', year: 'numeric' })}
                 </span>
                 <button onClick={() => setCurrentMonthDate(new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth() + 1, 1))} className="hover:bg-gray-100 p-2 rounded-full text-gray-600 transition-colors">
                   <Icon name="chevronRight" />
                 </button>
               </div>
               <div className="grid grid-cols-7 gap-2 text-center mb-2">
-                {['L', 'M', 'M', 'G', 'V', 'S', 'D'].map((d, i) => (
+                {weekdayInitials.map((d, i) => (
                   <span key={i} className="text-xs font-bold text-gray-400">{d}</span>
                 ))}
               </div>
@@ -281,7 +314,7 @@ export default function GestisciPage() {
                       key={d}
                       onClick={() => !isPast && !isWeekend && setNewDate(d)}
                       disabled={isPast || isWeekend}
-                      title={isCurrent ? 'Data attuale' : undefined}
+                      title={isCurrent ? t('data-attuale') : undefined}
                       className={`
                         w-11 h-11 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm transition-all font-medium
                         ${isPast || isWeekend
@@ -302,7 +335,7 @@ export default function GestisciPage() {
 
             {/* SLOTS */}
             <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex flex-col">
-              <h3 className="font-bold text-gray-900 mb-4 text-center">Orari disponibili</h3>
+              <h3 className="font-bold text-gray-900 mb-4 text-center">{t('orari-disponibili')}</h3>
               <div className="grid grid-cols-3 gap-3 max-h-72 overflow-y-auto pr-1">
                 {TIME_SLOTS.map(slot => (
                   <button
@@ -330,7 +363,7 @@ export default function GestisciPage() {
                       : 'bg-[var(--brand-title)] hover:-translate-y-0.5 hover:shadow-lg'
                   }`}
                 >
-                  {isProcessing ? 'Spostamento in corso...' : 'Conferma spostamento'}
+                  {isProcessing ? t('spostamento-in-corso') : t('conferma-spostamento')}
                 </Button>
               </div>
             </div>
@@ -344,23 +377,23 @@ export default function GestisciPage() {
   return (
     <div className="min-h-screen bg-[#F5F7F5] flex items-center justify-center px-4 py-10">
       <div className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full border border-gray-100">
-        <h1 className="text-2xl font-bold text-gray-800 mb-1 text-center">Il tuo appuntamento</h1>
-        <p className="text-center text-gray-500 text-sm mb-6">Ciao <strong>{appointment?.clientName}</strong></p>
+        <h1 className="text-2xl font-bold text-gray-800 mb-1 text-center">{t('tuo-appuntamento')}</h1>
+        <p className="text-center text-gray-500 text-sm mb-6">{t.rich('ciao', { nome: appointment?.clientName ?? '', b: (chunks) => <strong>{chunks}</strong> })}</p>
 
         {/* Dettagli appuntamento */}
         <div className="bg-gray-50 rounded-2xl p-5 mb-6 space-y-3">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500 font-medium">Data</span>
+            <span className="text-gray-500 font-medium">{t('etichetta-data')}</span>
             <span className="font-bold text-gray-800">{appointment && formattedDate(appointment.date)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500 font-medium">Orario</span>
+            <span className="text-gray-500 font-medium">{t('etichetta-orario')}</span>
             <span className="font-bold text-gray-800">{appointment?.time}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500 font-medium">Stato</span>
+            <span className="text-gray-500 font-medium">{t('etichetta-stato')}</span>
             <span className={`font-bold text-sm ${appointment?.isPending ? 'text-amber-600' : 'text-green-600'}`}>
-              {appointment?.isPending ? '⏳ In attesa di pagamento' : '✅ Confermato'}
+              {appointment?.isPending ? t('stato-in-attesa') : t('stato-confermato')}
             </span>
           </div>
         </div>
@@ -370,8 +403,8 @@ export default function GestisciPage() {
           {/* Contatto richiesto: meno di 24h */}
           {appointment?.contactRequired && (
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
-              <p className="font-bold mb-1">Meno di 24 ore all'appuntamento</p>
-              <p>Non è più possibile modificare autonomamente. Contatta Arianna direttamente:</p>
+              <p className="font-bold mb-1">{t('meno-24h-titolo')}</p>
+              <p>{t('meno-24h-testo')}</p>
               <a href="mailto:info@vivaplantnutrition.com" className="font-semibold underline mt-1 block">
                 info@vivaplantnutrition.com
               </a>
@@ -384,15 +417,16 @@ export default function GestisciPage() {
               onClick={() => setView('reschedule')}
               className="w-full bg-[var(--brand-title)] text-white rounded-xl py-3 font-bold"
             >
-              Sposta appuntamento
+              {t('sposta')}
             </Button>
           )}
 
           {/* Info fascia 2-7 giorni: solo spostamento, no rimborso */}
           {appointment?.canReschedule && !appointment?.canCancel && (
             <p className="text-xs text-gray-400 text-center">
-              In questa fascia è possibile solo spostare l'appuntamento. Per info sul rimborso consulta la{' '}
-              <a href="/cancellation-policy" target="_blank" className="underline">policy di cancellazione</a>.
+              {t.rich('solo-spostamento', {
+                link: (chunks) => <Link href="/cancellation-policy" target="_blank" className="underline">{chunks}</Link>,
+              })}
             </p>
           )}
 
@@ -402,15 +436,16 @@ export default function GestisciPage() {
               onClick={() => setView('confirm-cancel')}
               className="w-full py-3 border border-red-200 text-red-500 rounded-xl text-sm font-medium hover:bg-red-50 transition-colors"
             >
-              Cancella appuntamento
+              {t('cancella')}
             </button>
           )}
 
           {/* Info rimborso per cancellazione >7 giorni */}
           {appointment?.canCancel && appointment?.isPaid && !appointment?.isFree && (appointment?.daysUntil ?? 0) > 7 && (
             <p className="text-xs text-gray-400 text-center">
-              Hai diritto al rimborso completo. Dopo la cancellazione contatta Arianna a{' '}
-              <a href="mailto:info@vivaplantnutrition.com" className="underline">info@vivaplantnutrition.com</a>.
+              {t.rich('info-rimborso', {
+                mail: (chunks) => <a href="mailto:info@vivaplantnutrition.com" className="underline">{chunks}</a>,
+              })}
             </p>
           )}
         </div>

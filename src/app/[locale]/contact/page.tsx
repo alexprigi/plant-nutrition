@@ -33,8 +33,8 @@ export default function Contatti() {
         throw new Error(json.error || t('form.errore-invio'));
       }
       setIsSubmitted(true);
-    } catch (err: any) {
-      setSubmitError(err.message || t('form.errore-generico'));
+    } catch (err) {
+      setSubmitError((err instanceof Error && err.message) || t('form.errore-generico'));
     } finally {
       setIsSubmitting(false);
     }
@@ -49,7 +49,7 @@ export default function Contatti() {
           <div className="mb-8 p-6 rounded-xl" style={{ background: 'white', boxShadow: '0 4px 20px rgba(37, 105, 67, 0.15)' }}>
             <p className="text-xl font-semibold" style={{ color: 'var(--brand-title)' }}>{t('successo.testo')}</p>
           </div>
-          <Button href={`/${locale}`}>{t('successo.torna-home')}</Button>
+          <Button href="/">{t('successo.torna-home')}</Button>
         </div>
       </div>
     );

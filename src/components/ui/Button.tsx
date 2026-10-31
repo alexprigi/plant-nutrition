@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from '@/i18n/navigation';
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -46,14 +47,18 @@ const Button = ({
   
   // Non serve più customStyle né event handlers JS
   if (href) {
+    // Link esterni (http, mailto, tel, ancore) restano <a>; i percorsi interni passano da next-intl per mantenere la lingua
+    if (/^(https?:|mailto:|tel:|#)/.test(href)) {
+      return (
+        <a href={href} className={classes} style={style}>
+          {children}
+        </a>
+      );
+    }
     return (
-      <a
-        href={href}
-        className={classes}
-        style={style}
-      >
+      <Link href={href} className={classes} style={style}>
         {children}
-      </a>
+      </Link>
     );
   }
 

@@ -2,16 +2,16 @@
 
 import { useState, useMemo, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useRouter } from '@/i18n/navigation';
+import { useRouter, Link } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 
 import Button from '@/components/ui/Button';
 import CountrySelect from '@/components/ui/CountrySelect';
 import PhonePrefixSelect from '@/components/ui/PhonePrefixSelect';
 import { createFullBooking, checkEligibility, AppointmentStatus } from '@/lib/bookingService';
-import type { PaymentMethod } from '@/lib/bookingService';
+import type { PaymentMethod, CreateBookingDTO } from '@/lib/bookingService';
 import { COUNTRIES, COUNTRY_FLAGS, COUNTRY_PREFIXES } from '@/lib/constants';
-import Icon from '@/components/icons/Icon';
+import Icon, { IconName } from '@/components/icons/Icon';
 
 // --- CONSTANTS ---
 
@@ -400,8 +400,8 @@ const PrenotaPageContent = () => {
       name: formData.name, surname: formData.surname, email: formData.email, phone: formData.phone,
       address: formData.address, civicNumber: formData.civicNumber, city: formData.city,
       zipCode: formData.zipCode, country: formData.country, fiscalCode: formData.fiscalCode,
-      commercialType: selectedService as any,
-      paymentMethod: (activeService?.price! > 0 ? paymentMethod : 'none') as PaymentMethod,
+      commercialType: selectedService as CreateBookingDTO['commercialType'],
+      paymentMethod: ((activeService?.price ?? 0) > 0 ? paymentMethod : 'none') as PaymentMethod,
       selectedDate, selectedTime, notes: sanitizedNotes,
       isPaid: false,
       status: 'pending' as AppointmentStatus,
@@ -529,7 +529,7 @@ const PrenotaPageContent = () => {
   // --- SUCCESS VIEW ---
   if (isSuccess) {
     const isPaid = activeService?.price && activeService.price > 0 && paymentMethod !== 'bank_transfer';
-    const isBankTransfer = activeService?.price! > 0 && paymentMethod === 'bank_transfer';
+    const isBankTransfer = (activeService?.price ?? 0) > 0 && paymentMethod === 'bank_transfer';
 
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F5F7F5] px-4 animate-fade-in">
@@ -562,7 +562,7 @@ const PrenotaPageContent = () => {
               <p className="text-amber-700 mt-2 text-xs">{t('successo.bonifico-scadenza')}</p>
             </div>
           )}
-          <Button href={`/${locale}`} className="w-full bg-[var(--brand-title)] text-white">{t('successo.torna-home')}</Button>
+          <Button href="/" className="w-full bg-[var(--brand-title)] text-white">{t('successo.torna-home')}</Button>
         </div>
       </div>
     );
@@ -640,7 +640,7 @@ const PrenotaPageContent = () => {
                     )}
                     <div className="flex items-start gap-4 mb-3">
                       <div className="p-3 bg-white/50 rounded-xl" style={{ color: type.iconColor }}>
-                        <Icon name={type.iconName as any} size={24} />
+                        <Icon name={type.iconName as IconName} size={24} />
                       </div>
                       <div>
                         <h3 className="font-bold text-lg text-gray-900 group-hover:text-black">{type.title}</h3>
@@ -794,9 +794,9 @@ const PrenotaPageContent = () => {
                     />
                     <span className="text-xs text-gray-600 leading-relaxed">
                       {t('step2.gdpr-testo')}{' '}
-                      <a href="/privacy-policy" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
+                      <Link href="/privacy-policy" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
                         {t('step2.gdpr-link')}
-                      </a>
+                      </Link>
                       {t('step2.gdpr-consenso')}
                     </span>
                   </label>
@@ -845,7 +845,7 @@ const PrenotaPageContent = () => {
           <>
           <div className="animate-fade-in max-w-4xl mx-auto pb-28 md:pb-20">
             <h2 className="text-3xl font-bold mb-2 text-center text-gray-800">
-              {activeService?.price! > 0 ? t('step3.titolo-pagamento') : t('step3.titolo-gratuito')}
+              {(activeService?.price ?? 0) > 0 ? t('step3.titolo-pagamento') : t('step3.titolo-gratuito')}
             </h2>
 
             {(selectedService === 'plan-3-months' || selectedService === 'plan-6-months') ? (
@@ -957,7 +957,7 @@ const PrenotaPageContent = () => {
                         : 'bg-[var(--brand-title)] hover:-translate-y-1 hover:shadow-xl'
                       }`}
                   >
-                    {activeService?.price! > 0 ? t('step3.continua-pagamento') : t('step3.conferma')}
+                    {(activeService?.price ?? 0) > 0 ? t('step3.continua-pagamento') : t('step3.conferma')}
                   </Button>
                 </div>
               </div>
@@ -976,7 +976,7 @@ const PrenotaPageContent = () => {
                     : 'bg-[var(--brand-title)] text-white hover:shadow-lg hover:-translate-y-0.5'
                   }`}
               >
-                {activeService?.price! > 0 ? t('step3.continua-pagamento') : t('step3.conferma')}
+                {(activeService?.price ?? 0) > 0 ? t('step3.continua-pagamento') : t('step3.conferma')}
               </Button>
             </div>
           </div>
@@ -998,7 +998,7 @@ const PrenotaPageContent = () => {
               )}
               <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
 
-              {activeService?.price! > 0 ? (
+              {(activeService?.price ?? 0) > 0 ? (
                 <>
                   <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">{t('step4.titolo-pagamento')}</h2>
                   <p className="text-center text-gray-500 mb-8">
@@ -1022,7 +1022,7 @@ const PrenotaPageContent = () => {
               )}
 
               {/* PAYMENT OPTIONS */}
-              {activeService?.price! > 0 ? (
+              {(activeService?.price ?? 0) > 0 ? (
                 <div className="space-y-4 mb-8">
                   {/* Stripe */}
                   <div
@@ -1091,7 +1091,7 @@ const PrenotaPageContent = () => {
                 </div>
               )}
 
-              {activeService?.price! > 0 && (
+              {(activeService?.price ?? 0) > 0 && (
                 <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
                   <Icon name="shield" size={12} /> {t('step4.ssl-testo')}
                 </p>
@@ -1107,20 +1107,20 @@ const PrenotaPageContent = () => {
                     className="mt-0.5 w-4 h-4 rounded accent-[var(--brand-title)] shrink-0 cursor-pointer"
                   />
                   <span className="text-xs text-gray-600 leading-relaxed">
-                    {activeService?.price! > 0 ? (
+                    {(activeService?.price ?? 0) > 0 ? (
                       <>
                         {t('step4.policy-pagamento')}{' '}
-                        <a href="/cancellation-policy" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
+                        <Link href="/cancellation-policy" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
                           {t('step4.policy-link')}
-                        </a>
+                        </Link>
                         {t('step4.policy-testo')}
                       </>
                     ) : (
                       <>
                         {t('step4.termini-testo')}{' '}
-                        <a href="/cancellation-policy" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
+                        <Link href="/cancellation-policy" target="_blank" className="underline font-medium" style={{ color: 'var(--brand-title)' }}>
                           {t('step4.termini-link')}
-                        </a>
+                        </Link>
                         {t('step4.termini-nota')}
                       </>
                     )}
@@ -1138,7 +1138,7 @@ const PrenotaPageContent = () => {
                 >
                   {isProcessing
                     ? t('step4.elaborazione')
-                    : activeService?.price! > 0
+                    : (activeService?.price ?? 0) > 0
                       ? (paymentMethod === 'bank_transfer' ? t('step4.prenota-bonifico') : t('step4.paga-prenota'))
                       : t('step4.conferma')}
                 </Button>
@@ -1158,7 +1158,7 @@ const PrenotaPageContent = () => {
               >
                 {isProcessing
                   ? t('step4.elaborazione')
-                  : activeService?.price! > 0
+                  : (activeService?.price ?? 0) > 0
                     ? (paymentMethod === 'bank_transfer' ? t('step4.prenota-bonifico') : t('step4.paga-prenota'))
                     : t('step4.conferma')}
               </Button>

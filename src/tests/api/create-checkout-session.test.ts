@@ -1,3 +1,4 @@
+import { DEFAULT_LOCALE } from '@/i18n/locales'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
 import { POST } from '@/app/api/create-checkout-session/route'
@@ -112,6 +113,14 @@ describe('POST /api/create-checkout-session', () => {
   it('truncates long notes in Stripe metadata', async () => {
     await POST(makeRequest({ ...baseDTO, notes: 'x'.repeat(800) }))
     expect((mockStripeCreate.mock.calls[0][0] as any).metadata.notes).toHaveLength(500)
+  })
+
+  it('falls back to the default locale in the redirect URLs when no locale is sent', async () => {
+    const { locale: _omit, ...withoutLocale } = baseDTO as typeof baseDTO & { locale?: string }
+    await POST(makeRequest(withoutLocale))
+    const arg = mockStripeCreate.mock.calls[0][0] as any
+    expect(arg.success_url).toContain(`/${DEFAULT_LOCALE}/booking/success`)
+    expect(arg.cancel_url).toContain(`/${DEFAULT_LOCALE}/booking?cancelled=true`)
   })
 
   it('uses localhost default when AUTH_URL is unset', async () => {

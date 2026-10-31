@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import React from 'react';
-import Icon from '@/components/icons/Icon';
+import Icon, { IconName } from '@/components/icons/Icon';
 
 const groups = [
   {
@@ -52,7 +52,7 @@ export default function IconsPreview() {
             <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-8 gap-6">
               {group.icons.map(name => (
                 <div key={name} className="flex flex-col items-center gap-2">
-                  <Icon name={name as any} size={36} shape="circle" />
+                  <Icon name={name as IconName} size={36} shape="circle" />
                   <span className="text-xs text-gray-500 text-center break-all">{name}</span>
                 </div>
               ))}

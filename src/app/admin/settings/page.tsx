@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import Icon from '@/components/icons/Icon';
+import Icon, { IconName } from '@/components/icons/Icon';
 import { EyeIcon } from '@/components/ui/EyeIcon';
 
 type Tab = 'profilo' | 'sicurezza';
@@ -119,7 +119,7 @@ const SettingsPage = () => {
                   : 'text-gray-600 hover:bg-gray-50'
                 }`}
             >
-              <Icon name={tab.icon as any} size={16} />
+              <Icon name={tab.icon as IconName} size={16} />
               {tab.label}
             </button>
           ))}

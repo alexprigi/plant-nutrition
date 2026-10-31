@@ -244,7 +244,7 @@ export default function Blog() {
               <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--brand-title)' }}>Guida alla Transizione</h3>
               <p className="mb-6" style={{ color: 'var(--foreground)' }}>
                 PDF gratuito con tutto quello che devi sapere per passare 
-                all'alimentazione vegana in modo graduale e sicuro.
+                all&apos;alimentazione vegana in modo graduale e sicuro.
               </p>
               <Button variant="outline">
                 Scarica Gratis

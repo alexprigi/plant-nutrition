@@ -222,7 +222,7 @@ function DisponibilitaPage() {
       byDate.get(date)!.push(time);
     });
 
-    const promises: Promise<any>[] = [];
+    const promises: Promise<unknown>[] = [];
     byDate.forEach((times, date) => {
       const weekend = isWeekend(date);
       const sortedTimes = [...times].sort();
@@ -305,7 +305,7 @@ function DisponibilitaPage() {
       byDate.get(date)!.push(time);
     });
 
-    const promises: Promise<any>[] = [];
+    const promises: Promise<unknown>[] = [];
 
     byDate.forEach((times, date) => {
       if (isWeekend(date)) {

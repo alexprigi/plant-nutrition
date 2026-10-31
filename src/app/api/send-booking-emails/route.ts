@@ -211,12 +211,12 @@ export async function POST(request: NextRequest) {
       adminEmailId: adminEmailResult.data?.id,
     }, { status: 200 });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Email sending error:', error);
     
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to send emails'
+      error: (error instanceof Error && error.message) || 'Failed to send emails'
     }, { status: 500 });
   }
 }

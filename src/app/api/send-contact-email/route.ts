@@ -51,8 +51,8 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Contact email error:', error);
-    return NextResponse.json({ success: false, error: error.message || 'Errore invio email' }, { status: 500 });
+    return NextResponse.json({ success: false, error: (error instanceof Error && error.message) || 'Errore invio email' }, { status: 500 });
   }
 }

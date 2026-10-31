@@ -217,7 +217,7 @@ const AdminPage = () => {
   }, [appointments, today, sortOrder]);
 
 
-  const handleStatusChange = async (id: string, newStatus: any) => {
+  const handleStatusChange = async (id: string, newStatus: Parameters<typeof updateAppointmentStatus>[1]) => {
     if (!confirm(`Vuoi cambiare lo stato in: ${newStatus}?`)) return;
     const ok = await updateAppointmentStatus(id, newStatus);
     if (ok) loadData();

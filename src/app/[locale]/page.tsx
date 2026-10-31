@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ComponentProps } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import ParallaxEffect from '@/components/ParallaxEffect';
 import Testimonials from '@/components/Testimonials';
-import Icon from '@/components/icons/Icon';
+import Icon, { IconName } from '@/components/icons/Icon';
 import { useTranslations } from 'next-intl';
 
 export default function Home() {
@@ -304,7 +304,7 @@ export default function Home() {
                 <Card key={i} hover className="p-10 text-center transition-all duration-300 border-0 shadow-xl hover:shadow-2xl hover:-translate-y-1 relative"
                   style={{ background: 'var(--bg-card-warm)', color: 'var(--foreground)', borderRadius: '1.5rem', boxShadow: '0 8px 32px 0 rgba(0,0,0,0.12)', borderTop: '6px solid var(--bg-card-border)', transform: s.rotate }}
                 >
-                  <div className="mb-4"><Icon name={s.icon as any} size={48} /></div>
+                  <div className="mb-4"><Icon name={s.icon as IconName} size={48} /></div>
                   <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--brand-title)' }}>{s.titolo}</h3>
                   <p className="mb-6" style={{ color: 'var(--text-dark-green)' }}>{s.testo}</p>
                   <Button href="/services" variant="outline">{t('servizi.scopri-piu')}</Button>
@@ -407,7 +407,7 @@ export default function Home() {
               ].map((faq, i) => (
                 <div key={i} className="rounded-lg shadow-md p-6" style={{ background: faq.dark ? 'var(--bg-card-dark)' : 'var(--card-faq-bg)' }}>
                   <h3 className="text-lg font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--brand-title)' }}>
-                    <Icon name={faq.icon as any} size={24} variant={faq.variant as any} />
+                    <Icon name={faq.icon as IconName} size={24} variant={faq.variant as ComponentProps<typeof Icon>["variant"]} />
                     <span>{faq.d}</span>
                   </h3>
                   <p style={{ color: 'var(--brand-title)' }}>{faq.r}</p>

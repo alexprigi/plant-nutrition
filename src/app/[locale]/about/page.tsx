@@ -259,7 +259,7 @@ export default function ChiSono() {
                   { icon: 'leaf', titolo: t('approccio.sostenibile-titolo'), testo: t('approccio.sostenibile-testo') },
                 ].map((item, i) => (
                   <div key={i} className="flex items-start space-x-4">
-                    <Icon name={item.icon as any} size={32} />
+                    <Icon name={item.icon as IconName} size={32} />
                     <div>
                       <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-title)' }}>{item.titolo}</h3>
                       <p style={{ color: 'var(--text-darker)' }}>{item.testo}</p>

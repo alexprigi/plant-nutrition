@@ -150,8 +150,8 @@ export async function POST(request: NextRequest) {
           notes: data.notes?.substring(0, 500) ?? '',
           locale: getEmailLocale(data.locale),
         },
-        success_url: `${appUrl}/${LOCALES.includes(data.locale as any) ? data.locale : DEFAULT_LOCALE}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${appUrl}/${LOCALES.includes(data.locale as any) ? data.locale : DEFAULT_LOCALE}/booking?cancelled=true`,
+        success_url: `${appUrl}/${(LOCALES as readonly string[]).includes(data.locale ?? "") ? data.locale : DEFAULT_LOCALE}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${appUrl}/${(LOCALES as readonly string[]).includes(data.locale ?? "") ? data.locale : DEFAULT_LOCALE}/booking?cancelled=true`,
         expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // 30 minuti
       })
     } catch (stripeError) {

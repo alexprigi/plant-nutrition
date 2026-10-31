@@ -142,7 +142,7 @@ export function getReminderEmailHTML(data: ReminderEmailData): string {
                 <tr>
                   <td style="padding: 20px; text-align: center;">
                     <p style="margin: 0 0 12px; font-size: 14px; color: #6B7280;">${t.cantCome}</p>
-                    <a href="${appUrl}/gestisci/${data.managementToken}" style="display: inline-block; background-color: #ffffff; color: #374151; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #D1D5DB;">
+                    <a href="${appUrl}/${locale}/gestisci/${data.managementToken}" style="display: inline-block; background-color: #ffffff; color: #374151; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #D1D5DB;">
                       ${t.rescheduleCancel}
                     </a>
                     ${!data.isFree ? `<p style="margin: 12px 0 0; font-size: 11px; color: #9CA3AF;">${t.policyReminder(appUrl)}</p>` : ''}
@@ -182,7 +182,7 @@ ${!data.isFree
   ? `${t.reminderBringTitle}\n${t.reminderBring.map(i => `- ${i}`).join('\n')}`
   : `${t.reminderPrepTitle}\n${t.reminderPrep.map(i => `- ${i}`).join('\n')}`}
 
-${data.managementToken ? `${t.cantCome} ${appUrl}/gestisci/${data.managementToken}\n` : ''}
+${data.managementToken ? `${t.cantCome} ${appUrl}/${locale}/gestisci/${data.managementToken}\n` : ''}
 ---
 Viva Plant Nutrition
 `;
@@ -253,7 +253,7 @@ export function getExpiredBankTransferEmailHTML(data: ExpiredBankTransferEmailDa
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td align="center">
-                    <a href="${appUrl}/de/prenota" style="display: inline-block; background-color: #10B981; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 15px;">
+                    <a href="${appUrl}/${locale}/booking" style="display: inline-block; background-color: #10B981; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 15px;">
                       ${t.expiredCta}
                     </a>
                   </td>
@@ -287,7 +287,7 @@ ${t.service}: ${data.serviceName}
 ${t.date}: ${formattedDate}
 ${t.time}: ${data.time}
 
-${t.expiredBookAgain} ${appUrl}/de/prenota
+${t.expiredBookAgain} ${appUrl}/${locale}/booking
 
 ---
 Viva Plant Nutrition

@@ -113,6 +113,15 @@ describe('POST /api/admin/availability', () => {
     expect(data.count).toBe(3)
   })
 
+  it('returns the message of a non-Error rejection as a 500', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    mockPrisma.availabilityBlock.create.mockRejectedValue('plain string failure')
+    const res = await POST(makePostRequest({ date: '2026-06-10' }))
+    expect(res.status).toBe(500)
+    expect(await res.json()).toEqual({ error: 'plain string failure' })
+    spy.mockRestore()
+  })
+
   it('defaults to BLOCK type when type is missing', async () => {
     mockPrisma.availabilityBlock.create.mockResolvedValue({ id: 'blk_3', date: '2026-06-10', type: 'BLOCK', startTime: null, endTime: null, note: '' } as any)
     await POST(makePostRequest({ date: '2026-06-10' }))

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Card from './ui/Card';
 import Icon from './icons/Icon';
+import { Link } from '@/i18n/navigation';
 
 const testimonialMeta = [
   { id: 1, key: 't1', name: 'Emma M.',  initial: 'E' },
@@ -100,7 +101,7 @@ export default function Testimonials() {
                 }}
               >
                 <div className="absolute top-6 right-6 text-6xl opacity-10" style={{ color: 'var(--color-main)' }}>
-                  "
+                  &ldquo;
                 </div>
 
                 <div className="flex items-center mb-6 relative z-10">
@@ -196,7 +197,7 @@ export default function Testimonials() {
             <p className="text-xl sm:text-2xl font-semibold mb-6 flex items-center justify-center gap-2 px-2" style={{ color: 'var(--brand-title)' }}>
               <span>{t('cta-testo')}</span>
             </p>
-            <a
+            <Link
               href="/booking"
               className="inline-flex items-center justify-center px-6 py-4 sm:px-10 sm:py-5 rounded-full font-bold transition-all duration-200 text-base sm:text-lg shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95"
               style={{ background: 'var(--brand-title)', color: 'white' }}
@@ -204,7 +205,7 @@ export default function Testimonials() {
               <span className="text-center leading-tight">
                 {t('cta-bottone')}
               </span>
-            </a>
+            </Link>
           </div>
           
           {/* Decorative circles */}

@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token')
 
   if (!token) {
-    return NextResponse.json({ error: 'Token mancante' }, { status: 400 })
+    return NextResponse.json({ error: 'Token mancante', code: 'missingToken' }, { status: 400 })
   }
 
   const appointment = await prisma.appointment.findUnique({
@@ -20,15 +20,15 @@ export async function GET(request: NextRequest) {
   })
 
   if (!appointment) {
-    return NextResponse.json({ error: 'Appuntamento non trovato' }, { status: 404 })
+    return NextResponse.json({ error: 'Appuntamento non trovato', code: 'notFound' }, { status: 404 })
   }
 
   if (appointment.status === 'CANCELLED') {
-    return NextResponse.json({ error: 'Appuntamento già cancellato' }, { status: 410 })
+    return NextResponse.json({ error: 'Appuntamento già cancellato', code: 'alreadyCancelled' }, { status: 410 })
   }
 
   if (appointment.status === 'COMPLETED') {
-    return NextResponse.json({ error: 'Appuntamento già completato' }, { status: 410 })
+    return NextResponse.json({ error: 'Appuntamento già completato', code: 'alreadyCompleted' }, { status: 410 })
   }
 
   const apptDate = new Date(appointment.date)
@@ -54,6 +54,7 @@ export async function GET(request: NextRequest) {
     status: appointment.status,
     clientName: `${appointment.client.name} ${appointment.client.surname}`,
     serviceName: appointment.type,
+    locale: appointment.locale,
     price: appointment.subscription.price,
     isPaid,
     isPending,
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
   const { token, action, date, time } = body
 
   if (!token || !action) {
-    return NextResponse.json({ error: 'Parametri mancanti' }, { status: 400 })
+    return NextResponse.json({ error: 'Parametri mancanti', code: 'missingParams' }, { status: 400 })
   }
 
   const appointment = await prisma.appointment.findUnique({
@@ -85,11 +86,11 @@ export async function POST(request: NextRequest) {
   })
 
   if (!appointment) {
-    return NextResponse.json({ error: 'Appuntamento non trovato' }, { status: 404 })
+    return NextResponse.json({ error: 'Appuntamento non trovato', code: 'notFound' }, { status: 404 })
   }
 
   if (appointment.status === 'CANCELLED' || appointment.status === 'COMPLETED') {
-    return NextResponse.json({ error: 'Operazione non consentita su questo appuntamento' }, { status: 409 })
+    return NextResponse.json({ error: 'Operazione non consentita su questo appuntamento', code: 'notAllowed' }, { status: 409 })
   }
 
   const apptDate = new Date(appointment.date)
@@ -104,7 +105,7 @@ export async function POST(request: NextRequest) {
 
     // Blocca cancellazione solo se pagato E meno di 7 giorni all'appuntamento (non gratuito, non pending)
     if (!isPending && !isFree && isPaid && daysUntil <= 7) {
-      return NextResponse.json({ error: 'Non puoi cancellare un appuntamento già pagato con meno di 7 giorni di anticipo' }, { status: 403 })
+      return NextResponse.json({ error: 'Non puoi cancellare un appuntamento già pagato con meno di 7 giorni di anticipo', code: 'cancelTooLate' }, { status: 403 })
     }
 
     await prisma.appointment.update({
@@ -140,22 +141,22 @@ export async function POST(request: NextRequest) {
 
   if (action === 'reschedule') {
     if (!date || !time) {
-      return NextResponse.json({ error: 'Data e orario obbligatori per lo spostamento' }, { status: 400 })
+      return NextResponse.json({ error: 'Data e orario obbligatori per lo spostamento', code: 'dateTimeRequired' }, { status: 400 })
     }
 
     if (hoursUntil <= 24) {
-      return NextResponse.json({ error: 'Non puoi spostare un appuntamento entro 24 ore' }, { status: 403 })
+      return NextResponse.json({ error: 'Non puoi spostare un appuntamento entro 24 ore', code: 'rescheduleTooLate' }, { status: 403 })
     }
 
     const currentDaysUntil = hoursUntil / 24
     const isRestricted = currentDaysUntil <= 7 && currentDaysUntil > 1
 
     if (appointment.rescheduleCount >= 3) {
-      return NextResponse.json({ error: 'Hai raggiunto il limite massimo di spostamenti. Contatta Arianna.' }, { status: 403 })
+      return NextResponse.json({ error: 'Hai raggiunto il limite massimo di spostamenti. Contatta Arianna.', code: 'rescheduleLimit' }, { status: 403 })
     }
 
     if (isRestricted && appointment.rescheduleCountRestricted >= 1) {
-      return NextResponse.json({ error: 'Hai già spostato l\'appuntamento una volta in questa fascia. Contatta Arianna.' }, { status: 403 })
+      return NextResponse.json({ error: 'Hai già spostato l\'appuntamento una volta in questa fascia. Contatta Arianna.', code: 'rescheduleRestrictedLimit' }, { status: 403 })
     }
 
     await prisma.appointment.update({
@@ -182,5 +183,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, action: 'rescheduled', date, time })
   }
 
-  return NextResponse.json({ error: 'Azione non valida' }, { status: 400 })
+  return NextResponse.json({ error: 'Azione non valida', code: 'invalidAction' }, { status: 400 })
 }
