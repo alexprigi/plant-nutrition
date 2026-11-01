@@ -188,7 +188,7 @@ export function getClientConfirmationEmailHTML(data: EmailClientData): string {
                       <p style="margin: 0 0 12px; font-size: 14px; color: #6B7280;">
                         ${t.manageQuestion}
                       </p>
-                      <a href="${appUrl}/${locale}/gestisci/${data.managementToken}" style="display: inline-block; background-color: #ffffff; color: #374151; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #D1D5DB;">
+                      <a href="${appUrl}/${locale}/manage/${data.managementToken}" style="display: inline-block; background-color: #ffffff; color: #374151; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #D1D5DB;">
                         ${t.manageCta}
                       </a>
                     </td>
@@ -298,7 +298,7 @@ ${data.managementToken && !data.isBankTransfer ? `- ${t.stepManage}` : ''}
 
 ${data.managementToken ? `${t.manageCta}
 ---------------------
-${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/${locale}/gestisci/${data.managementToken}
+${process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com'}/${locale}/manage/${data.managementToken}
 
 ` : ''}${t.contact}
 --------

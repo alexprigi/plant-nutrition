@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { Link, useRouter } from '@/i18n/navigation';
-import { LOCALES, type Locale } from '@/i18n/locales';
+import { Link } from '@/i18n/navigation';
+import type { Locale } from '@/i18n/locales';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/icons/Icon';
 
@@ -41,8 +41,6 @@ export default function GestisciPage() {
   const { token } = useParams<{ token: string }>();
   const t = useTranslations('gestisci');
   const locale = useLocale() as Locale;
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const dateLocale = DATE_LOCALES[locale];
 
   const [view, setView] = useState<View>('loading');
@@ -71,12 +69,6 @@ export default function GestisciPage() {
           setErrorMsg(errorMessage(data));
           setView('error');
         } else {
-          // Link vecchi senza lingua arrivano qui con ?auto=1: portiamo il cliente nella lingua del suo appuntamento
-          const apptLocale = data.locale as Locale | undefined;
-          if (searchParams.get('auto') && apptLocale && apptLocale !== locale && LOCALES.includes(apptLocale)) {
-            router.replace(`/gestisci/${token}`, { locale: apptLocale });
-            return;
-          }
           setAppointment(data);
           setView('main');
         }

@@ -69,7 +69,7 @@ La route è protetta da `CRON_SECRET` nell'header `Authorization: Bearer`.
 
 ## 4. Gestione Appuntamento (lato cliente)
 
-Accessibile dal link nell'email di conferma: `/gestisci/TOKEN`
+Accessibile dal link nell'email di conferma: `/manage/TOKEN`
 
 Il token (`managementToken`) è univoco per ogni appuntamento e non scade.
 

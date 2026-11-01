@@ -1,7 +1,6 @@
 import { readFileSync } from 'fs'
 import { withPage, rejectCookies } from './browser'
 import { getT } from '../../src/lib/email-templates/email-i18n'
-import { DEFAULT_LOCALE } from '../../src/i18n/locales'
 import {
   BASE_URL, Mailbox, adminSession, api, assertSafeTarget, bookingPayload, dateIn, expect,
   requireSecret, secret, SkipTest, stripeSignature, type BookingInput,
@@ -142,10 +141,10 @@ const decodeEntities = (html: string) =>
   html.replace(/&#x27;|&#39;|&apos;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
 
 for (const locale of LOCALES) {
-  test(`pagina gestisci (${locale}): servita nella lingua giusta`, async () => {
+  test(`pagina manage (${locale}): servita nella lingua giusta`, async () => {
     const messages = JSON.parse(readFileSync(`messages/${locale}.json`, 'utf8'))
-    const res = await api(`/${locale}/gestisci/token-inesistente`)
-    expect(res.status === 200, `GET /${locale}/gestisci/... -> ${res.status}`)
+    const res = await api(`/${locale}/manage/token-inesistente`)
+    expect(res.status === 200, `GET /${locale}/manage/... -> ${res.status}`)
     const html = String(res.body)
     // Il rendering sul server mostra lo stato iniziale, che e' tradotto
     expect(decodeEntities(html).includes(messages.gestisci.caricamento), `testo "${messages.gestisci.caricamento}" assente nella pagina`)
@@ -156,7 +155,7 @@ for (const locale of LOCALES) {
 test('ogni pagina dichiara la propria lingua in <html lang>', async () => {
   const wrong: string[] = []
   for (const locale of LOCALES) {
-    for (const path of ['gestisci/token-inesistente', 'booking']) {
+    for (const path of ['manage/token-inesistente', 'booking']) {
       const html = String((await api(`/${locale}/${path}`)).body)
       const lang = html.match(/<html[^>]*\blang="([^"]*)"/)?.[1]
       if (lang !== locale) wrong.push(`/${locale}/${path} -> lang="${lang}"`)
@@ -169,7 +168,7 @@ test('ogni pagina dichiara la propria lingua in <html lang>', async () => {
 const decodeAll = (s: string) => decodeEntities(s).replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
 const PAGES: [path: string, namespace: string][] = [
   ['', 'sito'], ['about', 'chi-sono'], ['contact', 'contatti'], ['booking', 'prenota'],
-  ['services', 'servizi'], ['cookie-policy', 'cookie-policy'], ['privacy-policy', 'privacy-policy'], ['gestisci/token-inesistente', 'gestisci'],
+  ['services', 'servizi'], ['cookie-policy', 'cookie-policy'], ['privacy-policy', 'privacy-policy'], ['manage/token-inesistente', 'gestisci'],
 ]
 for (const locale of LOCALES) {
   test(`metadati (${locale}): titolo e descrizione tradotti in ogni pagina`, async () => {
@@ -186,20 +185,12 @@ for (const locale of LOCALES) {
   })
 }
 
-test('pagina gestisci: non indicizzabile (noindex)', async () => {
-  const html = String((await api('/en/gestisci/token-inesistente')).body)
+test('pagina manage: non indicizzabile (noindex)', async () => {
+  const html = String((await api('/en/manage/token-inesistente')).body)
   expect(/<meta name="robots" content="noindex/.test(html), 'meta robots noindex assente')
 })
 
-test('vecchio link /gestisci/<token>: reindirizza alla lingua predefinita con ?auto=1', async () => {
-  const res = await api('/gestisci/abc123')
-  expect(res.status === 307, `redirect -> ${res.status}`)
-  const location = new URL(res.headers.get('location') ?? '', BASE_URL)
-  expect(location.pathname.replace(/\/$/, '') === `/${DEFAULT_LOCALE}/gestisci/abc123`, `Location: ${location.pathname}`)
-  expect(location.searchParams.get('auto') === '1', 'manca ?auto=1')
-})
-
-test('API gestisci: locale dell\'appuntamento e codici di errore', async () => {
+test('API manage: locale dell\'appuntamento e codici di errore', async () => {
   const box = new Mailbox('manage')
   const created = await createBooking(box, { locale: 'it', commercialType: 'free-consultation', paymentMethod: 'none', date: dateIn(42), time: '10:00', isPaid: true })
   const token = created.appointment.managementToken
@@ -238,24 +229,6 @@ test('browser: il selettore di lingua tiene allineato <html lang>', async () => 
       const lang = await page.getAttribute('html', 'lang')
       expect(lang === locale, `dopo il clic su ${label}: lang="${lang}", atteso "${locale}"`)
     }
-  })
-})
-
-test('browser: vecchio link /gestisci/<token> porta alla lingua dell\'appuntamento', async () => {
-  const messages = JSON.parse(readFileSync('messages/en.json', 'utf8')).gestisci
-  const box = new Mailbox('browser')
-  const created = await createBooking(box, { locale: 'en', commercialType: 'free-consultation', paymentMethod: 'none', date: dateIn(43), time: '10:00', isPaid: true })
-  const token = created.appointment.managementToken
-
-  await withPage(async (page) => {
-    await page.goto(`${BASE_URL}/gestisci/${token}`)
-    await page.waitForURL(new RegExp(`/en/gestisci/${token}`), { timeout: 15_000 })
-    await page.getByText(messages['tuo-appuntamento'], { exact: false }).first().waitFor({ timeout: 15_000 })
-    const lang = await page.getAttribute('html', 'lang')
-    expect(lang === 'en', `<html lang="${lang}">, atteso "en"`)
-    const body = await page.innerText('body')
-    expect(body.includes(messages.sposta) || body.includes(messages['solo-spostamento']), 'azione di spostamento non mostrata')
-    expect(body.includes(messages.cancella), 'azione di cancellazione non mostrata')
   })
 })
 

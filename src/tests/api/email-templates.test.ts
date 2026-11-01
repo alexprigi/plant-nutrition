@@ -68,7 +68,7 @@ describe('client-confirmation', () => {
           const text = getClientConfirmationEmailText(d)
           expect(html).toContain('M')
           expect(text).toContain('M')
-          if (token) expect(text).toContain(`/gestisci/tok`)
+          if (token) expect(text).toContain(`/manage/tok`)
           if (notes) expect(html).toContain('Note')
         }
   })
@@ -100,8 +100,8 @@ describe('cron-emails', () => {
         const d = { clientName: 'M', serviceName: 'S', date: '2026-06-15', time: '10:00', isFree, isTest, managementToken: token, locale }
         const html = getReminderEmailHTML(d)
         const text = getReminderEmailText(d)
-        if (token) { expect(html).toContain('/gestisci/tok'); expect(text).toContain('/gestisci/tok') }
-        else expect(text).not.toContain('/gestisci/')
+        if (token) { expect(html).toContain('/manage/tok'); expect(text).toContain('/manage/tok') }
+        else expect(text).not.toContain('/manage/')
       }
   })
 
