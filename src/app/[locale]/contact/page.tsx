@@ -4,11 +4,10 @@ import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Icon from '@/components/icons/Icon';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 
 export default function Contatti() {
   const t = useTranslations('contatti');
-  const locale = useLocale();
   const [formData, setFormData] = useState({ nome: '', email: '', telefono: '', servizio: '', messaggio: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);

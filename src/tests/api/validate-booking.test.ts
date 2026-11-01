@@ -87,7 +87,7 @@ describe('POST /api/validate-booking', () => {
   })
 
   it('returns 500 when a sanitize step throws (country missing)', async () => {
-    const { country, ...rest } = valid
+    const rest = Object.fromEntries(Object.entries(valid).filter(([key]) => key !== 'country'))
     const res = await POST(makeRequest(rest))
     expect(res.status).toBe(500)
   })

@@ -116,7 +116,7 @@ describe('POST /api/create-checkout-session', () => {
   })
 
   it('falls back to the default locale in the redirect URLs when no locale is sent', async () => {
-    const { locale: _omit, ...withoutLocale } = baseDTO as typeof baseDTO & { locale?: string }
+    const withoutLocale = Object.fromEntries(Object.entries(baseDTO).filter(([key]) => key !== 'locale'))
     await POST(makeRequest(withoutLocale))
     const arg = mockStripeCreate.mock.calls[0][0] as any
     expect(arg.success_url).toContain(`/${DEFAULT_LOCALE}/booking/success`)

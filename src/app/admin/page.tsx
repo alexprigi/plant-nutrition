@@ -62,7 +62,7 @@ const AdminPage = () => {
   const [showCompletedBundles, setShowCompletedBundles] = useState(false);
   const [sortOrder, setSortOrder] = useState<'date-asc' | 'date-desc' | 'name-asc' | 'expiry-asc' | 'next-asc'>('date-asc');
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
-  const toggleExpand = (id: string) => setExpandedCards(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
+  const toggleExpand = (id: string) => setExpandedCards(prev => { const s = new Set(prev); if (s.has(id)) s.delete(id); else s.add(id); return s; });
 
   // Reschedule modal state
   const [rescheduleModal, setRescheduleModal] = useState<{ apptId: string; clientName: string } | null>(null);
@@ -71,14 +71,6 @@ const AdminPage = () => {
   const [isRescheduling, setIsRescheduling] = useState(false);
 
   const isBundle = (type: string) => type === 'BUNDLE_3_MONTHS' || type === 'BUNDLE_6_MONTHS';
-
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/admin/login');
-    } else if (status === 'authenticated') {
-      loadData();
-    }
-  }, [status, router]);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -91,6 +83,14 @@ const AdminPage = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/admin/login');
+    } else if (status === 'authenticated') {
+      loadData();
+    }
+  }, [status, router]);
 
   const today = new Date().toISOString().split('T')[0];
   const tomorrowDate = new Date();

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useId, useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from '@/components/icons/Icon';
 import { COUNTRY_PREFIXES } from '@/lib/constants';
@@ -18,6 +18,7 @@ export default function PhonePrefixSelect({ value, onChange, hasError = false }:
   const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
   const triggerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const listId = useId();
   const queryResetRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const selected = COUNTRY_PREFIXES.find(c => c.name === value) ?? COUNTRY_PREFIXES[0];
@@ -133,6 +134,7 @@ export default function PhonePrefixSelect({ value, onChange, hasError = false }:
         role="combobox"
         aria-expanded={open}
         aria-haspopup="listbox"
+        aria-controls={listId}
         onClick={() => open ? null : openDropdown()}
         onKeyDown={handleKeyDown}
         className={`h-[50px] px-3 pr-2 bg-white border rounded-xl flex items-center gap-1.5 cursor-pointer select-none outline-none shrink-0 min-w-[5.5rem]
@@ -150,7 +152,7 @@ export default function PhonePrefixSelect({ value, onChange, hasError = false }:
 
       {open && typeof document !== 'undefined' && createPortal(
         <div style={dropdownStyle} className="bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
-          <ul ref={listRef} role="listbox" className="max-h-52 overflow-y-auto py-1">
+          <ul ref={listRef} id={listId} role="listbox" className="max-h-52 overflow-y-auto py-1">
             {COUNTRY_PREFIXES.map((c, i) => (
               <li
                 key={c.name}

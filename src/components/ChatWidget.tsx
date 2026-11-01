@@ -794,6 +794,16 @@ export default function ChatWidget() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
+  const addBotMessage = (text: string, quickReplies?: QuickReply[]) => {
+    setMessages(prev => [...prev, {
+      id: Date.now(),
+      text,
+      isBot: true,
+      timestamp: new Date(),
+      quickReplies,
+    }]);
+  };
+
   useEffect(() => {
     if (isOpen && !hasOpened) {
       setHasOpened(true);
@@ -805,17 +815,8 @@ export default function ChatWidget() {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 300);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- deve scattare solo all'apertura, non al cambio di lingua
   }, [isOpen]);
-
-  const addBotMessage = (text: string, quickReplies?: QuickReply[]) => {
-    setMessages(prev => [...prev, {
-      id: Date.now(),
-      text,
-      isBot: true,
-      timestamp: new Date(),
-      quickReplies,
-    }]);
-  };
 
   const addUserMessage = (text: string) => {
     setMessages(prev => [...prev, {

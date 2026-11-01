@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import Card from './ui/Card';
 import Icon from './icons/Icon';
@@ -46,9 +47,11 @@ export default function Testimonials() {
         pointerEvents: 'none',
         zIndex: 0
       }}>
-        <img 
-          src="/images/plants/eucalyptus-curved.svg" 
-          alt="" 
+        <Image
+          src="/images/plants/eucalyptus-curved.svg"
+          alt=""
+          width={110}
+          height={420}
           style={{ width: '100%', height: 'auto' }}
         />
       </div>
@@ -64,9 +67,11 @@ export default function Testimonials() {
         zIndex: 0,
         transform: 'scaleX(-1)'
       }}>
-        <img 
-          src="/images/plants/olive-branch.svg" 
-          alt="" 
+        <Image
+          src="/images/plants/olive-branch.svg"
+          alt=""
+          width={95}
+          height={360}
           style={{ width: '100%', height: 'auto' }}
         />
       </div>

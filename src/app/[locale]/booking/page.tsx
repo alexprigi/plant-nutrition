@@ -258,11 +258,9 @@ const PrenotaPageContent = () => {
   }, [isBankTransferAvailable, paymentMethod]);
 
   const [slotAvailability, setSlotAvailability] = useState<Record<string, boolean>>({});
-  const [isLoadingSlots, setIsLoadingSlots] = useState(false);
 
   useEffect(() => {
     if (!selectedDate) return;
-    setIsLoadingSlots(true);
     const duration = activeService?.durationMinutes ?? 30;
     fetch(`/api/bookings?date=${selectedDate}&duration=${duration}`)
       .then(r => r.json())
@@ -274,9 +272,8 @@ const PrenotaPageContent = () => {
         });
         setSlotAvailability(map);
       })
-      .catch(() => {})
-      .finally(() => setIsLoadingSlots(false));
-  }, [selectedDate]);
+      .catch(() => {});
+  }, [selectedDate, activeService?.durationMinutes]);
 
   const availableTimeSlots = useMemo(() => {
     if (!selectedDate) return TIME_SLOTS;

@@ -36,7 +36,6 @@ export interface ApiResponse {
   status: number
   ok: boolean
   headers: Headers
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body: any
 }
 

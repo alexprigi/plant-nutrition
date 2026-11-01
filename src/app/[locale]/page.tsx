@@ -151,10 +151,10 @@ export default function Home() {
 
       <div className="content-decorations" style={{ position: 'relative' }}>
         <div style={{ position: 'absolute', left: '5px', top: '200px', width: '110px', opacity: 0.78, pointerEvents: 'none', zIndex: 1 }}>
-          <img src="/images/plants/eucalyptus-curved.svg" alt="" style={{ width: '100%', height: 'auto', filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.1))' }} />
+          <Image src="/images/plants/eucalyptus-curved.svg" alt="" width={110} height={420} style={{ width: '100%', height: 'auto', filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.1))' }}/>
         </div>
         <div style={{ position: 'absolute', right: '8px', top: '850px', width: '120px', opacity: 0.76, pointerEvents: 'none', zIndex: 1 }}>
-          <img src="/images/plants/potted-plant.svg" alt="" style={{ width: '100%', height: 'auto', filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.1))' }} />
+          <Image src="/images/plants/potted-plant.svg" alt="" width={120} height={200} style={{ width: '100%', height: 'auto', filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.1))' }}/>
         </div>
 
         {/* Sezione Presentazione Personale */}
@@ -202,6 +202,7 @@ export default function Home() {
                   <a href="https://ecodemy.de/" target="_blank" rel="noopener noreferrer"
                     title="Ich wurde bei der Fachfernschule ecodemy ausgebildet!"
                     className="hover:opacity-85 transition-opacity flex-shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- sigillo esterno con srcSet 1x/2x fornito da ecodemy */}
                     <img
                       src="https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-ausbildung-vegane-ernaehrungsberaterin-vea-150px-1x.png"
                       srcSet="https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-ausbildung-vegane-ernaehrungsberaterin-vea-150px-1x.png 1x, https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-ausbildung-vegane-ernaehrungsberaterin-vea-150px-2x.png 2x"
@@ -212,6 +213,7 @@ export default function Home() {
                   <a href="https://ecodemy.de/" target="_blank" rel="noopener noreferrer"
                     title="Ich habe mich bei der Fachfernschule ecodemy fortgebildet!"
                     className="hover:opacity-85 transition-opacity flex-shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- sigillo esterno con srcSet 1x/2x fornito da ecodemy */}
                     <img
                       src="https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-fachfortbildung-vegane-ernaehrung-fuer-mutter-und-kind-wb04-150px-1x.png"
                       srcSet="https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-fachfortbildung-vegane-ernaehrung-fuer-mutter-und-kind-wb04-150px-1x.png 1x, https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-fachfortbildung-vegane-ernaehrung-fuer-mutter-und-kind-wb04-150px-2x.png 2x"
@@ -319,7 +321,7 @@ export default function Home() {
 
       <div className="content-decorations" style={{ position: 'relative' }}>
         <div style={{ position: 'absolute', right: '8px', top: '2050px', width: '115px', opacity: 0.76, pointerEvents: 'none', zIndex: 1 }}>
-          <img src="/images/plants/citrus-branch.svg" alt="" style={{ width: '100%', height: 'auto', filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.1))' }} />
+          <Image src="/images/plants/citrus-branch.svg" alt="" width={115} height={300} style={{ width: '100%', height: 'auto', filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.1))' }}/>
         </div>
 
         {/* Perché Vegana */}
@@ -381,7 +383,7 @@ export default function Home() {
 
       <div className="content-decorations" style={{ position: 'relative' }}>
         <div style={{ position: 'absolute', left: '5px', top: '2700px', width: '110px', opacity: 0.78, pointerEvents: 'none', zIndex: 1 }}>
-          <img src="/images/plants/eucalyptus-curved.svg" alt="" style={{ width: '100%', height: 'auto', filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.1))' }} />
+          <Image src="/images/plants/eucalyptus-curved.svg" alt="" width={110} height={420} style={{ width: '100%', height: 'auto', filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.1))' }}/>
         </div>
 
         {/* FAQ */}

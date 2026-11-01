@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useId, useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from '@/components/icons/Icon';
 import { COUNTRY_FLAGS } from '@/lib/constants';
@@ -23,6 +23,7 @@ export default function CountrySelect({
   const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
   const triggerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const listId = useId();
   const autofillNameRef = useRef<HTMLInputElement>(null);
   const autofillISORef = useRef<HTMLInputElement>(null);
   const onChangeRef = useRef(onChange);
@@ -236,6 +237,7 @@ export default function CountrySelect({
         role="combobox"
         aria-expanded={open}
         aria-haspopup="listbox"
+        aria-controls={listId}
         onClick={() => open ? null : openDropdown()}
         onKeyDown={handleKeyDown}
         className={`w-full h-[50px] px-3 bg-white border rounded-xl flex items-center gap-2 cursor-pointer select-none outline-none
@@ -257,7 +259,7 @@ export default function CountrySelect({
 
       {open && typeof document !== 'undefined' && createPortal(
         <div style={dropdownStyle} className="bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
-          <ul ref={listRef} role="listbox" className="max-h-52 overflow-y-auto py-1">
+          <ul ref={listRef} id={listId} role="listbox" className="max-h-52 overflow-y-auto py-1">
             {countries.map((c, i) => (
               <li
                 key={c}

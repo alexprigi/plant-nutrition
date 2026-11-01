@@ -161,6 +161,7 @@ export default function ChiSono() {
             <Card className="p-6 flex flex-col items-center gap-4 text-center"
               style={{ borderRadius: '1.5rem', border: '2px solid var(--color-main)', background: 'white', boxShadow: '0 4px 24px rgba(37,105,67,0.10)' }}>
               <a href="https://ecodemy.de/" target="_blank" rel="noopener noreferrer" title="Ich wurde bei der Fachfernschule ecodemy ausgebildet!" className="hover:opacity-90 transition-opacity">
+                {/* eslint-disable-next-line @next/next/no-img-element -- sigillo esterno con srcSet 1x/2x fornito da ecodemy */}
                 <img
                   src="https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-ausbildung-vegane-ernaehrungsberaterin-vea-200px-1x.png"
                   srcSet="https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-ausbildung-vegane-ernaehrungsberaterin-vea-200px-1x.png 1x, https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-ausbildung-vegane-ernaehrungsberaterin-vea-200px-2x.png 2x"
@@ -189,6 +190,7 @@ export default function ChiSono() {
             <Card className="p-6 flex flex-col items-center gap-4 text-center"
               style={{ borderRadius: '1.5rem', border: '2px solid var(--color-main)', background: 'white', boxShadow: '0 4px 24px rgba(37,105,67,0.10)' }}>
               <a href="https://ecodemy.de/" target="_blank" rel="noopener noreferrer" title="Ich habe mich bei der Fachfernschule ecodemy fortgebildet!" className="hover:opacity-90 transition-opacity">
+                {/* eslint-disable-next-line @next/next/no-img-element -- sigillo esterno con srcSet 1x/2x fornito da ecodemy */}
                 <img
                   src="https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-fachfortbildung-vegane-ernaehrung-fuer-mutter-und-kind-wb04-200px-1x.png"
                   srcSet="https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-fachfortbildung-vegane-ernaehrung-fuer-mutter-und-kind-wb04-200px-1x.png 1x, https://ecodemy.de/wp-content/themes/ecodemy-pro/assets/images/seals/ecodemy-siegel-fachfortbildung-vegane-ernaehrung-fuer-mutter-und-kind-wb04-200px-2x.png 2x"

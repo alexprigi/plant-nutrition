@@ -128,7 +128,7 @@ function DisponibilitaPage() {
     } else {
       setSelected(prev => {
         const next = new Set(prev);
-        newMode === 'select' ? next.add(key) : next.delete(key);
+        if (newMode === 'select') next.add(key); else next.delete(key);
         return next;
       });
     }
@@ -142,7 +142,7 @@ function DisponibilitaPage() {
       if (dragMode === 'select' && prev.has(key)) return prev;
       if (dragMode === 'deselect' && !prev.has(key)) return prev;
       const next = new Set(prev);
-      dragMode === 'select' ? next.add(key) : next.delete(key);
+      if (dragMode === 'select') next.add(key); else next.delete(key);
       return next;
     });
   };
@@ -392,9 +392,7 @@ function DisponibilitaPage() {
     if (blockedByBlock > 0) return 'unblock'; // slot bloccati dentro weekend aperto → riapri
     if (openSlots > 0 && closedSlots === 0) return 'close'; // tutti aperti → richiudi
     return 'open'; // tutti o in parte chiusi → apri
-  }, [selectionIsAllWeekend, selected, isBlocked, isWeekend, blocks]);
-
-  const selectionIsOpenWeekend = weekendSelectionState === 'close';
+  }, [selectionIsAllWeekend, selected, isBlocked, blocks]);
 
   const navLabel = `${new Date(weekDays[0]).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })} — ${new Date(weekDays[6]).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' })}`;
 

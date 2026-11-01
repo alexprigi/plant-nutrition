@@ -74,7 +74,7 @@ export default function FollowUpBookingPage() {
         setErrorMsg(t('caricamento'));
         setView('error');
       });
-  }, [token]);
+  }, [token, t]);
 
   const calendarDays = useMemo(() => {
     const year = currentMonthDate.getFullYear();

@@ -151,6 +151,7 @@ export default function Ricette() {
               <Card key={recipe.id} className="overflow-hidden hover:shadow-xl transition-shadow" style={{ background: 'white', borderRadius: '1rem' }}>
                 {/* Immagine ricetta */}
                 <div className="relative h-64 overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- src dinamico con fallback onError */}
                   <img
                     src={recipe.image}
                     alt={recipe.title}
