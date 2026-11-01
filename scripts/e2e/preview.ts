@@ -232,6 +232,118 @@ test('browser: il selettore di lingua tiene allineato <html lang>', async () => 
   })
 })
 
+// ---------- Browser: flussi dell'interfaccia (prenotazione, banner cookie, selettori, chat) ----------
+
+test('browser: prenotazione gratuita completa dal sito (en)', async () => {
+  const messages = JSON.parse(readFileSync('messages/en.json', 'utf8'))
+  const pren = messages.prenota
+  const box = new Mailbox('ui')
+  await withPage(async (page) => {
+    await page.goto(`${BASE_URL}/en/booking`)
+    await rejectCookies(page, messages.cookie.rifiuta)
+
+    // Passo 1: servizio
+    await page.getByRole('button', { name: new RegExp(pren.servizi['colloquio-gratuito-titolo']) }).first().click()
+    await page.getByRole('button', { name: pren.step1.continua, exact: true }).last().click()
+
+    // Passo 2: dati
+    await page.getByText(pren.step2.titolo).first().waitFor({ timeout: 15_000 })
+    await page.locator('input[name="given-name"]').fill('Test')
+    await page.locator('input[name="family-name"]').fill('E2E')
+    await page.locator('input[name="email"]').fill(box.address)
+    await page.locator('input[name="tel-national"]').fill('3330000000')
+    await page.locator('input[name="street-address"]').fill('Via Test')
+    await page.locator('input[name="address-line2"]').fill('1')
+    await page.locator('input[name="postal-code"]').fill('20100')
+    await page.locator('input[name="address-level2"]').fill('Milano')
+    await page.locator('input[name="fiscal-code"]').fill('RSSMRA80A01F205X')
+    await page.locator('input[type="checkbox"]').first().check()
+    await page.getByRole('button', { name: pren.step2.continua, exact: true }).last().click()
+
+    // Passo 3: data e ora (ultimo giorno libero del mese mostrato, primo orario libero)
+    await page.getByText(pren.step3['titolo-gratuito']).first().waitFor({ timeout: 15_000 })
+    const days = page.locator('button.rounded-full:not([disabled])').filter({ hasText: /^\d{1,2}$/ })
+    await days.first().waitFor({ timeout: 15_000 })
+    await days.last().click()
+    const slot = page.locator('button:not([disabled])').filter({ hasText: /^\d{2}:\d{2}$/ }).first()
+    await slot.waitFor({ timeout: 15_000 })
+    await slot.click()
+    await page.getByRole('button', { name: pren.step3.conferma, exact: true }).last().click()
+
+    // Passo 4: riepilogo e conferma
+    await page.getByText(pren.step4['titolo-gratuito']).first().waitFor({ timeout: 15_000 })
+    await page.locator('input[type="checkbox"]').last().check()
+    await page.getByRole('button', { name: pren.step4.conferma, exact: true }).last().click()
+    await page.getByText(pren.successo['titolo-confermato']).first().waitFor({ timeout: 30_000 })
+    expect((await page.innerText('body')).includes('Thank you Test'), 'saluto con il nome non mostrato')
+  })
+  await box.waitFor('conferma prenotazione', (m) => /confirm/i.test(m.subject), 90_000)
+})
+
+test('browser: banner cookie (rifiuto ricordato, accetta tutti)', async () => {
+  const messages = JSON.parse(readFileSync('messages/en.json', 'utf8')).cookie
+  await withPage(async (page) => {
+    await page.goto(`${BASE_URL}/en`)
+    const reject = page.getByRole('button', { name: messages.rifiuta })
+    await reject.waitFor({ timeout: 10_000 })
+    await reject.click()
+    expect(await reject.count() === 0, 'il banner è ancora visibile dopo il rifiuto')
+    const stored = await page.evaluate(() => localStorage.getItem('cookieConsent'))
+    expect(JSON.parse(stored ?? '{}').analytics === false, `consenso salvato: ${stored}`)
+    await page.reload()
+    await page.waitForTimeout(2000)
+    expect(await page.getByRole('button', { name: messages.rifiuta }).count() === 0, 'il banner riappare dopo il ricaricamento')
+
+    await page.evaluate(() => localStorage.removeItem('cookieConsent'))
+    await page.reload()
+    await page.getByRole('button', { name: messages.accetta }).click()
+    const accepted = await page.evaluate(() => localStorage.getItem('cookieConsent'))
+    expect(JSON.parse(accepted ?? '{}').marketing === true, `consenso salvato: ${accepted}`)
+  })
+})
+
+test('browser: selettore paese e prefisso telefonico', async () => {
+  const messages = JSON.parse(readFileSync('messages/en.json', 'utf8'))
+  const pren = messages.prenota
+  await withPage(async (page) => {
+    await page.goto(`${BASE_URL}/en/booking`)
+    await rejectCookies(page, messages.cookie.rifiuta)
+    await page.getByRole('button', { name: new RegExp(pren.servizi['colloquio-gratuito-titolo']) }).first().click()
+    await page.getByRole('button', { name: pren.step1.continua, exact: true }).last().click()
+    await page.getByText(pren.step2.titolo).first().waitFor({ timeout: 15_000 })
+
+    const [prefix, country] = await page.getByRole('combobox').all()
+    await country.click()
+    await page.keyboard.type('Germ')
+    await page.getByRole('option', { name: /Germany/ }).first().click()
+    expect((await country.innerText()).includes('Germany'), `paese selezionato: "${await country.innerText()}"`)
+    expect(await page.getByRole('listbox').count() === 0, 'elenco paesi ancora aperto dopo la scelta')
+
+    await prefix.click()
+    await page.keyboard.type('Aust')
+    await page.getByRole('option', { name: /Austria/ }).first().click()
+    expect((await prefix.innerText()).includes('+43'), `prefisso selezionato: "${await prefix.innerText()}"`)
+  })
+})
+
+test('browser: chat assistente (messaggio proattivo e risposta)', async () => {
+  const messages = JSON.parse(readFileSync('messages/en.json', 'utf8'))
+  await withPage(async (page) => {
+    await page.goto(`${BASE_URL}/en`)
+    await rejectCookies(page, messages.cookie.rifiuta)
+    await page.getByRole('button', { name: 'Open chat assistant' }).click()
+    const input = page.getByPlaceholder('Write a message...')
+    await input.waitFor({ timeout: 10_000 })
+    await page.waitForTimeout(1500) // messaggio proattivo dopo 400ms
+    const before = (await page.innerText('body')).length
+    await input.fill('prices')
+    await page.getByRole('button', { name: 'Send message' }).click()
+    // risposta del bot: oltre al messaggio dell'utente il testo deve crescere di una risposta intera
+    await page.waitForFunction((n) => document.body.innerText.length > n + 60, before, { timeout: 10_000 })
+    expect((await page.innerText('body')).includes('prices'), 'messaggio utente non mostrato')
+  })
+})
+
 // ---------- Azioni admin ----------
 
 const ADMIN = ['ADMIN_EMAIL', 'ADMIN_PASSWORD']
