@@ -266,7 +266,7 @@ async function fillBookingSteps(page: Page, serviceKey: string, email: string, n
   await rejectCookies(page, messages.cookie.rifiuta)
 
   // Passo 1: servizio (con l'avviso sulle lingue delle consulenze)
-  expect((await page.innerText('body')).includes(pren.step1['lingua-consulenze']), 'avviso sulle lingue delle consulenze non mostrato')
+  await page.getByText(pren.step1['lingua-consulenze']).first().waitFor({ timeout: 15_000 }).catch(() => { throw new Error('avviso sulle lingue delle consulenze non mostrato') })
   await page.getByRole('button', { name: new RegExp(pren.servizi[serviceKey]) }).first().click()
   await page.getByRole('button', { name: pren.step1.continua, exact: true }).last().click()
 
