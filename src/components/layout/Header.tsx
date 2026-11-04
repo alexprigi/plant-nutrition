@@ -5,12 +5,12 @@ import { useState, useEffect, useRef, type MouseEvent } from 'react';
 import { usePathname } from 'next/navigation';
 import { Link, useRouter } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
-
-const VISIBLE_LOCALES = ['it', 'de'] as const;
+import { LOCALES } from '@/i18n/locales';
 
 const LocaleFlag: Record<string, string> = {
   it: '🇮🇹',
   de: '🇩🇪',
+  en: '🇬🇧',
 };
 
 const Header = () => {
@@ -87,7 +87,7 @@ const Header = () => {
               <Link
                 key={item.name}
                 href={item.href}
-                className="font-semibold text-base lg:text-lg xl:text-lg tracking-wide transition-all duration-200 menu-lift hover:text-[var(--color-main)] active:scale-95 active:opacity-80"
+                className="whitespace-nowrap font-semibold text-base lg:text-lg xl:text-lg tracking-wide transition-all duration-200 menu-lift hover:text-[var(--color-main)] active:scale-95 active:opacity-80"
                 style={{ color: 'var(--brand-title)', letterSpacing: '0.02em' }}
                 onClick={item.href === '/' ? handleHomeClick : undefined}
               >
@@ -99,19 +99,20 @@ const Header = () => {
           {/* Desktop Right: CTA + Selettore Lingua */}
           <div className="hidden md:flex items-center gap-3">
             {/* Selettore lingua */}
-            <div className="flex items-center gap-2">
-              {VISIBLE_LOCALES.map((loc) => (
+            <div className="flex items-center gap-1 lg:gap-2">
+              {LOCALES.map((loc) => (
                 <button
                   key={loc}
                   onClick={() => switchLocale(loc)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${locale === loc ? 'shadow-sm' : 'opacity-70 hover:opacity-90'}`}
+                  aria-label={loc.toUpperCase()}
+                  className={`flex items-center gap-1.5 px-2 lg:px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${locale === loc ? 'shadow-sm' : 'opacity-70 hover:opacity-90'}`}
                   style={locale === loc
                     ? { background: 'var(--brand-title)', color: 'white' }
                     : { color: 'var(--brand-title)', background: 'var(--bg-section-light)', border: '1.5px solid var(--color-main-light)' }
                   }
                 >
                   <span className="text-base">{LocaleFlag[loc]}</span>
-                  <span>{loc.toUpperCase()}</span>
+                  <span className="hidden lg:inline">{loc.toUpperCase()}</span>
                 </button>
               ))}
             </div>
@@ -129,19 +130,20 @@ const Header = () => {
           {/* Mobile: lingua + burger */}
           <div className="md:hidden flex items-center gap-2">
             {/* Selettore lingua inline */}
-            <div className="flex items-center gap-1.5">
-              {VISIBLE_LOCALES.map((loc) => (
+            <div className="flex items-center gap-1">
+              {LOCALES.map((loc) => (
                 <button
                   key={loc}
                   onClick={() => switchLocale(loc)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${locale === loc ? 'shadow-sm' : 'opacity-70'}`}
+                  aria-label={loc.toUpperCase()}
+                  className={`flex items-center gap-1.5 px-2 min-[420px]:px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${locale === loc ? 'shadow-sm' : 'opacity-70'}`}
                   style={locale === loc
                     ? { background: 'var(--brand-title)', color: 'white' }
                     : { color: 'var(--brand-title)', background: 'var(--bg-section-light)', border: '1.5px solid var(--color-main-light)' }
                   }
                 >
                   <span className="text-base">{LocaleFlag[loc]}</span>
-                  <span>{loc.toUpperCase()}</span>
+                  <span className="hidden min-[420px]:inline">{loc.toUpperCase()}</span>
                 </button>
               ))}
             </div>

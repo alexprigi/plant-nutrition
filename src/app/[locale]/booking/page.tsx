@@ -597,7 +597,8 @@ const PrenotaPageContent = () => {
           <div className="max-w-4xl mx-auto">
             <div className="animate-fade-in">
               <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">{t('step1.titolo')}</h1>
-              <p className="text-center text-gray-500 mb-8">{t('step1.sottotitolo')}</p>
+              <p className="text-center text-gray-500 mb-2">{t('step1.sottotitolo')}</p>
+              <p className="text-center text-sm text-gray-400 mb-8">{t('step1.lingua-consulenze')}</p>
 
               {eligibilityError && (
                 <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
