@@ -45,6 +45,12 @@ describe('robots', () => {
     expect(result.sitemap).toBe('https://www.vivaplantnutrition.com/sitemap.xml')
   })
 
+  it('treats the domain without www as production and always publishes www addresses', async () => {
+    const result = await load('https://vivaplantnutrition.com')
+    expect(result.rules).toMatchObject({ allow: '/' })
+    expect(result.sitemap).toBe('https://www.vivaplantnutrition.com/sitemap.xml')
+  })
+
   it('keeps preview and local sites out of search engines', async () => {
     expect(await load('https://preview.vivaplantnutrition.com')).toEqual({ rules: { userAgent: '*', disallow: '/' } })
     expect(await load('http://localhost:3000')).toEqual({ rules: { userAgent: '*', disallow: '/' } })

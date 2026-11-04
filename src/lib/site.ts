@@ -1,6 +1,13 @@
 import { LOCALES, DEFAULT_LOCALE } from '@/i18n/locales'
 
-export const SITE_URL = (process.env.AUTH_URL ?? 'https://www.vivaplantnutrition.com').replace(/\/$/, '')
+const PRODUCTION_URL = 'https://www.vivaplantnutrition.com'
+const PRODUCTION_HOSTS = ['www.vivaplantnutrition.com', 'vivaplantnutrition.com']
+
+const configuredUrl = (process.env.AUTH_URL ?? PRODUCTION_URL).replace(/\/$/, '')
+
+// In produzione AUTH_URL può essere anche il dominio senza www, che rimanda a www: negli indirizzi pubblici vale sempre www
+export const IS_PRODUCTION_SITE = PRODUCTION_HOSTS.includes(new URL(configuredUrl).host)
+export const SITE_URL = IS_PRODUCTION_SITE ? PRODUCTION_URL : configuredUrl
 
 // Pagine pubbliche indicizzabili (blog e ricette sono in lavorazione, la pagina di gestione è privata)
 export const PUBLIC_PATHS = ['', '/about', '/services', '/contact', '/booking', '/privacy-policy', '/cookie-policy', '/cancellation-policy'] as const
@@ -15,6 +22,3 @@ export function languageAlternates(path: string): Record<string, string> {
     'x-default': pageUrl(DEFAULT_LOCALE, path),
   }
 }
-
-// Solo il sito di produzione deve comparire nei motori di ricerca (preview e sviluppo restano fuori)
-export const IS_PRODUCTION_SITE = new URL(SITE_URL).host === 'www.vivaplantnutrition.com'
