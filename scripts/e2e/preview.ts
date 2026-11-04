@@ -186,6 +186,19 @@ for (const locale of LOCALES) {
   })
 }
 
+test('sitemap con hreflang in tutte le lingue; robots.txt chiuso fuori produzione', async () => {
+  const sitemap = String((await api('/sitemap.xml')).body)
+  for (const locale of LOCALES) {
+    expect(new RegExp(`<loc>[^<]*/${locale}/about</loc>`).test(sitemap), `sitemap senza /${locale}/about`)
+    expect(new RegExp(`hreflang="${locale}" href="[^"]*/${locale}/about"`).test(sitemap), `hreflang ${locale} mancante per /about`)
+  }
+  expect(/hreflang="x-default" href="[^"]*\/de\/about"/.test(sitemap), 'x-default mancante')
+  for (const hidden of ['/manage', '/admin', '/blog', '/recipes']) expect(!sitemap.includes(hidden), `${hidden} non dovrebbe essere in sitemap`)
+  const robots = String((await api('/robots.txt')).body)
+  // Preview e sviluppo non devono comparire nei motori di ricerca: robots.txt chiude tutto
+  expect(/Disallow: \/(\s|$)/.test(robots) && !/Allow: \//.test(robots), `robots.txt: ${robots.replace(/\n/g, ' | ')}`)
+})
+
 test('pagina manage: non indicizzabile (noindex)', async () => {
   const html = String((await api('/en/manage/token-inesistente')).body)
   expect(/<meta name="robots" content="noindex/.test(html), 'meta robots noindex assente')
@@ -223,7 +236,7 @@ test('browser: il selettore di lingua tiene allineato <html lang>', async () => 
     await page.goto(`${BASE_URL}/it`)
     await rejectCookies(page, messages.cookie.rifiuta)
     expect((await page.getAttribute('html', 'lang')) === 'it', 'lang iniziale diverso da it')
-    for (const [label, locale] of [['DE', 'de'], ['IT', 'it'], ['DE', 'de']] as const) {
+    for (const [label, locale] of [['DE', 'de'], ['EN', 'en'], ['IT', 'it'], ['DE', 'de']] as const) {
       await page.getByRole('button', { name: new RegExp(`\\b${label}\\b`) }).first().click()
       await page.waitForURL(new RegExp(`/${locale}$`))
       await page.waitForFunction((l) => document.documentElement.lang === l, locale, { timeout: 5000 }).catch(() => undefined)
@@ -252,7 +265,8 @@ async function fillBookingSteps(page: Page, serviceKey: string, email: string, n
   await page.goto(`${BASE_URL}/en/booking`)
   await rejectCookies(page, messages.cookie.rifiuta)
 
-  // Passo 1: servizio
+  // Passo 1: servizio (con l'avviso sulle lingue delle consulenze)
+  expect((await page.innerText('body')).includes(pren.step1['lingua-consulenze']), 'avviso sulle lingue delle consulenze non mostrato')
   await page.getByRole('button', { name: new RegExp(pren.servizi[serviceKey]) }).first().click()
   await page.getByRole('button', { name: pren.step1.continua, exact: true }).last().click()
 
