@@ -1,15 +1,17 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
-import * as dotenv from "dotenv";
+import { assertPreviewDatabase } from "./lib-db-guard";
 
-dotenv.config({ path: ".env.local" });
+assertPreviewDatabase();
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
+  if (process.argv.includes("--remember-host")) return;
+
   const [clients, clientUsers, appointments, subscriptions, adminUsers, blocks] =
     await Promise.all([
       prisma.client.count(),
