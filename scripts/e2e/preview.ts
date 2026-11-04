@@ -1,4 +1,5 @@
 import { readFileSync } from 'fs'
+import type { Page } from 'playwright-core'
 import { withPage, rejectCookies } from './browser'
 import { getT } from '../../src/lib/email-templates/email-i18n'
 import {
@@ -234,40 +235,65 @@ test('browser: il selettore di lingua tiene allineato <html lang>', async () => 
 
 // ---------- Browser: flussi dell'interfaccia (prenotazione, banner cookie, selettori, chat) ----------
 
-test('browser: prenotazione gratuita completa dal sito (en)', async () => {
+// Percorre i passi 1-3 della prenotazione (servizio, dati, data e ora) e si ferma al riepilogo.
+// Restituisce le richieste POST verso /api/ fatte dal browser, per controllare cosa arriva al server.
+async function fillBookingSteps(page: Page, serviceKey: string, email: string, nextMonth: boolean) {
   const messages = JSON.parse(readFileSync('messages/en.json', 'utf8'))
   const pren = messages.prenota
+  const posted: { url: string; body: any }[] = []
+  page.on('request', (r) => {
+    if (r.method() === 'POST' && r.url().includes('/api/')) {
+      let body: any = r.postData()
+      try { body = JSON.parse(body) } catch { /* resta testo */ }
+      posted.push({ url: new URL(r.url()).pathname, body })
+    }
+  })
+
+  await page.goto(`${BASE_URL}/en/booking`)
+  await rejectCookies(page, messages.cookie.rifiuta)
+
+  // Passo 1: servizio
+  await page.getByRole('button', { name: new RegExp(pren.servizi[serviceKey]) }).first().click()
+  await page.getByRole('button', { name: pren.step1.continua, exact: true }).last().click()
+
+  // Passo 2: dati (prefisso telefonico di default per l'inglese: +44)
+  await page.getByText(pren.step2.titolo).first().waitFor({ timeout: 15_000 })
+  await page.locator('input[name="given-name"]').fill('Test')
+  await page.locator('input[name="family-name"]').fill('E2E')
+  await page.locator('input[name="email"]').fill(email)
+  await page.locator('input[name="tel-national"]').fill('3330000000')
+  await page.locator('input[name="street-address"]').fill('Via Test')
+  await page.locator('input[name="address-line2"]').fill('1')
+  await page.locator('input[name="postal-code"]').fill('20100')
+  await page.locator('input[name="address-level2"]').fill('Milano')
+  await page.locator('input[name="fiscal-code"]').fill('RSSMRA80A01F205X')
+  await page.locator('input[type="checkbox"]').first().check()
+  await page.getByRole('button', { name: pren.step2.continua, exact: true }).last().click()
+
+  // Passo 3: ultimo giorno libero del mese mostrato (o del successivo), primo orario libero
+  await page.getByText(/Choose the date/).first().waitFor({ timeout: 15_000 })
+  if (nextMonth) await page.locator('span.capitalize.font-bold + button').click()
+  const days = page.locator('button.rounded-full:not([disabled])').filter({ hasText: /^\d{1,2}$/ })
+  await days.first().waitFor({ timeout: 15_000 })
+  await days.last().click()
+  const slot = page.locator('button:not([disabled])').filter({ hasText: /^\d{2}:\d{2}$/ }).first()
+  await slot.waitFor({ timeout: 15_000 })
+  await slot.click()
+  return { posted, messages, pren }
+}
+
+// Il telefono arriva al server come "prefisso numero": se manca la prenotazione viene rifiutata
+function expectPhoneSent(posted: { url: string; body: any }[], bookingUrl = '/api/bookings') {
+  const validate = posted.find((p) => p.url === '/api/validate-booking')
+  expect(validate?.body?.phone === '+44 3330000000', `validate-booking: phone = ${JSON.stringify(validate?.body?.phone)}`)
+  const booking = posted.find((p) => p.url === bookingUrl)
+  expect(booking?.body?.phone === '+44 3330000000', `${bookingUrl}: phone = ${JSON.stringify(booking?.body?.phone)}`)
+}
+
+test('browser: prenotazione gratuita completa dal sito (en)', async () => {
   const box = new Mailbox('ui')
   await withPage(async (page) => {
-    await page.goto(`${BASE_URL}/en/booking`)
-    await rejectCookies(page, messages.cookie.rifiuta)
-
-    // Passo 1: servizio
-    await page.getByRole('button', { name: new RegExp(pren.servizi['colloquio-gratuito-titolo']) }).first().click()
-    await page.getByRole('button', { name: pren.step1.continua, exact: true }).last().click()
-
-    // Passo 2: dati
-    await page.getByText(pren.step2.titolo).first().waitFor({ timeout: 15_000 })
-    await page.locator('input[name="given-name"]').fill('Test')
-    await page.locator('input[name="family-name"]').fill('E2E')
-    await page.locator('input[name="email"]').fill(box.address)
-    await page.locator('input[name="tel-national"]').fill('3330000000')
-    await page.locator('input[name="street-address"]').fill('Via Test')
-    await page.locator('input[name="address-line2"]').fill('1')
-    await page.locator('input[name="postal-code"]').fill('20100')
-    await page.locator('input[name="address-level2"]').fill('Milano')
-    await page.locator('input[name="fiscal-code"]').fill('RSSMRA80A01F205X')
-    await page.locator('input[type="checkbox"]').first().check()
-    await page.getByRole('button', { name: pren.step2.continua, exact: true }).last().click()
-
-    // Passo 3: data e ora (ultimo giorno libero del mese mostrato, primo orario libero)
-    await page.getByText(pren.step3['titolo-gratuito']).first().waitFor({ timeout: 15_000 })
-    const days = page.locator('button.rounded-full:not([disabled])').filter({ hasText: /^\d{1,2}$/ })
-    await days.first().waitFor({ timeout: 15_000 })
-    await days.last().click()
-    const slot = page.locator('button:not([disabled])').filter({ hasText: /^\d{2}:\d{2}$/ }).first()
-    await slot.waitFor({ timeout: 15_000 })
-    await slot.click()
+    const { posted, pren } = await fillBookingSteps(page, 'colloquio-gratuito-titolo', box.address, false)
     await page.getByRole('button', { name: pren.step3.conferma, exact: true }).last().click()
 
     // Passo 4: riepilogo e conferma
@@ -276,8 +302,64 @@ test('browser: prenotazione gratuita completa dal sito (en)', async () => {
     await page.getByRole('button', { name: pren.step4.conferma, exact: true }).last().click()
     await page.getByText(pren.successo['titolo-confermato']).first().waitFor({ timeout: 30_000 })
     expect((await page.innerText('body')).includes('Thank you Test'), 'saluto con il nome non mostrato')
+    expectPhoneSent(posted)
   })
   await box.waitFor('conferma prenotazione', (m) => /confirm/i.test(m.subject), 90_000)
+})
+
+test('browser: prenotazione con bonifico dal sito (en): richiesta e istruzioni', async () => {
+  const t = getT('en')
+  const box = new Mailbox('uibank')
+  await withPage(async (page) => {
+    const { posted, pren } = await fillBookingSteps(page, 'prima-visita-titolo', box.address, true)
+    await page.getByRole('button', { name: pren.step3['continua-pagamento'], exact: true }).last().click()
+
+    // Passo 4: pagamento con bonifico (disponibile solo oltre 5 giorni dalla data scelta)
+    await page.getByText(pren.step4['titolo-pagamento']).first().waitFor({ timeout: 15_000 })
+    await page.getByText(pren.step4['bonifico-label']).first().click()
+    await page.locator('input[type="checkbox"]').last().check()
+    await page.getByRole('button', { name: pren.step4['prenota-bonifico'], exact: true }).last().click()
+    await page.getByText(pren.successo['titolo-bonifico']).first().waitFor({ timeout: 30_000 })
+    const body = await page.innerText('body')
+    expect(body.includes(pren.successo['bonifico-titolo'].replace(/^\S+\s/, '')), 'istruzioni del bonifico non mostrate')
+    expectPhoneSent(posted)
+    expect(posted.every((p) => p.url !== '/api/create-checkout-session'), 'con il bonifico non deve partire il pagamento con carta')
+  })
+  const mail = await box.waitFor('richiesta di bonifico', hasSubject(t.subjBankRequest(t.svcFirstVisit)), 90_000)
+  expect((await box.read(mail)).attachments.length === 0, 'la richiesta di bonifico non deve avere il .ics')
+})
+
+test('browser: prenotazione con carta dal sito (en): pagamento Stripe di test e conferma', async () => {
+  const t = getT('en')
+  const box = new Mailbox('uicard')
+  await withPage(async (page) => {
+    const { posted, pren, messages } = await fillBookingSteps(page, 'prima-visita-titolo', box.address, true)
+    await page.getByRole('button', { name: pren.step3['continua-pagamento'], exact: true }).last().click()
+
+    // Passo 4: la carta è il metodo di default
+    await page.getByText(pren.step4['titolo-pagamento']).first().waitFor({ timeout: 15_000 })
+    await page.locator('input[type="checkbox"]').last().check()
+    await page.getByRole('button', { name: pren.step4['paga-prenota'], exact: true }).last().click()
+
+    // Pagina di pagamento di Stripe (modalità test): carta 4242 4242 4242 4242, scadenza e CVC qualsiasi
+    await page.waitForURL(/checkout\.stripe\.com/, { timeout: 45_000 })
+    expectPhoneSent(posted, '/api/create-checkout-session')
+    // Sulla riga c'è un pulsante trasparente che intercetta il clic: lo si preme alle coordinate della riga
+    await page.locator('#payment-method-label-card').click({ force: true })
+    await page.locator('#cardNumber').fill('4242424242424242')
+    await page.locator('#cardExpiry').fill('1234')
+    await page.locator('#cardCvc').fill('123')
+    await page.locator('#billingName').fill('Test E2E')
+    const postal = page.locator('#billingPostalCode')
+    if (await postal.count()) await postal.fill('20100')
+    await page.locator('[data-testid="hosted-payment-submit-button"]').click()
+
+    // Ritorno sul sito: pagina di successo
+    await page.waitForURL(/\/booking\/success\?session_id=/, { timeout: 90_000 })
+    await page.getByText(messages['booking-success'].titolo).first().waitFor({ timeout: 15_000 })
+  })
+  // La conferma parte dal webhook di Stripe
+  await box.waitFor('conferma dopo il pagamento', hasSubject(t.subjConfirm(t.svcFirstVisit)), 120_000)
 })
 
 test('browser: banner cookie (rifiuto ricordato, accetta tutti)', async () => {
