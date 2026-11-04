@@ -39,6 +39,8 @@ function ClientePage() {
   const { status } = useSession();
   const [appointments, setAppointments] = useState<AdminAppointmentView[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  // Istante di apertura della pagina: serve per i giorni alla scadenza (il render deve restare puro)
+  const [now] = useState(() => Date.now());
 
   useEffect(() => {
     if (status === 'unauthenticated') router.push('/admin/login');
@@ -174,7 +176,7 @@ function ClientePage() {
             const isBundleSub = isBundle(sub.subscriptionType);
             const sessionsRemaining = sub.totalSessions - sub.usedSessions;
             const expiryDays = sub.expiresAt
-              ? Math.ceil((new Date(sub.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+              ? Math.ceil((new Date(sub.expiresAt).getTime() - now) / (1000 * 60 * 60 * 24))
               : null;
 
             return (

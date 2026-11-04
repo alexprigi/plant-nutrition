@@ -52,15 +52,17 @@ export default function PhonePrefixSelect({ value, onChange, hasError = false }:
     triggerRef.current.focus();
   };
 
-  useEffect(() => {
-    if (!query.trim()) return;
-    const q = query.replace('+', '');
+  // Aggiorna il testo digitato e porta l'evidenziazione sul primo prefisso che corrisponde
+  const updateQuery = (next: string) => {
+    setQuery(next);
+    if (!next.trim()) return;
+    const q = next.replace('+', '');
     const idx = COUNTRY_PREFIXES.findIndex(c =>
       c.code.replace('+', '').startsWith(q) ||
-      c.name.toLowerCase().startsWith(query.toLowerCase())
+      c.name.toLowerCase().startsWith(next.toLowerCase())
     );
     if (idx >= 0) setHighlighted(idx);
-  }, [query]);
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -122,8 +124,8 @@ export default function PhonePrefixSelect({ value, onChange, hasError = false }:
     else if (e.key === 'ArrowDown') { e.preventDefault(); setHighlighted(h => Math.min(h + 1, COUNTRY_PREFIXES.length - 1)); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setHighlighted(h => Math.max(h - 1, 0)); }
     else if (e.key === 'Enter') { e.preventDefault(); if (COUNTRY_PREFIXES[highlighted]) select(COUNTRY_PREFIXES[highlighted].name); }
-    else if (e.key === 'Backspace') { e.preventDefault(); setQuery(q => q.slice(0, -1)); scheduleReset(); }
-    else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) { e.preventDefault(); setQuery(q => q + e.key); scheduleReset(); }
+    else if (e.key === 'Backspace') { e.preventDefault(); updateQuery(query.slice(0, -1)); scheduleReset(); }
+    else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) { e.preventDefault(); updateQuery(query + e.key); scheduleReset(); }
   };
 
   return (

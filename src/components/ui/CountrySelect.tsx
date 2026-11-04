@@ -146,14 +146,15 @@ export default function CountrySelect({
     triggerRef.current.focus();
   };
 
-  useEffect(() => {
-    if (!query.trim()) return;
+  // Aggiorna il testo digitato e porta l'evidenziazione sul primo paese che inizia così
+  const updateQuery = (next: string) => {
+    setQuery(next);
+    if (!next.trim()) return;
     const idx = countries.findIndex(c =>
-      getLocalizedName(c).toLowerCase().startsWith(query.toLowerCase())
+      getLocalizedName(c).toLowerCase().startsWith(next.toLowerCase())
     );
     if (idx >= 0) setHighlighted(idx);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -215,8 +216,8 @@ export default function CountrySelect({
     else if (e.key === 'ArrowDown') { e.preventDefault(); setHighlighted(h => Math.min(h + 1, countries.length - 1)); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setHighlighted(h => Math.max(h - 1, 0)); }
     else if (e.key === 'Enter') { e.preventDefault(); if (countries[highlighted]) select(countries[highlighted]); }
-    else if (e.key === 'Backspace') { e.preventDefault(); setQuery(q => q.slice(0, -1)); scheduleReset(); }
-    else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) { e.preventDefault(); setQuery(q => q + e.key); scheduleReset(); }
+    else if (e.key === 'Backspace') { e.preventDefault(); updateQuery(query.slice(0, -1)); scheduleReset(); }
+    else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) { e.preventDefault(); updateQuery(query + e.key); scheduleReset(); }
   };
 
   const hiddenStyle: React.CSSProperties = {

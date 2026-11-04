@@ -80,6 +80,7 @@ function DisponibilitaPage() {
     setIsLoading(false);
   }, [weekDays]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- loadBlocks mostra lo spinner a ogni cambio di settimana
   useEffect(() => { loadBlocks(); }, [loadBlocks]);
 
   // Determina se uno slot è bloccato da un blocco esistente

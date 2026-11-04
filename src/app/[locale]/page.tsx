@@ -26,6 +26,7 @@ export default function Home() {
 
   useEffect(() => {
     const next = (currentSlide + 1) % heroImages.length;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- precarica la slide successiva del carosello
     setLoadedSlides(prev => new Set([...prev, next]));
   }, [currentSlide, heroImages.length]);
 

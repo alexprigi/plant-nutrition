@@ -1,12 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 
+const subscribeToStorage = (onChange: () => void) => {
+  window.addEventListener('storage', onChange);
+  return () => window.removeEventListener('storage', onChange);
+};
+
 export default function CookieBanner() {
   const t = useTranslations('cookie');
-  const [showBanner, setShowBanner] = useState(false);
+  // Sul server si considera il consenso già dato, così il banner compare solo dopo l'idratazione e solo se manca
+  const hasConsent = useSyncExternalStore(
+    subscribeToStorage,
+    () => localStorage.getItem('cookieConsent') !== null,
+    () => true,
+  );
+  const [dismissed, setDismissed] = useState(false);
+  const showBanner = !hasConsent && !dismissed;
   const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState({
     necessary: true,
@@ -14,21 +26,11 @@ export default function CookieBanner() {
     marketing: false,
   });
 
-  useEffect(() => {
-    const consent = localStorage.getItem('cookieConsent');
-    if (!consent) {
-      setShowBanner(true);
-    } else {
-      const savedPreferences = JSON.parse(consent);
-      setPreferences(savedPreferences);
-    }
-  }, []);
-
   const handleAcceptAll = () => {
     const allAccepted = { necessary: true, analytics: true, marketing: true };
     localStorage.setItem('cookieConsent', JSON.stringify(allAccepted));
     setPreferences(allAccepted);
-    setShowBanner(false);
+    setDismissed(true);
     if (allAccepted.analytics) initializeAnalytics();
   };
 
@@ -36,12 +38,12 @@ export default function CookieBanner() {
     const onlyNecessary = { necessary: true, analytics: false, marketing: false };
     localStorage.setItem('cookieConsent', JSON.stringify(onlyNecessary));
     setPreferences(onlyNecessary);
-    setShowBanner(false);
+    setDismissed(true);
   };
 
   const handleSavePreferences = () => {
     localStorage.setItem('cookieConsent', JSON.stringify(preferences));
-    setShowBanner(false);
+    setDismissed(true);
     setShowSettings(false);
     if (preferences.analytics) initializeAnalytics();
   };

@@ -56,6 +56,8 @@ const AdminPage = () => {
   const router = useRouter();
   const [appointments, setAppointments] = useState<AdminAppointmentView[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  // Istante di apertura della pagina: serve per i giorni alla scadenza (il render deve restare puro)
+  const [now] = useState(() => Date.now());
   const [activeFilter, setActiveFilter] = useState<FilterTab>('upcoming');
   const [search, setSearch] = useState('');
   const [dateFilter, setDateFilter] = useState('');
@@ -88,6 +90,7 @@ const AdminPage = () => {
     if (status === 'unauthenticated') {
       router.push('/admin/login');
     } else if (status === 'authenticated') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- loadData mostra lo spinner anche negli aggiornamenti manuali
       loadData();
     }
   }, [status, router]);
@@ -481,7 +484,7 @@ const AdminPage = () => {
                 b.clientEmail.toLowerCase().includes(search.toLowerCase()))
               ).map(b => {
                 const daysToExpiry = b.expiresAt
-                  ? Math.ceil((new Date(b.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+                  ? Math.ceil((new Date(b.expiresAt).getTime() - now) / (1000 * 60 * 60 * 24))
                   : null;
                 const expiryWarning = daysToExpiry !== null && daysToExpiry <= 30 && b.sessionsRemaining > 0;
 

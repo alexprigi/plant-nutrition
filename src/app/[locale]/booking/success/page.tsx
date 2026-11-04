@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { useLocale } from 'next-intl'
@@ -9,25 +8,10 @@ import Link from 'next/link'
 export default function BookingSuccessPage() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
+  // La pagina non verifica nulla lato server: basta la presenza di session_id per mostrare la conferma
+  const status: 'success' | 'error' = sessionId ? 'success' : 'error'
   const t = useTranslations('booking-success')
   const locale = useLocale()
-
-  useEffect(() => {
-    if (!sessionId) {
-      setStatus('error')
-      return
-    }
-    setStatus('success')
-  }, [sessionId])
-
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--brand-title)]" />
-      </div>
-    )
-  }
 
   if (status === 'error') {
     return (

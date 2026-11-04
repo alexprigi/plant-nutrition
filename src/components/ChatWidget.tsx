@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useSyncExternalStore } from 'react';
+
+const subscribeNoop = () => () => {};
 import { usePathname } from 'next/navigation';
 import { DEFAULT_LOCALE } from '@/i18n/locales';
 
@@ -779,7 +781,8 @@ export default function ChatWidget() {
 
   const ui = UI[locale] ?? UI.it;
 
-  const [mounted, setMounted] = useState(false);
+  // false sul server e durante l'idratazione, true subito dopo sul client
+  const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -787,8 +790,6 @@ export default function ChatWidget() {
   const [hasOpened, setHasOpened] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -804,18 +805,22 @@ export default function ChatWidget() {
     }]);
   };
 
-  useEffect(() => {
-    if (isOpen && !hasOpened) {
+  // Alla prima apertura il bot saluta con un messaggio adatto alla pagina
+  const openChat = () => {
+    setIsOpen(true);
+    if (!hasOpened) {
       setHasOpened(true);
       setTimeout(() => {
         const proactive = getProactiveMessage(localePath, locale);
         addBotMessage(proactive.text, proactive.quickReplies);
       }, 400);
     }
+  };
+
+  useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 300);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- deve scattare solo all'apertura, non al cambio di lingua
   }, [isOpen]);
 
   const addUserMessage = (text: string) => {
@@ -840,6 +845,7 @@ export default function ChatWidget() {
       const intent = detectIntent(msg.toLowerCase(), locale);
       const response = getResponse(intent, locale);
       addBotMessage(response.text, response.quickReplies);
+    // eslint-disable-next-line react-hooks/purity -- gestore di evento, non render: il ritardo casuale rende naturale la risposta
     }, 700 + Math.random() * 400);
   };
 
@@ -857,7 +863,7 @@ export default function ChatWidget() {
   if (!isOpen) {
     return (
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={openChat}
         className={`fixed right-4 sm:right-6 ${bottomClass} z-50 p-4 rounded-full shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95 group`}
         style={{ background: 'var(--brand-title)' }}
         aria-label={ui.openLabel}

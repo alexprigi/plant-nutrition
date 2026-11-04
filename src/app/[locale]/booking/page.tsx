@@ -131,12 +131,10 @@ const PrenotaPageContent = () => {
   const defaultPhonePrefix = locale === 'de' ? '+49' : locale === 'en' ? '+44' : '+39';
   const defaultPhonePrefixName = locale === 'de' ? 'Germania' : locale === 'en' ? 'Regno Unito' : 'Italia';
 
-  const [displayNames, setDisplayNames] = useState<Intl.DisplayNames | null>(null);
-  useEffect(() => {
-    if (typeof Intl !== 'undefined' && Intl.DisplayNames) {
-      setDisplayNames(new Intl.DisplayNames([locale], { type: 'region' }));
-    }
-  }, [locale]);
+  const displayNames = useMemo(
+    () => (typeof Intl !== 'undefined' && Intl.DisplayNames ? new Intl.DisplayNames([locale], { type: 'region' }) : null),
+    [locale],
+  );
 
   const getLocalizedCountryName = useCallback((italianName: string): string => {
     if (!displayNames) return italianName;
@@ -175,19 +173,18 @@ const PrenotaPageContent = () => {
     const prefixForLocale = locale === 'de' ? '+49' : locale === 'en' ? '+44' : '+39';
     const defaultCountries = ['Italia', 'Germania', 'Regno Unito'];
     const defaultPrefixes = ['+39', '+49', '+44'];
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- allinea paese e prefisso alla lingua dopo una navigazione lato client senza perdere i dati inseriti
     setFormData(prev => defaultCountries.includes(prev.country) ? { ...prev, country: countryForLocale } : prev);
     setPhonePrefix(prev => defaultPrefixes.includes(prev) ? prefixForLocale : prev);
     setPhonePrefixName(prev => defaultCountries.includes(prev) ? countryForLocale : prev);
   }, [locale]);
 
   // Payment State
-  const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'paypal' | 'bank_transfer'>('stripe');
+  const [chosenPaymentMethod, setPaymentMethod] = useState<'stripe' | 'paypal' | 'bank_transfer'>('stripe');
   const [policyAccepted, setPolicyAccepted] = useState(false);
   const [gdprAccepted, setGdprAccepted] = useState(false);
 
-  useEffect(() => {
-    setFormData(prev => ({ ...prev, phone: `${phonePrefix} ${phoneNumber}` }));
-  }, [phonePrefix, phoneNumber]);
+  const fullPhone = `${phonePrefix} ${phoneNumber}`;
 
   const [selectedService, setSelectedService] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState('');
@@ -251,11 +248,8 @@ const PrenotaPageContent = () => {
     }
   }, [currentStep, selectedService, selectedDate, selectedTime, router, searchParams]);
 
-  useEffect(() => {
-    if (!isBankTransferAvailable && paymentMethod === 'bank_transfer') {
-      setPaymentMethod('stripe');
-    }
-  }, [isBankTransferAvailable, paymentMethod]);
+  // Il bonifico non è più disponibile (es. data troppo vicina): si ripiega sulla carta
+  const paymentMethod = !isBankTransferAvailable && chosenPaymentMethod === 'bank_transfer' ? 'stripe' : chosenPaymentMethod;
 
   const [slotAvailability, setSlotAvailability] = useState<Record<string, boolean>>({});
 
@@ -311,7 +305,7 @@ const PrenotaPageContent = () => {
       name: randomName,
       surname: randomSurname,
       email: `${randomName.toLowerCase()}.${randomSurname.toLowerCase()}@test.com`,
-      phone: `+39 ${Math.floor(300 + Math.random() * 90)}${Math.floor(1000000 + Math.random() * 9000000)}`,
+      phone: '',
       address: randomStreets[Math.floor(Math.random() * randomStreets.length)],
       civicNumber: `${Math.floor(1 + Math.random() * 200)}`,
       city: randomCities[Math.floor(Math.random() * randomCities.length)],
@@ -355,7 +349,7 @@ const PrenotaPageContent = () => {
         const response = await fetch('/api/validate-booking', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...formData, locale }),
+          body: JSON.stringify({ ...formData, phone: fullPhone, locale }),
         });
 
         const result = await response.json();
@@ -394,7 +388,7 @@ const PrenotaPageContent = () => {
       .substring(0, 500);
 
     const bookingPayload = {
-      name: formData.name, surname: formData.surname, email: formData.email, phone: formData.phone,
+      name: formData.name, surname: formData.surname, email: formData.email, phone: fullPhone,
       address: formData.address, civicNumber: formData.civicNumber, city: formData.city,
       zipCode: formData.zipCode, country: formData.country, fiscalCode: formData.fiscalCode,
       commercialType: selectedService as CreateBookingDTO['commercialType'],
@@ -416,7 +410,7 @@ const PrenotaPageContent = () => {
           body: JSON.stringify({
             clientName: `${formData.name} ${formData.surname}`,
             clientEmail: formData.email,
-            clientPhone: formData.phone,
+            clientPhone: fullPhone,
             serviceName: activeService?.title || '',
             price: 0,
             date: selectedDate,
@@ -450,7 +444,7 @@ const PrenotaPageContent = () => {
           body: JSON.stringify({
             clientName: `${formData.name} ${formData.surname}`,
             clientEmail: formData.email,
-            clientPhone: formData.phone,
+            clientPhone: fullPhone,
             serviceName: activeService?.title || '',
             price: activeService?.price || 0,
             date: selectedDate,
