@@ -157,6 +157,35 @@ describe('POST /api/appointments/manage — cancel', () => {
     )
   })
 
+  it('also cancels the subscription when a free consultation is cancelled, so it can be booked again', async () => {
+    mockPrisma.appointment.findUnique.mockResolvedValue(
+      baseAppointment({
+        subscriptionId: 'sub_free',
+        subscription: { paymentMethod: 'NONE', isPaid: true, price: 0, type: 'FREE_CONSULTATION' },
+      }) as any
+    )
+    mockPrisma.appointment.update.mockResolvedValue({} as any)
+    mockPrisma.subscription.updateMany.mockResolvedValue({ count: 1 } as any)
+
+    const res = await POST(makePostRequest({ token: 'test-token', action: 'cancel' }))
+
+    expect(res.status).toBe(200)
+    expect(mockPrisma.subscription.updateMany).toHaveBeenCalledWith({
+      where: { id: 'sub_free', status: 'ACTIVE' },
+      data: { status: 'CANCELLED' },
+    })
+  })
+
+  it('keeps the subscription of a paid session when only the appointment is cancelled', async () => {
+    mockPrisma.appointment.findUnique.mockResolvedValue(baseAppointment({ date: dateInDays(10) }) as any)
+    mockPrisma.appointment.update.mockResolvedValue({} as any)
+
+    const res = await POST(makePostRequest({ token: 'test-token', action: 'cancel' }))
+
+    expect(res.status).toBe(200)
+    expect(mockPrisma.subscription.updateMany).not.toHaveBeenCalled()
+  })
+
   it('blocks cancellation for paid appointment within 7 days', async () => {
     mockPrisma.appointment.findUnique.mockResolvedValue(
       baseAppointment({ date: dateInDays(4) }) as any

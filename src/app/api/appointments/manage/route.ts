@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     where: { managementToken: token, isDeleted: false },
     include: {
       client: { select: { name: true, surname: true, email: true } },
-      subscription: { select: { paymentMethod: true, isPaid: true, price: true } },
+      subscription: { select: { paymentMethod: true, isPaid: true, price: true, type: true } },
     },
   })
 
@@ -112,6 +112,14 @@ export async function POST(request: NextRequest) {
       where: { id: appointment.id },
       data: { status: 'CANCELLED' },
     })
+
+    // Disdire il colloquio gratuito lo "restituisce": senza questo il cliente non potrebbe più riprenotarlo
+    if (appointment.subscription.type === 'FREE_CONSULTATION') {
+      await prisma.subscription.updateMany({
+        where: { id: appointment.subscriptionId, status: 'ACTIVE' },
+        data: { status: 'CANCELLED' },
+      })
+    }
 
     const isRefundable = !isPending && !isFree && isPaid && daysUntil > 7
 
