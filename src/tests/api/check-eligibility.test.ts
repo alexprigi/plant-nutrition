@@ -15,8 +15,8 @@ const makeRequest = (body: object) =>
 describe('POST /api/clients/check-eligibility', () => {
   beforeEach(() => vi.clearAllMocks())
 
-  it('returns eligible: true when email does not exist', async () => {
-    mockPrisma.client.findUnique.mockResolvedValue(null)
+  it('returns eligible: true when the email has no live subscription', async () => {
+    mockPrisma.subscription.findFirst.mockResolvedValue(null)
 
     const res = await POST(makeRequest({ email: 'nuovo@test.com' }))
     const data = await res.json()
@@ -25,14 +25,24 @@ describe('POST /api/clients/check-eligibility', () => {
     expect(data).toEqual({ eligible: true })
   })
 
-  it('returns eligible: false when email already exists', async () => {
-    mockPrisma.client.findUnique.mockResolvedValue({ id: '1', email: 'esistente@test.com' } as any)
+  it('returns eligible: false when the email already has a subscription that is not cancelled', async () => {
+    mockPrisma.subscription.findFirst.mockResolvedValue({ id: 'sub_1' } as any)
 
     const res = await POST(makeRequest({ email: 'esistente@test.com' }))
     const data = await res.json()
 
     expect(res.status).toBe(200)
     expect(data).toEqual({ eligible: false, reason: 'already_customer' })
+  })
+
+  it('ignores cancelled subscriptions, so an abandoned checkout does not count as a purchase', async () => {
+    mockPrisma.subscription.findFirst.mockResolvedValue(null)
+
+    await POST(makeRequest({ email: 'abbandonato@test.com' }))
+
+    expect(mockPrisma.subscription.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({ where: expect.objectContaining({ status: { not: 'CANCELLED' } }) }),
+    )
   })
 
   it('returns 400 when email is missing', async () => {
@@ -43,14 +53,14 @@ describe('POST /api/clients/check-eligibility', () => {
     expect(data.error).toBeDefined()
   })
 
-  it('lowercases email before querying', async () => {
-    mockPrisma.client.findUnique.mockResolvedValue(null)
+  it('lowercases email before querying and skips deleted clients', async () => {
+    mockPrisma.subscription.findFirst.mockResolvedValue(null)
 
     await POST(makeRequest({ email: 'TEST@EXAMPLE.COM' }))
 
-    expect(mockPrisma.client.findUnique).toHaveBeenCalledWith(
+    expect(mockPrisma.subscription.findFirst).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: expect.objectContaining({ email: 'test@example.com' }),
+        where: expect.objectContaining({ client: { email: 'test@example.com', isDeleted: false } }),
       }),
     )
   })
@@ -59,7 +69,7 @@ describe('POST /api/clients/check-eligibility', () => {
 describe('POST /api/clients/check-eligibility - errors', () => {
   it('returns 500 when the database fails', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {})
-    mockPrisma.client.findUnique.mockRejectedValue(new Error('db'))
+    mockPrisma.subscription.findFirst.mockRejectedValue(new Error('db'))
     const res = await POST(makeRequest({ email: 'a@b.com' }))
     expect(res.status).toBe(500)
   })
