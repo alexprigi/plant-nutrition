@@ -188,7 +188,8 @@ const PrenotaPageContent = () => {
 
   const [selectedService, setSelectedService] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState('');
-  const [selectedTime, setSelectedTime] = useState('');
+  // Orario cliccato dall'utente; quello davvero valido (non occupato) è `selectedTime`, calcolato sotto
+  const [pickedTime, setPickedTime] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [currentMonthDate, setCurrentMonthDate] = useState(() => {
@@ -241,12 +242,12 @@ const PrenotaPageContent = () => {
       params.set('step', '1');
       router.replace(`?${params.toString()}`);
     }
-    if (currentStep > 3 && (!selectedDate || !selectedTime)) {
+    if (currentStep > 3 && (!selectedDate || !pickedTime)) {
       const params = new URLSearchParams(searchParams.toString());
       params.set('step', '3');
       router.replace(`?${params.toString()}`);
     }
-  }, [currentStep, selectedService, selectedDate, selectedTime, router, searchParams]);
+  }, [currentStep, selectedService, selectedDate, pickedTime, router, searchParams]);
 
   // Il bonifico non è più disponibile (es. data troppo vicina): si ripiega sulla carta
   const paymentMethod = !isBankTransferAvailable && chosenPaymentMethod === 'bank_transfer' ? 'stripe' : chosenPaymentMethod;
@@ -291,6 +292,11 @@ const PrenotaPageContent = () => {
       return { time: slot, available };
     });
   }, [selectedDate, slotAvailability]);
+
+  // Se l'orario scelto risulta occupato (la disponibilità arriva dopo il clic) la scelta decade
+  const selectedTime = availableTimeSlots.some(slot =>
+    typeof slot === 'string' ? slot === pickedTime : slot.time === pickedTime && slot.available
+  ) ? pickedTime : '';
 
   // --- DEV HELPER ---
   const fillRandomData = () => {
@@ -541,7 +547,7 @@ const PrenotaPageContent = () => {
             }
             <br /><br />
             {t('successo.data')} <span className="font-bold text-gray-800">{new Date(selectedDate).toLocaleDateString(locale)}</span><br />
-            {t('successo.ora')} <span className="font-bold text-gray-800">{selectedTime}</span>
+            {t('successo.ora')} <span className="font-bold text-gray-800">{pickedTime}</span>
           </p>
           {isBankTransfer && (
             <div className="text-left bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-sm">
@@ -904,7 +910,7 @@ const PrenotaPageContent = () => {
                     return (
                       <button
                         key={timeValue}
-                        onClick={() => isAvailable && setSelectedTime(timeValue)}
+                        onClick={() => isAvailable && setPickedTime(timeValue)}
                         disabled={!isAvailable}
                         className={`
                           py-2 rounded-lg text-sm border transition-all font-medium
