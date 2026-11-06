@@ -15,6 +15,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "e2e:preview": "NODE_OPTIONS=--use-system-ca tsx scripts/e2e/preview.ts",
+    "e2e:preview:fast": "NODE_OPTIONS=--use-system-ca tsx scripts/e2e/preview.ts --no-mail",
     "e2e:preview:admin": "NODE_OPTIONS=--use-system-ca tsx scripts/e2e/admin-user.ts --apply && NODE_OPTIONS=--use-system-ca tsx scripts/e2e/preview.ts; NODE_OPTIONS=--use-system-ca tsx scripts/e2e/admin-user.ts --remove --apply"
   },
   "dependencies": {

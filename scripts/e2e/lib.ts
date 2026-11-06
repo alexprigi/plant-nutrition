@@ -150,6 +150,8 @@ export class Mailbox {
 
   // Attende un'email che soddisfi il filtro; lancia se non arriva entro il timeout
   async waitFor(description: string, match: (mail: MailItem) => boolean, timeoutMs = 60_000): Promise<MailItem> {
+    // E2E_MAIL_WAIT_MS accorcia l'attesa (utile contro un server che non spedisce davvero le email)
+    if (process.env.E2E_MAIL_WAIT_MS) timeoutMs = Number(process.env.E2E_MAIL_WAIT_MS)
     const start = Date.now()
     for (;;) {
       const found = (await this.list()).find(match)

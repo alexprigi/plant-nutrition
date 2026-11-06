@@ -10,8 +10,11 @@ import {
 // Test end-to-end sulla PREVIEW: creano prenotazioni di prova, mandano email vere a caselle temporanee
 // (tempmail.plus) e ne verificano lingua, oggetto, allegati e contenuto.
 //
-//   npm run e2e:preview                  # tutti i test
+//   npm run e2e:preview                  # tutti i test (circa 35 email: una sola corsa prima di un rilascio)
+//   npm run e2e:preview:fast             # senza email: salta i test di consegna e blocca le email nel browser
 //   npm run e2e:preview -- --only admin  # solo i test il cui nome contiene "admin"
+//
+// Resend gratuito: 100 email al giorno. Con --no-mail i test non ne mandano nessuna.
 //
 // Segreti in .env.e2e.local (ignorato da git), accettati con o senza prefisso E2E_:
 //   BASE_URL (opzionale), ADMIN_EMAIL, ADMIN_PASSWORD   -> npx tsx scripts/e2e/admin-user.ts
@@ -23,6 +26,7 @@ import {
 
 type Locale = 'it' | 'de' | 'en'
 const LOCALES: Locale[] = ['it', 'de', 'en']
+const DEFAULT_LOCALE: Locale = 'de'
 
 interface Created {
   appointment: { id: string; managementToken: string; locale: string }
@@ -57,16 +61,22 @@ const hasSubject = (fragment: string) => (m: { subject: string }) => m.subject.i
 interface TestCase {
   name: string
   needs?: string[]
+  mail?: boolean
   run: () => Promise<void>
 }
 
+// Con --no-mail non parte nessuna email: i test di consegna si saltano e quelli del browser bloccano le chiamate di invio
+const NO_MAIL = process.argv.includes('--no-mail')
+
 const tests: TestCase[] = []
 const test = (name: string, run: () => Promise<void>, needs: string[] = []) => tests.push({ name, run, needs })
+// Test il cui scopo è la consegna delle email (o che le fanno partire): saltati con --no-mail
+const mailTest = (name: string, run: () => Promise<void>, needs: string[] = []) => tests.push({ name, run, needs, mail: true })
 
 // ---------- Prenotazioni pubbliche ----------
 
 for (const locale of LOCALES) {
-  test(`prenotazione gratuita (${locale}): email, lingua e allegato .ics`, async () => {
+  mailTest(`prenotazione gratuita (${locale}): email, lingua e allegato .ics`, async () => {
     const t = getT(locale)
     const box = new Mailbox(`free${locale}`)
     const date = dateIn(30), time = '10:00'
@@ -82,13 +92,13 @@ for (const locale of LOCALES) {
   })
 }
 
-test('locale non valido: ripiega su de', async () => {
+mailTest('locale non valido: ripiega su de', async () => {
   const box = new Mailbox('badloc')
   const created = await createBooking(box, { locale: 'fr', commercialType: 'free-consultation', paymentMethod: 'none', date: dateIn(31), time: '10:00', isPaid: true })
   expect(created.appointment.locale === 'de', `locale salvato: ${created.appointment.locale}`)
 })
 
-test('bonifico (en): richiesta di prenotazione senza .ics', async () => {
+mailTest('bonifico (en): richiesta di prenotazione senza .ics', async () => {
   const t = getT('en')
   const box = new Mailbox('bank')
   const date = dateIn(32), time = '10:00'
@@ -98,7 +108,7 @@ test('bonifico (en): richiesta di prenotazione senza .ics', async () => {
   expect((await box.read(mail)).attachments.length === 0, 'la richiesta di bonifico non deve avere il .ics')
 })
 
-test('cancellazione dal link (en): email al cliente', async () => {
+mailTest('cancellazione dal link (en): email al cliente', async () => {
   const t = getT('en')
   const box = new Mailbox('cancel')
   const created = await createBooking(box, { locale: 'en', commercialType: 'free-consultation', paymentMethod: 'none', date: dateIn(33), time: '11:00', isPaid: true })
@@ -107,14 +117,14 @@ test('cancellazione dal link (en): email al cliente', async () => {
   await box.waitFor('cancellazione', hasSubject(t.subjCancelConfirmed), 40_000)
 })
 
-test('spostamento dal link (de)', async () => {
+mailTest('spostamento dal link (de)', async () => {
   const box = new Mailbox('resched')
   const created = await createBooking(box, { locale: 'de', commercialType: 'free-consultation', paymentMethod: 'none', date: dateIn(34), time: '11:00', isPaid: true })
   const res = await api('/api/appointments/manage', { json: { token: created.appointment.managementToken, action: 'reschedule', date: dateIn(35), time: '12:00' } })
   expect(res.status === 200 && res.body.action === 'rescheduled', `manage reschedule -> ${res.status} ${JSON.stringify(res.body)}`)
 })
 
-test('follow-up da link (en): locale salvato e testo dedicato', async () => {
+mailTest('follow-up da link (en): locale salvato e testo dedicato', async () => {
   const t = getT('en')
   const box = new Mailbox('fup')
   const first = await createBooking(box, { locale: 'it', commercialType: 'plan-3-months', paymentMethod: 'bank_transfer', date: dateIn(36), time: '10:00' })
@@ -199,12 +209,41 @@ test('sitemap con hreflang in tutte le lingue; robots.txt chiuso fuori produzion
   expect(/Disallow: \/(\s|$)/.test(robots) && !/Allow: \//.test(robots), `robots.txt: ${robots.replace(/\n/g, ' | ')}`)
 })
 
+// Ogni pagina pubblica dichiara se stessa come canonica e le altre lingue con hreflang (più x-default);
+// le pagine private non devono avere né canonical né hreflang
+const HREFLANG_PATHS = ['', '/about', '/services', '/contact', '/booking', '/privacy-policy', '/cookie-policy', '/cancellation-policy']
+for (const locale of LOCALES) {
+  test(`hreflang e canonical (${locale}): presenti in ogni pagina pubblica`, async () => {
+    const wrong: string[] = []
+    for (const path of HREFLANG_PATHS) {
+      const html = String((await api(`/${locale}${path}`)).body)
+      const links = [...html.matchAll(/<link[^>]*hreflang="([^"]+)"[^>]*href="([^"]+)"/gi)].map((m) => [m[1], new URL(m[2]).pathname] as const)
+      const found = Object.fromEntries(links)
+      for (const l of LOCALES) if (found[l] !== `/${l}${path}`) wrong.push(`${locale}${path}: hreflang ${l} = ${found[l]}`)
+      if (found['x-default'] !== `/${DEFAULT_LOCALE}${path}`) wrong.push(`${locale}${path}: x-default = ${found['x-default']}`)
+      const canonical = html.match(/<link[^>]*rel="canonical"[^>]*href="([^"]+)"/i)?.[1]
+      if (!canonical || new URL(canonical).pathname !== `/${locale}${path}`) wrong.push(`${locale}${path}: canonical = ${canonical}`)
+    }
+    expect(wrong.length === 0, wrong.join('; '))
+  })
+}
+
+test('pagine private: nessun canonical né hreflang', async () => {
+  const wrong: string[] = []
+  for (const path of ['/en/manage/token-inesistente', '/en/booking/success?session_id=x', '/en/booking/follow-up/token-inesistente']) {
+    const html = String((await api(path)).body)
+    if (/<link[^>]*(rel="canonical"|hreflang=)/i.test(html)) wrong.push(`${path}: ha canonical o hreflang`)
+    if (!/<meta name="robots" content="noindex/.test(html)) wrong.push(`${path}: noindex assente`)
+  }
+  expect(wrong.length === 0, wrong.join('; '))
+})
+
 test('pagina manage: non indicizzabile (noindex)', async () => {
   const html = String((await api('/en/manage/token-inesistente')).body)
   expect(/<meta name="robots" content="noindex/.test(html), 'meta robots noindex assente')
 })
 
-test('API manage: locale dell\'appuntamento e codici di errore', async () => {
+mailTest('API manage: locale dell\'appuntamento e codici di errore', async () => {
   const box = new Mailbox('manage')
   const created = await createBooking(box, { locale: 'it', commercialType: 'free-consultation', paymentMethod: 'none', date: dateIn(42), time: '10:00', isPaid: true })
   const token = created.appointment.managementToken
@@ -250,7 +289,7 @@ test('browser: il selettore di lingua tiene allineato <html lang>', async () => 
 
 // Percorre i passi 1-3 della prenotazione (servizio, dati, data e ora) e si ferma al riepilogo.
 // Restituisce le richieste POST verso /api/ fatte dal browser, per controllare cosa arriva al server.
-async function fillBookingSteps(page: Page, serviceKey: string, email: string, nextMonth: boolean) {
+async function fillBookingSteps(page: Page, serviceKey: string, email: string, nextMonth: boolean, dayFromEnd = 1, stopAtDateStep = false) {
   const messages = JSON.parse(readFileSync('messages/en.json', 'utf8'))
   const pren = messages.prenota
   const posted: { url: string; body: any }[] = []
@@ -261,6 +300,16 @@ async function fillBookingSteps(page: Page, serviceKey: string, email: string, n
       posted.push({ url: new URL(r.url()).pathname, body })
     }
   })
+
+  // E2E_SLOW_SLOTS_MS ritarda la risposta con gli orari disponibili: serve a verificare che il test non scelga prima del caricamento
+  if (process.env.E2E_SLOW_SLOTS_MS) {
+    await page.route(/\/api\/bookings\?date=/, async (route) => {
+      await new Promise((r) => setTimeout(r, Number(process.env.E2E_SLOW_SLOTS_MS)))
+      await route.continue()
+    })
+  }
+  // Con --no-mail la pagina non può far partire le email: la chiamata di invio riceve una risposta finta
+  if (NO_MAIL) await page.route('**/api/send-booking-emails', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: '{"success":true}' }))
 
   await page.goto(`${BASE_URL}/en/booking`)
   await rejectCookies(page, messages.cookie.rifiuta)
@@ -286,13 +335,33 @@ async function fillBookingSteps(page: Page, serviceKey: string, email: string, n
 
   // Passo 3: ultimo giorno libero del mese mostrato (o del successivo), primo orario libero
   await page.getByText(/Choose the date/).first().waitFor({ timeout: 15_000 })
+  if (stopAtDateStep) return { posted, messages, pren }
   if (nextMonth) await page.locator('span.capitalize.font-bold + button').click()
   const days = page.locator('button.rounded-full:not([disabled])').filter({ hasText: /^\d{1,2}$/ })
   await days.first().waitFor({ timeout: 15_000 })
-  await days.last().click()
+  // Il pulsante per proseguire si abilita solo con data e ora scelte
+  const proceed = page.getByRole('button', { name: new RegExp(`^(${pren.step3['continua-pagamento']}|${pren.step3.conferma})$`) }).last()
+  // Dopo il clic sul giorno la pagina mostra tutti gli orari abilitati e li aggiorna solo quando arriva la disponibilità:
+  // scegliere prima farebbe cadere il clic su un orario che poi si disabilita. Si aspetta quindi la risposta del server.
+  const availability = page.waitForResponse((r) => /\/api\/bookings\?date=/.test(r.url()), { timeout: 15_000 })
+  await days.nth(-dayFromEnd).click()
+  await availability
+  await page.evaluate(() => new Promise<void>((done) => requestAnimationFrame(() => requestAnimationFrame(() => done()))))
   const slot = page.locator('button:not([disabled])').filter({ hasText: /^\d{2}:\d{2}$/ }).first()
   await slot.waitFor({ timeout: 15_000 })
   await slot.click()
+  // Se il pulsante per proseguire non si abilita si dice cosa mostra la pagina
+  const enabled = await (async () => {
+    for (let i = 0; i < 30; i++) {
+      if (await proceed.isEnabled()) return true
+      await page.waitForTimeout(100)
+    }
+    return false
+  })()
+  if (!enabled) {
+    const slots = await page.locator('button').filter({ hasText: /^\d{2}:\d{2}$/ }).evaluateAll((els) => els.map((e) => `${e.textContent}${(e as HTMLButtonElement).disabled ? '(x)' : ''}`).join(' '))
+    throw new Error(`data e ora non selezionate (${page.url()}); orari: ${slots}`)
+  }
   return { posted, messages, pren }
 }
 
@@ -318,14 +387,14 @@ test('browser: prenotazione gratuita completa dal sito (en)', async () => {
     expect((await page.innerText('body')).includes('Thank you Test'), 'saluto con il nome non mostrato')
     expectPhoneSent(posted)
   })
-  await box.waitFor('conferma prenotazione', (m) => /confirm/i.test(m.subject), 90_000)
+  if (!NO_MAIL) await box.waitFor('conferma prenotazione', (m) => /confirm/i.test(m.subject), 90_000)
 })
 
 test('browser: prenotazione con bonifico dal sito (en): richiesta e istruzioni', async () => {
   const t = getT('en')
   const box = new Mailbox('uibank')
   await withPage(async (page) => {
-    const { posted, pren } = await fillBookingSteps(page, 'prima-visita-titolo', box.address, true)
+    const { posted, pren } = await fillBookingSteps(page, 'prima-visita-titolo', box.address, true, 1)
     await page.getByRole('button', { name: pren.step3['continua-pagamento'], exact: true }).last().click()
 
     // Passo 4: pagamento con bonifico (disponibile solo oltre 5 giorni dalla data scelta)
@@ -339,6 +408,7 @@ test('browser: prenotazione con bonifico dal sito (en): richiesta e istruzioni',
     expectPhoneSent(posted)
     expect(posted.every((p) => p.url !== '/api/create-checkout-session'), 'con il bonifico non deve partire il pagamento con carta')
   })
+  if (NO_MAIL) return
   const mail = await box.waitFor('richiesta di bonifico', hasSubject(t.subjBankRequest(t.svcFirstVisit)), 90_000)
   expect((await box.read(mail)).attachments.length === 0, 'la richiesta di bonifico non deve avere il .ics')
 })
@@ -347,7 +417,7 @@ test('browser: prenotazione con carta dal sito (en): pagamento Stripe di test e 
   const t = getT('en')
   const box = new Mailbox('uicard')
   await withPage(async (page) => {
-    const { posted, pren, messages } = await fillBookingSteps(page, 'prima-visita-titolo', box.address, true)
+    const { posted, pren, messages } = await fillBookingSteps(page, 'prima-visita-titolo', box.address, true, 2)
     await page.getByRole('button', { name: pren.step3['continua-pagamento'], exact: true }).last().click()
 
     // Passo 4: la carta è il metodo di default
@@ -358,6 +428,8 @@ test('browser: prenotazione con carta dal sito (en): pagamento Stripe di test e 
     // Pagina di pagamento di Stripe (modalità test): carta 4242 4242 4242 4242, scadenza e CVC qualsiasi
     await page.waitForURL(/checkout\.stripe\.com/, { timeout: 45_000 })
     expectPhoneSent(posted, '/api/create-checkout-session')
+    // Pagare farebbe partire la conferma dal webhook di Stripe (una email): con --no-mail ci si ferma qui
+    if (NO_MAIL) return
     // Sulla riga c'è un pulsante trasparente che intercetta il clic: lo si preme alle coordinate della riga
     await page.locator('#payment-method-label-card').click({ force: true })
     await page.locator('#cardNumber').fill('4242424242424242')
@@ -373,7 +445,39 @@ test('browser: prenotazione con carta dal sito (en): pagamento Stripe di test e 
     await page.getByText(messages['booking-success'].titolo).first().waitFor({ timeout: 15_000 })
   })
   // La conferma parte dal webhook di Stripe
-  await box.waitFor('conferma dopo il pagamento', hasSubject(t.subjConfirm(t.svcFirstVisit)), 120_000)
+  if (!NO_MAIL) await box.waitFor('conferma dopo il pagamento', hasSubject(t.subjConfirm(t.svcFirstVisit)), 120_000)
+})
+
+test('browser: un orario scelto prima del caricamento e poi risultato occupato non resta selezionato', async () => {
+  // Giorno feriale lontano con l'orario delle 10:00 già occupato (creato via API: non parte nessuna email)
+  let n = 46
+  while ([0, 6].includes(new Date(`${dateIn(n)}T12:00:00Z`).getUTCDay())) n++
+  const date = dateIn(n)
+  await createBooking(new Mailbox('late'), { locale: 'en', commercialType: 'first-visit', paymentMethod: 'bank_transfer', date, time: '10:00' })
+  const monthsAhead = (Number(date.slice(0, 4)) - new Date().getUTCFullYear()) * 12 + Number(date.slice(5, 7)) - (new Date().getUTCMonth() + 1)
+
+  await withPage(async (page) => {
+    // La disponibilità arriva dopo 2 secondi: nel frattempo tutti gli orari risultano abilitati
+    await page.route(/\/api\/bookings\?date=/, async (route) => {
+      await new Promise((r) => setTimeout(r, 2000))
+      await route.continue()
+    })
+    const { pren } = await fillBookingSteps(page, 'prima-visita-titolo', new Mailbox('late').address, false, 1, true)
+    for (let i = 0; i < monthsAhead; i++) await page.locator('span.capitalize.font-bold + button').click()
+    const proceed = page.getByRole('button', { name: pren.step3['continua-pagamento'], exact: true }).last()
+    const availability = page.waitForResponse((r) => /\/api\/bookings\?date=/.test(r.url()), { timeout: 15_000 })
+    await page.locator('button.rounded-full:not([disabled])').filter({ hasText: new RegExp(`^${Number(date.slice(8))}$`) }).click()
+
+    // Prima della risposta l'orario occupato sembra libero: lo si sceglie, e il pulsante si abilita
+    const slot = page.getByRole('button', { name: '10:00', exact: true })
+    await slot.click()
+    expect(await proceed.isEnabled(), 'prima della risposta il pulsante dovrebbe essere abilitato')
+
+    // Con la disponibilità l'orario risulta occupato: la scelta decade e non si può proseguire
+    await availability
+    await page.waitForFunction(() => [...document.querySelectorAll('button')].some((b) => b.textContent === '10:00' && b.disabled), undefined, { timeout: 5000 })
+    expect(!(await proceed.isEnabled()), 'dopo la risposta il pulsante deve disabilitarsi: orario occupato ancora selezionato')
+  })
 })
 
 test('browser: banner cookie (rifiuto ricordato, accetta tutti)', async () => {
@@ -444,7 +548,7 @@ test('browser: chat assistente (messaggio proattivo e risposta)', async () => {
 
 const ADMIN = ['ADMIN_EMAIL', 'ADMIN_PASSWORD']
 
-test('admin: segna pagato -> conferma, sposta -> email (en, prima visita)', async () => {
+mailTest('admin: segna pagato -> conferma, sposta -> email (en, prima visita)', async () => {
   const t = getT('en')
   const cookies = await adminSession()
   const box = new Mailbox('adminen')
@@ -465,7 +569,7 @@ test('admin: segna pagato -> conferma, sposta -> email (en, prima visita)', asyn
   expect(content.text.includes(t.svcFirstVisit) && content.text.includes('15:00'), 'servizio o orario mancanti nell\'email di spostamento')
 }, ADMIN)
 
-test('admin: completa sessione -> follow-up (it, percorso 3 mesi)', async () => {
+mailTest('admin: completa sessione -> follow-up (it, percorso 3 mesi)', async () => {
   const t = getT('it')
   const cookies = await adminSession()
   const box = new Mailbox('adminit')
@@ -490,7 +594,7 @@ test('cron: secret errato -> 401', async () => {
   expect(res.status === 401, `cron -> ${res.status}`)
 })
 
-test('cron: promemoria a 3 giorni (en)', async () => {
+mailTest('cron: promemoria a 3 giorni (en)', async () => {
   const t = getT('en')
   const box = new Mailbox('cron')
   await createBooking(box, { locale: 'en', commercialType: 'free-consultation', paymentMethod: 'none', date: dateIn(3), time: '09:30', isPaid: true })
@@ -504,7 +608,7 @@ test('webhook Stripe: firma errata -> 400', async () => {
   expect(res.status === 400, `webhook -> ${res.status}`)
 })
 
-test('webhook Stripe: pagamento completato (de) -> email di conferma', async () => {
+mailTest('webhook Stripe: pagamento completato (de) -> email di conferma', async () => {
   const t = getT('de')
   const key = requireSecret('STRIPE_SECRET_KEY')
   const box = new Mailbox('stripe')
@@ -540,9 +644,10 @@ async function main() {
   assertSafeTarget()
   const onlyIdx = process.argv.indexOf('--only')
   const only = onlyIdx >= 0 ? process.argv[onlyIdx + 1] : undefined
-  const selected = tests.filter((t) => !only || t.name.includes(only))
+  const selected = tests.filter((t) => (!only || t.name.includes(only)) && !(NO_MAIL && t.mail))
+  const withheld = tests.filter((t) => (!only || t.name.includes(only)) && NO_MAIL && t.mail).length
 
-  console.log(`E2E su ${BASE_URL} (${selected.length} test)\n`)
+  console.log(`E2E su ${BASE_URL} (${selected.length} test${NO_MAIL ? `, senza email: ${withheld} test di consegna saltati` : ''})\n`)
   let passed = 0, failed = 0, skipped = 0
   for (const t of selected) {
     const missing = (t.needs ?? []).filter((n) => !secret(n))
