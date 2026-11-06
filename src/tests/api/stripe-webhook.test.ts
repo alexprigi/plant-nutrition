@@ -200,3 +200,69 @@ describe('POST /api/stripe-webhook — validation and edge cases', () => {
     spy.mockRestore()
   })
 })
+
+describe('POST /api/stripe-webhook — checkout.session.expired', () => {
+  const tx = {
+    subscription: { updateMany: vi.fn() },
+    appointment: { updateMany: vi.fn() },
+  }
+
+  const expiredEvent = (overrides: Record<string, unknown> = {}, metadata: Record<string, string> | null = { subscriptionId: 'sub_1', appointmentId: 'appt_1' }) => ({
+    type: 'checkout.session.expired',
+    data: { object: { id: 'cs_1', payment_status: 'unpaid', status: 'expired', metadata, ...overrides } },
+  })
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockPrisma.$transaction.mockImplementation((async (fn: (t: typeof tx) => unknown) => fn(tx)) as any)
+    tx.subscription.updateMany.mockResolvedValue({ count: 1 })
+    tx.appointment.updateMany.mockResolvedValue({ count: 1 })
+    mockConstructEvent.mockReturnValue(expiredEvent())
+  })
+
+  it('cancels the unpaid subscription and its pending appointment', async () => {
+    const res = await POST(makeRequest())
+    expect(res.status).toBe(200)
+    expect(tx.subscription.updateMany).toHaveBeenCalledWith({
+      where: { id: 'sub_1', isPaid: false, status: 'ACTIVE' },
+      data: { status: 'CANCELLED' },
+    })
+    expect(tx.appointment.updateMany).toHaveBeenCalledWith({
+      where: { id: 'appt_1', status: 'PENDING' },
+      data: { status: 'CANCELLED' },
+    })
+  })
+
+  it('leaves the appointment alone when the subscription was already paid or cancelled', async () => {
+    tx.subscription.updateMany.mockResolvedValue({ count: 0 })
+    const res = await POST(makeRequest())
+    expect(res.status).toBe(200)
+    expect(tx.appointment.updateMany).not.toHaveBeenCalled()
+  })
+
+  it('ignores an expired event for a session that was paid', async () => {
+    mockConstructEvent.mockReturnValue(expiredEvent({ payment_status: 'paid' }))
+    const res = await POST(makeRequest())
+    expect(res.status).toBe(200)
+    expect(mockPrisma.$transaction).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    ['without metadata', null],
+    ['without the appointment id', { subscriptionId: 'sub_1' }],
+    ['without the subscription id', { appointmentId: 'appt_1' }],
+  ])('logs and answers 200 for a session %s', async (_label, metadata) => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    mockConstructEvent.mockReturnValue(expiredEvent({}, metadata as any))
+    const res = await POST(makeRequest())
+    expect(res.status).toBe(200)
+    expect(spy).toHaveBeenCalledWith('Missing metadata in expired session:', 'cs_1')
+    expect(mockPrisma.$transaction).not.toHaveBeenCalled()
+    spy.mockRestore()
+  })
+
+  it('lets a database failure surface so Stripe retries the event', async () => {
+    mockPrisma.$transaction.mockRejectedValue(new Error('db down'))
+    await expect(POST(makeRequest())).rejects.toThrow('db down')
+  })
+})

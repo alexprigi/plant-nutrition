@@ -638,6 +638,51 @@ mailTest('webhook Stripe: pagamento completato (de) -> email di conferma', async
   expect((await box.read(mail)).html.includes('<html lang="de">'), 'lingua della conferma errata')
 }, ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET'])
 
+test('webhook Stripe: sessione di pagamento scaduta -> prenotazione annullata e slot libero', async () => {
+  const key = requireSecret('STRIPE_SECRET_KEY')
+  // Giorno feriale lontano: la disponibilità del weekend dipende da altre regole
+  let n = 52
+  while ([0, 6].includes(new Date(`${dateIn(n)}T12:00:00Z`).getUTCDay())) n++
+  const date = dateIn(n)
+  const slotIsFree = async () => {
+    const res = await api(`/api/bookings?date=${date}&duration=60`)
+    const slot = (res.body.slots as { time: string; available: boolean }[] | undefined)?.find((x) => x.time === '10:00')
+    expect(slot, `orario 10:00 assente dalla disponibilità del ${date}`)
+    return slot.available
+  }
+  expect(await slotIsFree(), `il ${date} alle 10:00 dovrebbe essere libero prima del test`)
+
+  // Il cliente apre la pagina di pagamento (prenotazione in attesa, slot occupato) e non paga
+  const checkout = await api('/api/create-checkout-session', {
+    json: bookingPayload({ email: new Mailbox('expired').address, locale: 'en', commercialType: 'first-visit', paymentMethod: 'stripe', date, time: '10:00' }),
+  })
+  expect(checkout.status === 201 && checkout.body.url, `create-checkout-session -> ${checkout.status}`)
+  const sessionId = String(checkout.body.url).split('/pay/')[1]?.split('#')[0]
+  expect(sessionId, "id della sessione Stripe non trovato nell'URL")
+  expect(!(await slotIsFree()), 'dopo la richiesta di pagamento lo slot dovrebbe essere occupato')
+
+  // Stripe invia checkout.session.expired alla scadenza dei 30 minuti
+  const session = (await api('', { url: `https://api.stripe.com/v1/checkout/sessions/${sessionId}`, headers: { Authorization: `Bearer ${key}` } })).body
+  expect(session.livemode === false, 'sessione Stripe non in test mode')
+  const payload = JSON.stringify({
+    id: `evt_e2e_expired_${Date.now()}`, object: 'event', type: 'checkout.session.expired',
+    data: { object: { ...session, payment_status: 'unpaid', status: 'expired' } },
+  })
+  const hook = await api('/api/stripe-webhook', {
+    rawBody: payload,
+    headers: { 'Content-Type': 'application/json', 'Stripe-Signature': stripeSignature(payload, requireSecret('STRIPE_WEBHOOK_SECRET')) },
+  })
+  expect(hook.status === 200, `webhook -> ${hook.status} ${JSON.stringify(hook.body)}`)
+  expect(await slotIsFree(), 'dopo la scadenza lo slot dovrebbe essere tornato libero')
+
+  // Lo stesso evento ripetuto non fa danni
+  const again = await api('/api/stripe-webhook', {
+    rawBody: payload,
+    headers: { 'Content-Type': 'application/json', 'Stripe-Signature': stripeSignature(payload, requireSecret('STRIPE_WEBHOOK_SECRET')) },
+  })
+  expect(again.status === 200, `evento ripetuto -> ${again.status}`)
+}, ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET'])
+
 // ---------- Esecuzione ----------
 
 async function main() {

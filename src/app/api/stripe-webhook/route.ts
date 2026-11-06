@@ -89,5 +89,37 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // Il cliente ha aperto la pagina di pagamento e non ha pagato: la sessione scade dopo 30 minuti
+  // e prenotazione e abbonamento vanno annullati, così lo slot torna libero
+  if (event.type === 'checkout.session.expired') {
+    const session = event.data.object as Stripe.Checkout.Session
+
+    if (session.payment_status === 'paid') {
+      return NextResponse.json({ received: true })
+    }
+
+    const { subscriptionId, appointmentId } = session.metadata ?? {}
+
+    if (!subscriptionId || !appointmentId) {
+      // Riprovare non servirebbe: si registra e si risponde 200
+      console.error('Missing metadata in expired session:', session.id)
+      return NextResponse.json({ received: true })
+    }
+
+    await prisma.$transaction(async (tx) => {
+      // Solo se l'abbonamento non risulta già pagato (es. evento arrivato fuori ordine)
+      const cancelled = await tx.subscription.updateMany({
+        where: { id: subscriptionId, isPaid: false, status: 'ACTIVE' },
+        data: { status: 'CANCELLED' },
+      })
+      if (cancelled.count === 0) return
+
+      await tx.appointment.updateMany({
+        where: { id: appointmentId, status: 'PENDING' },
+        data: { status: 'CANCELLED' },
+      })
+    })
+  }
+
   return NextResponse.json({ received: true })
 }
