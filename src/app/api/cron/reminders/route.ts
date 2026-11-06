@@ -91,6 +91,7 @@ export async function GET(request: NextRequest) {
   }
 
   // --- 2. SCADENZA BONIFICI (PENDING > 72H) ---
+  // Solo i bonifici: un checkout con carta abbandonato non deve ricevere la mail "bonifico scaduto" (vedi punto 2b)
   const expiredThreshold = new Date()
   expiredThreshold.setHours(expiredThreshold.getHours() - 72)
 
@@ -99,6 +100,7 @@ export async function GET(request: NextRequest) {
       status: 'PENDING',
       createdAt: { lt: expiredThreshold },
       isDeleted: false,
+      subscription: { paymentMethod: 'BANK_TRANSFER' },
     },
     include: {
       client: true,
@@ -108,9 +110,13 @@ export async function GET(request: NextRequest) {
 
   for (const appt of expiredAppointments) {
     try {
-      // Cancella appuntamento
+      // Cancella appuntamento e, se non è stato pagato, anche l'abbonamento (altrimenti resterebbe attivo)
       await prisma.appointment.update({
         where: { id: appt.id },
+        data: { status: 'CANCELLED' },
+      })
+      await prisma.subscription.updateMany({
+        where: { id: appt.subscriptionId, isPaid: false, status: 'ACTIVE' },
         data: { status: 'CANCELLED' },
       })
 
@@ -169,6 +175,30 @@ export async function GET(request: NextRequest) {
     } catch {
       results.errors++
     }
+  }
+
+  // --- 2b. CHECKOUT CON CARTA ABBANDONATI ---
+  // La sessione Stripe scade dopo 30 minuti e il webhook annulla la prenotazione; se l'evento non è arrivato
+  // (endpoint non configurato, errore temporaneo) lo si recupera qui, in silenzio e senza email.
+  try {
+    const abandonedThreshold = new Date()
+    abandonedThreshold.setHours(abandonedThreshold.getHours() - 2)
+
+    await prisma.subscription.updateMany({
+      where: { paymentMethod: 'STRIPE', isPaid: false, status: 'ACTIVE', createdAt: { lt: abandonedThreshold } },
+      data: { status: 'CANCELLED' },
+    })
+    await prisma.appointment.updateMany({
+      where: {
+        status: 'PENDING',
+        isDeleted: false,
+        createdAt: { lt: abandonedThreshold },
+        subscription: { paymentMethod: 'STRIPE', isPaid: false, status: 'CANCELLED' },
+      },
+      data: { status: 'CANCELLED' },
+    })
+  } catch {
+    results.errors++
   }
 
   // --- 3. SCADENZA PERCORSI ---

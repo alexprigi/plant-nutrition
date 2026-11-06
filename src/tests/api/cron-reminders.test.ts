@@ -164,6 +164,74 @@ describe('GET /api/cron/reminders', () => {
   })
 })
 
+describe('GET /api/cron/reminders - unpaid bookings', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.stubEnv('CRON_SECRET', 'test-secret')
+    vi.stubEnv('AUTH_URL', 'http://localhost:3000')
+    mockPrisma.subscription.updateMany.mockResolvedValue({ count: 0 } as any)
+    mockPrisma.appointment.updateMany.mockResolvedValue({ count: 0 } as any)
+  })
+
+  it('only expires bank transfers, so a card checkout never gets the "bank transfer expired" email', async () => {
+    mockPrisma.appointment.findMany.mockResolvedValueOnce([]).mockResolvedValueOnce([])
+    await GET(makeRequest())
+    const expiredQuery = mockPrisma.appointment.findMany.mock.calls[1][0] as any
+    expect(expiredQuery.where).toMatchObject({ status: 'PENDING', subscription: { paymentMethod: 'BANK_TRANSFER' } })
+  })
+
+  it('also cancels the unpaid subscription of an expired bank transfer', async () => {
+    mockPrisma.appointment.findMany
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([baseAppointment({ status: 'PENDING', subscriptionId: 'sub_1' }) as any])
+    mockPrisma.appointment.update.mockResolvedValue({} as any)
+    await GET(makeRequest())
+    expect(mockPrisma.subscription.updateMany).toHaveBeenCalledWith({
+      where: { id: 'sub_1', isPaid: false, status: 'ACTIVE' },
+      data: { status: 'CANCELLED' },
+    })
+  })
+
+  it('silently cancels abandoned card checkouts without sending any email', async () => {
+    const { resend } = await import('@/lib/email')
+    const mockSend = vi.mocked(resend.emails.send)
+    mockPrisma.appointment.findMany.mockResolvedValueOnce([]).mockResolvedValueOnce([])
+    const res = await GET(makeRequest())
+    expect(res.status).toBe(200)
+    expect(mockPrisma.subscription.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ paymentMethod: 'STRIPE', isPaid: false, status: 'ACTIVE', createdAt: { lt: expect.any(Date) } }),
+        data: { status: 'CANCELLED' },
+      }),
+    )
+    expect(mockPrisma.appointment.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ status: 'PENDING', subscription: { paymentMethod: 'STRIPE', isPaid: false, status: 'CANCELLED' } }),
+        data: { status: 'CANCELLED' },
+      }),
+    )
+    expect(mockSend).not.toHaveBeenCalled()
+  })
+
+  it('leaves checkouts younger than two hours alone', async () => {
+    mockPrisma.appointment.findMany.mockResolvedValueOnce([]).mockResolvedValueOnce([])
+    await GET(makeRequest())
+    const call = mockPrisma.subscription.updateMany.mock.calls.find(([a]: any[]) => a.where.paymentMethod === 'STRIPE')![0] as any
+    const ageMs = Date.now() - call.where.createdAt.lt.getTime()
+    expect(ageMs).toBeGreaterThan(2 * 60 * 60 * 1000 - 5000)
+    expect(ageMs).toBeLessThan(2 * 60 * 60 * 1000 + 5000)
+  })
+
+  it('counts an error and keeps going when the cleanup of abandoned checkouts fails', async () => {
+    mockPrisma.appointment.findMany.mockResolvedValueOnce([]).mockResolvedValueOnce([])
+    mockPrisma.appointment.updateMany.mockRejectedValueOnce(new Error('db'))
+    const res = await GET(makeRequest())
+    const data = await res.json()
+    expect(res.status).toBe(200)
+    expect(data.errors).toBe(1)
+  })
+})
+
 describe('GET /api/cron/reminders - error handling and fallbacks', () => {
   beforeEach(() => {
     vi.clearAllMocks()
