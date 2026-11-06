@@ -1,3 +1,4 @@
+import { alternatesFor } from '@/lib/metadata';
 import { getTranslations } from 'next-intl/server';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -6,6 +7,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: t('meta-titolo'),
     description: t('meta-descrizione'),
+    alternates: alternatesFor(locale, '/cancellation-policy'),
   };
 }
 

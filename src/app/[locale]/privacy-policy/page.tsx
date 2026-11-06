@@ -1,3 +1,4 @@
+import { alternatesFor } from '@/lib/metadata';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 
@@ -7,6 +8,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: t('meta-titolo'),
     description: t('meta-descrizione'),
+    alternates: alternatesFor(locale, '/privacy-policy'),
   };
 }
 

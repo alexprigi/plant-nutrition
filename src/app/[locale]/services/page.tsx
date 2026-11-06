@@ -1,3 +1,4 @@
+import { alternatesFor } from '@/lib/metadata';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -10,6 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: t('meta-titolo'),
     description: t('meta-descrizione'),
+    alternates: alternatesFor(locale, '/services'),
   };
 }
 

@@ -5,7 +5,7 @@ import { LOCALES } from '@/i18n/locales'
 const getTranslations = vi.hoisted(() => vi.fn())
 vi.mock('next-intl/server', () => ({ getTranslations }))
 
-import { localizedMetadata } from '@/lib/metadata'
+import { alternatesFor, localizedMetadata } from '@/lib/metadata'
 
 describe('localizedMetadata', () => {
   beforeEach(() => {
@@ -17,6 +17,20 @@ describe('localizedMetadata', () => {
     const meta = await localizedMetadata(Promise.resolve({ locale: 'de' }), 'prenota')
     expect(getTranslations).toHaveBeenCalledWith({ locale: 'de', namespace: 'prenota' })
     expect(meta).toEqual({ title: 'tradotto:meta-titolo', description: 'tradotto:meta-descrizione' })
+  })
+
+  it('adds canonical and hreflang alternates only when a path is given', async () => {
+    const meta = await localizedMetadata(Promise.resolve({ locale: 'de' }), 'chi-sono', {}, '/about')
+    expect(meta.alternates?.canonical).toMatch(/\/de\/about$/)
+    const languages = meta.alternates?.languages as Record<string, string>
+    expect(Object.keys(languages).sort()).toEqual(['de', 'en', 'it', 'x-default'])
+    expect(languages.en).toMatch(/\/en\/about$/)
+    expect(languages['x-default']).toMatch(/\/de\/about$/)
+    expect((await localizedMetadata(Promise.resolve({ locale: 'de' }), 'sito')).alternates).toBeUndefined()
+  })
+
+  it('uses the bare locale as the address of the home page', () => {
+    expect(alternatesFor('it', '').canonical).toMatch(/\/it$/)
   })
 
   it('merges extra metadata such as robots', async () => {

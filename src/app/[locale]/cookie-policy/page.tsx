@@ -3,7 +3,7 @@ import { Link } from '@/i18n/navigation';
 import { localizedMetadata } from '@/lib/metadata';
 
 export function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
-  return localizedMetadata(params, 'cookie-policy');
+  return localizedMetadata(params, 'cookie-policy', {}, '/cookie-policy');
 }
 
 export default async function CookiePolicyPage() {
