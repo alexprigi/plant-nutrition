@@ -6,6 +6,7 @@ Profilo gratuito su Google che fa apparire l'attività su Google Maps e nei risu
 ## Prerequisiti
 - Account Google
 - NON serve partita IVA né sede fisica (attività online)
+- Da verificare: Google richiede in genere un indirizzo o un'area di servizio; controllare se un'attività solo online è ammessa per la categoria scelta
 
 ---
 
@@ -17,7 +18,7 @@ Profilo gratuito su Google che fa apparire l'attività su Google Maps e nei risu
    - **Nome attività:** `Arianna Ciervo - Nutrizionista Plant-Based`
    - **Categoria:** `Nutrizionista` (o "Dietista")
    - **Tipo:** attività online / senza sede fisica
-   - **Sito web:** `https://vivaplantn utrition.com` (o il dominio attuale)
+   - **Sito web:** `https://www.vivaplantnutrition.com`
    - **Numero di telefono:** opzionale
 4. **Verifica** tramite telefono o email (Google manda un codice)
 

@@ -1,6 +1,6 @@
 # Integrazione Pagamenti - Viva Plant Nutrition
 
-Guida completa per integrare uno o più sistemi di pagamento nel flusso di prenotazione.
+Guida ai sistemi di pagamento. **Stato attuale:** sono integrati solo **Stripe Checkout (carta)** e **bonifico bancario**. PayPal, Satispay, Klarna e Scalapay descritti sotto sono solo piani/valutazioni, non presenti nel codice.
 
 ---
 
@@ -63,26 +63,27 @@ STRIPE_WEBHOOK_SECRET=whsec_...  # ottenuto dopo aver configurato il webhook
 Il webhook è necessario per ricevere la conferma del pagamento avvenuto.
 
 1. Nel pannello Stripe → **Developers** → **Webhooks** → **Add endpoint**
-2. URL: `https://tuodominio.com/api/webhooks/stripe`
-3. Seleziona l'evento: `checkout.session.completed`
+2. URL: `https://www.vivaplantnutrition.com/api/stripe-webhook`
+3. Seleziona gli eventi: `checkout.session.completed` e `checkout.session.expired` (da fare sia nella sandbox usata dalla preview sia in live)
 4. Copia il **Signing secret** (`whsec_...`) e mettilo in `.env.local`
 
 ### Flusso di integrazione nel codice
 
 ```
 Utente completa Step 4 → click "Prenota"
-  → POST /api/checkout/stripe (crea Checkout Session)
+  → POST /api/create-checkout-session (crea Checkout Session, scade dopo 30 min)
   → Redirect a pagina Stripe hosted
   → Utente inserisce carta
-  → Pagamento OK → Stripe reindirizza a /prenota/success?session_id=...
-  → Stripe invia webhook a /api/webhooks/stripe
-  → Webhook crea booking + invia email di conferma
+  → Pagamento OK → Stripe reindirizza a /{locale}/booking/success?session_id=...
+  → Stripe invia webhook a /api/stripe-webhook
+  → completed: conferma appuntamento, isPaid = true, email di conferma
+  → expired: annulla subscription e appuntamento non pagati
 ```
 
 ### Dipendenze npm da installare
 
 ```bash
-npm install stripe @stripe/stripe-js
+npm install stripe @stripe/stripe-js   # già installati
 ```
 
 ---
@@ -131,7 +132,7 @@ Utente seleziona PayPal → click "Prenota"
   → POST /api/checkout/paypal (crea ordine PayPal)
   → Redirect alla pagina PayPal
   → Utente approva il pagamento
-  → PayPal reindirizza a /prenota/success?token=...
+  → PayPal reindirizza a /{locale}/booking/success?token=...
   → POST /api/checkout/paypal/capture (cattura il pagamento)
   → Crea booking + invia email di conferma
 ```
@@ -280,19 +281,18 @@ Mantienilo sempre come opzione fallback — alcuni clienti (specie anziani) lo p
 
 ---
 
-## Prossimi Passi Tecnici
+## Prossimi Passi Tecnici (solo per nuovi provider)
 
-Una volta che hai le chiavi API, lo sviluppo richiede:
+Per aggiungere un provider oltre a Stripe, lo sviluppo richiede:
 
 1. Installare le dipendenze npm
-2. Creare endpoint `/api/checkout/[provider]`
-3. Creare endpoint `/api/webhooks/[provider]`
-4. Modificare `prenota/page.tsx` per il redirect al checkout
-5. Creare pagina `/prenota/success` e `/prenota/cancel`
-6. Aggiornare logica email: invio solo dopo conferma pagamento
+2. Creare endpoint di checkout e webhook dedicati in `src/app/api/`
+3. Modificare `src/app/[locale]/booking/page.tsx` per il redirect al checkout
+4. Riutilizzare `/{locale}/booking/success`
+5. Aggiornare logica email: invio solo dopo conferma pagamento
 
 Comunica quando hai creato l'account e ottenuto le chiavi — si procede con il codice.
 
 ---
 
-*Ultimo aggiornamento: 2026-04-17*
+*Ultimo aggiornamento: 2026-11-06*

@@ -10,17 +10,24 @@ Sito web professionale per Arianna Ciervo, nutrizionista specializzata in alimen
 /src
   /app                  # Next.js App Router
     /api               # API routes
-    /(pages)           # Pagine pubbliche
-    /admin             # Dashboard amministratore
+    /[locale]          # Pagine pubbliche localizzate (it/de/en, prefisso sempre presente)
+    /admin             # Dashboard amministratore (solo italiano)
+    sitemap.ts, robots.ts  # SEO (robots blocca tutto fuori produzione)
+  /i18n                # next-intl: locales, routing, request
+  /tests               # Test vitest (api, layout, metadata, sitemap, proxy)
   /components          # Componenti React
     /layout            # Header, Footer
     /ui                # Button, Card, ecc.
   /lib                 # Utilities e servizi
     constants.ts       # Liste paesi, prefissi telefonici
+    site.ts, metadata.ts  # URL sito, hreflang/canonical
     bookingService.ts  # Logica prenotazioni
     prisma.ts          # Client Prisma
     email.ts           # Servizio email (Resend)
     /email-templates   # Template email HTML
+/messages              # Traduzioni it.json, de.json, en.json
+/scripts               # Script DB (con guard host) e test e2e (scripts/e2e)
+/configs               # lint-staged e commitlint
 /public
   /images              # Immagini statiche (vedi IMAGE-SETUP.md)
 ```
@@ -33,10 +40,13 @@ Sito web professionale per Arianna Ciervo, nutrizionista specializzata in alimen
 - Email tramite Resend (configurato e funzionante)
 - Sistema prenotazioni con Prisma/PostgreSQL
 - Tutte le pagine pubbliche (servizi, chi sono, contatti, prenota, ecc.)
-- Chat/chatbot - funzionante (pattern matching client-side, italiano)
+- Chat/chatbot - funzionante (pattern matching client-side, it/de/en)
+- Internazionalizzazione: it, de, en nel selettore (default `de`). Le consulenze sono solo in italiano o tedesco (avviso in prenotazione); l'inglese non va promosso sui social
+- Stripe Checkout (carta) + bonifico; webhook `/api/stripe-webhook` (`checkout.session.completed` e `checkout.session.expired`)
+- Cron giornaliero `/api/cron/reminders` (Vercel, solo produzione): promemoria, scadenza bonifici, chiusura checkout abbandonati
 
 **Work in Progress (non completate):**
-- `/ricette` - sezione ricette non ancora pronta
+- `/recipes` - sezione ricette non ancora pronta
 - `/blog` - sezione blog non ancora pronta
 
 ### Convenzioni Codice
@@ -98,8 +108,10 @@ Tutte in `/src/app/api/`:
 
 ### Git Workflow
 
-- Branch principale: `main`
-- Commit messages: chiari e concisi, in inglese
+- Branch principale: `main` (sviluppo su `development`)
+- Commit messages: chiari e concisi, in inglese, formato conventional commits (`fix:`, `feat:`, `chore:`, `docs:`), titolo ≤72 caratteri; nessuna riga `Co-Authored-By`
+- Hook husky: pre-commit esegue lint-staged (ESLint a zero warning), commit-msg esegue commitlint. Prima di committare eseguire anche `npx tsc --noEmit`
+- Push tramite `./push-via-nas.sh`, rilascio in produzione con `./merge-to-main.sh`
 
 ### Performance
 
@@ -120,11 +132,19 @@ npm run dev          # Avvia dev server (con Turbopack)
 npm run build        # Build produzione
 npm run lint         # ESLint check
 npm run lint:fix     # ESLint auto-fix
+npx tsc --noEmit     # Type check
+npm test             # Unit test (vitest, coverage 100% su src/lib e src/app/api)
+npm run e2e:preview:fast   # E2E browser sulla preview, senza mail
+npm run e2e:preview        # E2E completo con mail reali
 ```
+
+**Attenzione Resend**: piano Free = 100 mail/giorno. I test con prenotazioni consumano quota: usare `e2e:preview:fast` e lanciare la suite completa una sola volta per rilascio. Non creare sessioni/prenotazioni/mail in produzione.
+
+**Script DB** (`scripts/cleanup-preview-db.ts`, `scripts/e2e/admin-user.ts`): hanno un guard sull'host e funzionano solo sul DB di preview.
 
 ## Note Importanti
 
-- Il sito è in **italiano**
+- Il sito è in **italiano, tedesco e inglese** (testi in `messages/*.json`, tutte e tre le lingue vanno aggiornate insieme); l'area admin e le email ad Arianna sono solo in italiano
 - Target audience: persone interessate a nutrizione plant-based
 - GDPR compliance: importante per gestione dati clienti e foto
 - Database: Prisma + PostgreSQL (migrazione da localStorage completata)
@@ -145,5 +165,5 @@ A: Leggi IMAGE-SETUP.md prima. Ottimizza, salva in /public/images/[categoria], u
 
 ---
 
-**Ultimo aggiornamento**: 2026-06-01
+**Ultimo aggiornamento**: 2026-11-06
 **Versione**: 1.0

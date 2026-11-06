@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Viva Plant Nutrition
 
-## Getting Started
+Sito web di Arianna Ciervo, nutrizionista specializzata in alimentazione plant-based: pagine informative in italiano, tedesco e inglese, prenotazione consulenze (carta con Stripe o bonifico), area admin, email transazionali.
 
-First, run the development server:
+Stack: Next.js (App Router), next-intl, Prisma + PostgreSQL (Supabase), Stripe, Resend, Tailwind CSS.
+
+## Avvio
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Servono le variabili ambiente in `.env.local` (database, Auth, Resend, Stripe, `CRON_SECRET`). Elenco e dettagli in [Spec.md](Spec.md).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Comandi
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint            # ESLint (zero warning)
+npx tsc --noEmit        # type check
+npm test                # unit test (vitest, coverage 100% su src/lib e src/app/api)
+npm run e2e:preview:fast  # test browser sulla preview, senza invio mail
+npm run e2e:preview       # idem, con mail reali (consuma quota Resend)
+```
 
-## Learn More
+## Documentazione
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [CLAUDE.md](CLAUDE.md) – linee guida di progetto
+- [Spec.md](Spec.md) – specifiche tecniche
+- [BOOKING-FLOW.md](BOOKING-FLOW.md) – flusso prenotazione, cron, gestione appuntamenti
+- [PAYMENT-SETUP.md](PAYMENT-SETUP.md), [EMAIL-SETUP.md](EMAIL-SETUP.md), [IMAGE-SETUP.md](IMAGE-SETUP.md), [CHATBOT-GUIDE.md](CHATBOT-GUIDE.md), [NEWSLETTER-SETUP.md](NEWSLETTER-SETUP.md), [GOOGLE-BUSINESS-SETUP.md](GOOGLE-BUSINESS-SETUP.md)

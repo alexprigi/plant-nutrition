@@ -1,4 +1,7 @@
-# Guide: How to Set Up Live Chat
+# Guide: How to Set Up Live Chat (Tawk.to)
+
+> **Status: not active.** The site currently uses the internal pattern-matching chatbot in `src/components/ChatWidget.tsx` (see [CHATBOT-GUIDE.md](CHATBOT-GUIDE.md)). This guide is kept in case we decide to add Tawk.to as a live chat with a human.
+> If Tawk.to is enabled, the privacy policy (`messages/*.json`, `cond-lista`) already lists it as a provider. The cookie banner/consent must also cover the Tawk.to script.
 
 ## Option 1: Tawk.to (RECOMMENDED - Free and GDPR compliant)
 
@@ -7,7 +10,7 @@
 - ✅ **GDPR compliant** (EU servers available)
 - ✅ **Mobile app** to reply anywhere
 - ✅ **Color and position customization**
-- ✅ **Widget in Italian**
+- ✅ **Widget language** configurable (the site is available in Italian, German and English)
 - ✅ **Chat history** and analytics
 
 ### Tawk.to Setup (5 minutes):
@@ -22,17 +25,14 @@
    - Example: `https://embed.tawk.to/YOUR_PROPERTY_ID/YOUR_WIDGET_ID`
 
 3. **Configure on the Site**
-   Open: `/src/components/ChatWidget.tsx`
-   
-   Replace this line:
+   The current `ChatWidget.tsx` has no external script. To add Tawk.to, load the script client-side (only after cookie consent) in a component rendered by `src/app/[locale]/layout.tsx`:
    ```tsx
+   const script = document.createElement('script');
+   script.async = true;
    script.src = 'https://embed.tawk.to/YOUR_PROPERTY_ID/YOUR_WIDGET_ID';
+   document.body.appendChild(script);
    ```
-   
-   With your IDs:
-   ```tsx
-   script.src = 'https://embed.tawk.to/67a1b2c3d4e5f6g7h8i9/1jk2lm3no4pq5rs';
-   ```
+   Decide whether it replaces the internal chatbot or runs alongside it (two chat bubbles would overlap).
 
 4. **Customize Widget**
    - Dashboard → Appearance

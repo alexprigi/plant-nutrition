@@ -31,7 +31,7 @@
 
 ## 🎠 Slider Homepage (Hero Section)
 
-**File**: `src/app/page.tsx` (righe 15-36)
+**File**: `src/app/[locale]/home-content.tsx`
 
 Lo slider carica automaticamente **5 immagini** da `/public/images/hero/`:
 
@@ -83,7 +83,7 @@ const heroImages = [
 # 1. Salva l'immagine in:
 /public/images/hero/nuova-immagine.png
 
-# 2. Aggiungi allo slider in src/app/page.tsx:
+# 2. Aggiungi allo slider in src/app/[locale]/home-content.tsx:
 const heroImages = [
   // ... immagini esistenti
   { src: '/images/hero/nuova-immagine.png', alt: 'Descrizione' }

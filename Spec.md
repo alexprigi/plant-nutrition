@@ -1,487 +1,83 @@
 # Viva Plant Nutrition - Specifiche Tecniche
 
-> **NOTA**: Questo file contiene specifiche tecniche dettagliate. Consultalo solo quando necessario per completare task specifici. Per linee guida generali vedi [CLAUDE.md](CLAUDE.md).
+> Consultalo solo quando serve per un task specifico. Linee guida generali: [CLAUDE.md](CLAUDE.md). Flusso prenotazioni: [BOOKING-FLOW.md](BOOKING-FLOW.md). Le versioni esatte delle dipendenze sono in `package.json`.
 
-## Stack Tecnologico
+## Stack
 
-### Core
-- **Framework**: Next.js 16.2.2 (App Router)
-- **React**: 19.2.4
-- **TypeScript**: 6.0.2
-- **Node**: Richiede versione compatibile con Next.js 16
+- **Framework**: Next.js (App Router, Turbopack in dev), React 19, TypeScript strict
+- **i18n**: next-intl, locali `it`, `de`, `en` (default `de`, prefisso sempre presente); proxy in `src/proxy.ts`
+- **Styling**: Tailwind CSS 4
+- **Database**: PostgreSQL su Supabase, ORM Prisma 7 (`@prisma/adapter-pg`)
+- **Auth admin**: Auth.js (NextAuth v5) con credenziali, adapter Prisma, bcryptjs
+- **Pagamenti**: Stripe Checkout (carta) e bonifico bancario
+- **Email**: Resend
+- **Test**: vitest (unit, coverage 100% su `src/lib` e `src/app/api`), Playwright-core per e2e sulla preview
+- **Qualità**: ESLint (zero warning), husky + lint-staged + commitlint
+- **Deploy**: Vercel (preview su `development`, produzione su `main`); cron in `vercel.json`
 
-### Styling
-- **Tailwind CSS**: 4.2.2
-- **PostCSS**: @tailwindcss/postcss 4.2.2
-
-### Dipendenze Produzione
-```json
-{
-  "next": "16.2.2",
-  "react": "19.2.4",
-  "react-dom": "19.2.4",
-  "resend": "6.10.0"
-}
-```
-
-### Dipendenze Sviluppo
-```json
-{
-  "@eslint/eslintrc": "3.3.5",
-  "@tailwindcss/postcss": "4.2.2",
-  "@types/node": "25.5.2",
-  "@types/react": "19.2.14",
-  "@types/react-dom": "19.2.3",
-  "eslint": "10.1.0",
-  "eslint-config-next": "16.2.2",
-  "tailwindcss": "4.2.2",
-  "typescript": "6.0.2"
-}
-```
-
-## Architettura Next.js
-
-### Routing (App Router)
+## Routing (`src/app`)
 
 ```
-/src/app
-├── layout.tsx                    # Root layout
-├── page.tsx                      # Homepage (/)
-├── about-me.tsx                  # Componente About Me
-├── admin/
-│   └── page.tsx                  # Dashboard admin (/admin)
-├── api/
-│   ├── bookings/
-│   │   └── route.ts              # POST /api/bookings
-│   ├── validate-booking/
-│   │   └── route.ts              # POST /api/validate-booking
-│   └── send-booking-emails/
-│       └── route.ts              # POST /api/send-booking-emails
-├── blog/
-│   └── page.tsx                  # Blog (non implementato)
-├── chi-sono/
-│   └── page.tsx                  # Chi sono (/chi-sono)
-├── contatti/
-│   └── page.tsx                  # Contatti (/contatti)
-├── cookie-policy/
-│   └── page.tsx                  # Cookie Policy
-├── prenota/
-│   └── page.tsx                  # Form prenotazione (/prenota)
-├── privacy-policy/
-│   └── page.tsx                  # Privacy Policy
-├── ricette/
-│   └── page.tsx                  # Ricette (placeholder)
-└── servizi/
-    └── page.tsx                  # Servizi (/servizi)
+[locale]/              page (home), about, services, contact, recipes (WIP), blog (WIP),
+                       booking, booking/success, booking/follow-up/[token],
+                       manage/[token], cancellation-policy, privacy-policy, cookie-policy
+admin/                 page (dashboard), login, clienti/[id], disponibilita, settings   (solo italiano)
+api/                   vedi sotto
+sitemap.ts, robots.ts  SEO (hreflang nella sitemap + <link rel=alternate>, canonical)
+email-preview, icons-preview   pagine di sviluppo
 ```
 
-### Componenti
+Le pagine private (success, follow-up, manage) hanno `alternates: {}` e non sono indicizzate.
 
-```
-/src/components
-├── layout/
-│   ├── Header.tsx                # Header navigazione
-│   └── Footer.tsx                # Footer sito
-├── ui/
-│   ├── Button.tsx                # Button component
-│   └── Card.tsx                  # Card component
-├── icons/
-│   └── Icon.tsx                  # Icon wrapper
-├── ChatWidget.tsx                # Chat widget (WIP - non toccare)
-├── CookieBanner.tsx              # Banner cookie
-├── ParallaxEffect.tsx            # Effetto parallasse
-└── Testimonials.tsx              # Sezione testimonianze
-```
+### API Routes (`src/app/api`)
 
-## Data Model (localStorage)
+| Route | Scopo |
+|-------|-------|
+| `bookings` | Disponibilità (GET) e creazione prenotazione (POST) |
+| `validate-booking` | Validazione form prenotazione |
+| `create-checkout-session` | Crea la Stripe Checkout Session (scade dopo 30 min) |
+| `stripe-webhook` | Eventi `checkout.session.completed` e `checkout.session.expired` |
+| `send-booking-emails` | Email conferma a cliente e admin |
+| `send-contact-email` | Modulo contatti |
+| `clients/check-eligibility` | Idoneità alla prima call gratuita |
+| `appointments/manage` | Sposta/annulla da link cliente |
+| `follow-up` | Validazione token follow-up |
+| `cron/reminders` | Cron giornaliero (protetto da `CRON_SECRET`) |
+| `admin/*` | appointments, availability, password, profile, subscriptions/[id]/cancel |
+| `auth/[...nextauth]` | Auth admin |
 
-### Chiavi localStorage
+## Data Model (`prisma/schema.prisma`)
 
-```typescript
-const KEY_CLIENTS = "plantNutritionClients"
-const KEY_BOOKINGS = "plantNutritionBookings"
-const KEY_APPOINTMENTS = "plantNutritionAppointments"
-```
+- `User` (admin, `Role`)
+- `Client` (dati cliente, soft delete `isDeleted`)
+- `Subscription`: `type` (FREE_CONSULTATION, SINGLE_SESSION, BUNDLE_3_MONTHS, BUNDLE_6_MONTHS), `price`, `isPaid`, `paymentMethod` (STRIPE, PAYPAL, BANK_TRANSFER, NONE), `totalSessions`, `usedSessions`, `status` (ACTIVE, EXHAUSTED, CANCELLED), `followUpToken`, `stripeSessionId`, `expiresAt`
+- `Appointment`: `type` (FREE_CONSULTATION, FIRST_VISIT, FOLLOW_UP), `status` (PENDING, CONFIRMED, CANCELLED, COMPLETED), `managementToken`, contatori di spostamento
+- `AvailabilityBlock`: blocchi/aperture impostati da Arianna (`BLOCK`, `OPEN`)
 
-### Schema Client
+Migrazioni con `npm run db:migrate`; `npm run build` esegue `prisma migrate deploy`. Non usare localStorage per dati applicativi.
 
-```typescript
-interface Client {
-  id: string                      // UUID generato client-side
-  email: string                   // Unique
-  name: string
-  surname: string
-  phone: string                   // Formato: +39 123 4567890
-  address: string
-  civicNumber: string
-  city: string
-  zipCode: string
-  country: string                 // Da lista COUNTRIES
-  fiscalCode: string
-  role: 'guest' | 'registered'    // Sempre 'guest' per ora
-  createdAt: string               // ISO date
-  updatedAt: string               // ISO date
-  isDeleted: boolean
-}
-```
+## Codice condiviso (`src/lib`)
 
-### Schema Subscription (Pacchetto)
+- `bookingService.ts` logica prenotazioni; `booking-emails.ts` composizione email
+- `email.ts` client Resend; `email-templates/` template (cliente in it/de/en, admin in italiano)
+- `stripe.ts`, `prisma.ts`, `auth.ts`, `ics.ts` (allegato calendario)
+- `site.ts` (URL sito, `IS_PRODUCTION_SITE`, `PUBLIC_PATHS`, hreflang), `metadata.ts` (`localizedMetadata`, `alternatesFor`)
+- `constants.ts` (paesi, prefissi telefonici)
 
-```typescript
-interface Subscription {
-  id: string                      // UUID
-  clientId: string                // FK a Client
-  commercialType: string          // Es: "FREE_CONSULTATION", "SINGLE_SESSION"
-  price: number                   // Euro
-  isPaid: boolean
-  paymentMethod: string           // Es: "STRIPE", "PAYPAL", "BANK_TRANSFER"
-  totalSessions: number           // Es: 1 per singola, 6 per pacchetto
-  usedSessions: number            // Incrementa a ogni appuntamento completato
-  status: 'active' | 'exhausted' | 'cancelled'
-  createdAt: string
-  updatedAt: string
-  isDeleted: boolean
-}
-```
+## Variabili ambiente (solo nomi)
 
-### Schema Appointment
+`DATABASE_URL` (pooler), `DIRECT_URL` (migrazioni), `AUTH_URL`, `AUTH_SECRET`, `RESEND_API_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `CRON_SECRET`. Configurate in `.env.local` e nella dashboard Vercel (preview usa la sandbox Stripe, produzione le chiavi live). In produzione `AUTH_URL` è il dominio apex, che reindirizza (307) a `www`.
 
-```typescript
-interface Appointment {
-  id: string                      // UUID
-  subscriptionId: string          // FK a Subscription
-  clientId: string                // FK a Client (denormalizzato)
-  appointmentType: string         // Es: "FREE_CONSULTATION", "FIRST_VISIT", "FOLLOW_UP"
-  selectedDate: string            // Formato: "YYYY-MM-DD"
-  selectedTime: string            // Formato: "HH:mm"
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed'
-  notes: string                   // Note opzionali
-  createdAt: string
-  updatedAt: string
-  isDeleted: boolean
-}
-```
+## Test
 
-## Servizio Prenotazioni
+- `npm test` / `npm run test:coverage`: unit test in `src/tests`
+- `npm run e2e:preview[:fast|:admin]`: test browser sulla preview (`scripts/e2e`); `:fast` non invia mail. Vedi limiti Resend in [EMAIL-SETUP.md](EMAIL-SETUP.md)
+- `scripts/cleanup-preview-db.ts`: svuota clienti/subscription/appuntamenti della preview (guard sull'host)
 
-File: `src/lib/bookingService.ts`
+## Immagini e GDPR
 
-### Funzioni Principali
-
-```typescript
-// Verifica se un cliente può prenotare consulenza gratuita
-checkEligibility(email: string): {
-  eligible: boolean
-  reason?: 'already_customer' | 'free_consultation_used'
-}
-
-// Crea una nuova prenotazione (transazione atomica simulata)
-createBooking(data: BookingData): {
-  success: boolean
-  booking?: { client, subscription, appointment }
-  error?: string
-}
-
-// Recupera tutte le prenotazioni (con JOIN simulati)
-getAllBookings(): Booking[]
-
-// Filtra prenotazioni per stato
-getBookingsByStatus(status: string): Booking[]
-
-// Recupera singola prenotazione
-getBookingById(id: string): Booking | null
-
-// Aggiorna stato prenotazione
-updateBookingStatus(id: string, status: string): boolean
-
-// Soft delete
-deleteBooking(id: string): boolean
-```
-
-### Utility localStorage
-
-```typescript
-// Get da localStorage con parsing JSON
-getLs<T>(key: string): T[]
-
-// Set in localStorage con stringify JSON
-setLs<T>(key: string, data: T[]): void
-
-// Clear localStorage (per testing)
-clearLs(): void
-```
-
-## Sistema Email (Resend)
-
-### Configurazione
-
-File: `src/lib/email.ts`
-
-```typescript
-import { Resend } from 'resend'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
-```
-
-### Variabili Ambiente Richieste
-
-```env
-RESEND_API_KEY=re_xxxxxxxxxxxxx
-```
-
-### Template Email
-
-File: `src/lib/email-templates/`
-
-**admin-notification.ts**
-- Template per notificare l'admin di nuova prenotazione
-- Include tutti i dettagli cliente e appuntamento
-- Stile HTML inline per compatibilità email client
-
-**client-confirmation.ts**
-- Template per conferma prenotazione al cliente
-- Include riepilogo appuntamento
-- Link a contatti in caso di modifiche
-
-### Invio Email
-
-```typescript
-// Da API route: /api/send-booking-emails/route.ts
-
-export async function POST(request: Request) {
-  const { booking } = await request.json()
-  
-  // Invia email admin
-  await sendAdminNotification(booking)
-  
-  // Invia email cliente
-  await sendClientConfirmation(booking)
-  
-  return Response.json({ success: true })
-}
-```
-
-## Costanti Globali
-
-File: `src/lib/constants.ts`
-
-### COUNTRIES
-Array di 195+ paesi in italiano (es: "Italia", "Stati Uniti", "Francia")
-
-### COUNTRY_PREFIXES
-Array di oggetti con prefissi telefonici internazionali:
-
-```typescript
-{
-  code: string      // Es: "+39"
-  flag: string      // Emoji: "🇮🇹"
-  name: string      // Es: "Italia"
-}
-```
-
-## Configurazioni Build
-
-### next.config.js
-
-```javascript
-// Configurazione di default Next.js
-// Turbopack abilitato via npm script
-```
-
-### tsconfig.json
-
-```json
-{
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
-```
-
-### ESLint
-
-Usa `eslint-config-next` con regole standard Next.js.
-
-```bash
-npm run lint       # Check
-npm run lint:fix   # Auto-fix
-```
-
-## Asset Management
-
-### Immagini
-
-Tutte in `/public/images/`
-
-Struttura:
-```
-/public/images
-├── hero/                    # Slider homepage (5 immagini)
-├── professional/            # Foto Arianna professionali
-├── plants/                  # Decorazioni
-├── testimonials/            # Foto testimonianze (con consenso)
-└── recipes/                 # Ricette (placeholder)
-```
-
-**Dettagli completi**: vedi [IMAGE-SETUP.md](IMAGE-SETUP.md)
-
-### Font
-
-Usa `next/font` con Geist (font Vercel).
-
-```typescript
-import { GeistSans } from 'geist/font/sans'
-```
-
-## API Routes
-
-### POST /api/bookings
-
-**Body**:
-```typescript
-{
-  // Client data
-  email: string
-  name: string
-  surname: string
-  phone: string
-  address: string
-  civicNumber: string
-  city: string
-  zipCode: string
-  country: string
-  fiscalCode: string
-  
-  // Subscription data
-  commercialType: string
-  price: number
-  isPaid: boolean
-  paymentMethod: string
-  totalSessions: number
-  
-  // Appointment data
-  appointmentType: string
-  selectedDate: string
-  selectedTime: string
-  notes: string
-}
-```
-
-**Response**: 
-```typescript
-{ 
-  success: boolean
-  booking?: { client, subscription, appointment }
-  error?: string 
-}
-```
-
-### POST /api/validate-booking
-
-Valida dati form prenotazione prima di submit.
-
-**Body**: Stesso di /api/bookings
-
-**Response**:
-```typescript
-{
-  valid: boolean
-  errors?: { field: string, message: string }[]
-}
-```
-
-### POST /api/send-booking-emails
-
-Invia email di conferma (admin + cliente).
-
-**Body**:
-```typescript
-{
-  booking: {
-    client: Client
-    subscription: Subscription
-    appointment: Appointment
-  }
-}
-```
-
-**Response**:
-```typescript
-{ success: boolean }
-```
-
-## Piani Futuri
-
-### Migrazione Database
-
-Esiste un piano dettagliato in [MIGRATION-TO-DATABASE.md](MIGRATION-TO-DATABASE.md) per migrare da localStorage a:
-- **Database**: Supabase PostgreSQL
-- **ORM**: Prisma
-- **Auth**: Auth.js (NextAuth v5)
-
-**IMPORTANTE**: Questo è solo un piano futuro. Al momento continuare con localStorage.
-
-### Funzionalità in Sviluppo
-
-**Chat/Chatbot**:
-- Setup non completato
-- Non implementare o modificare per ora
-- File: `src/components/ChatWidget.tsx`
-
-## Environment Variables
-
-```env
-# Email (Resend)
-RESEND_API_KEY=re_xxxxxxxxxxxxx
-
-# Future (quando si migrerà a DB)
-# DATABASE_URL=
-# DIRECT_URL=
-# NEXTAUTH_SECRET=
-```
-
-## Deploy
-
-**Target**: Vercel
-
-```bash
-# Build locale
-npm run build
-
-# Deploy
-vercel --prod
-```
-
-**Variabili ambiente**: Configurare in Vercel dashboard.
-
-## Testing
-
-Non ci sono test configurati al momento.
-
-## Performance Metrics
-
-- **Lighthouse**: Puntare a 90+ su tutte le metriche
-- **Core Web Vitals**: Monitorare LCP, FID, CLS
-- **Image optimization**: next/image gestisce automaticamente WebP + lazy loading
-
-## Browser Support
-
-Come da configurazione Next.js default:
-- Chrome (ultime 2 versioni)
-- Firefox (ultime 2 versioni)
-- Safari (ultime 2 versioni)
-- Edge (ultime 2 versioni)
-
-## GDPR Compliance
-
-- Cookie banner implementato (`CookieBanner.tsx`)
-- Privacy Policy (`/privacy-policy`)
-- Cookie Policy (`/cookie-policy`)
-- Consenso per foto testimonianze (vedi IMAGE-SETUP.md)
+Immagini: vedi [IMAGE-SETUP.md](IMAGE-SETUP.md) (sempre `next/image`). Cookie banner (`CookieBanner.tsx`), Privacy Policy, Cookie Policy e consenso per foto testimonianze.
 
 ---
 
-**Ultimo aggiornamento**: 2026-04-04
-**Versione**: 1.0
+**Ultimo aggiornamento**: 2026-11-06

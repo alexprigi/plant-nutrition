@@ -53,13 +53,9 @@ RESEND_API_KEY=re_tua_chiave_qui
 ## Modifica Email Admin
 
 
-Nel file `/src/app/api/send-booking-emails/route.ts`, linea 82:
+L'indirizzo che riceve le notifiche è la costante `ADMIN_EMAIL` in `src/app/api/send-booking-emails/route.ts` (attualmente `info@vivaplantnutrition.com`). Per cambiarlo modifica quella costante.
 
-```typescript
-to: 'arianna@vivaplantnutrition.com', // ← CAMBIA CON LA TUA EMAIL
-```
-
-Sostituisci con l'email dove vuoi ricevere le notifiche.
+Le email al cliente sono in italiano, tedesco o inglese in base alla lingua scelta (`src/lib/email-templates/email-i18n.ts`); quelle ad Arianna restano sempre in italiano.
 
 ---
 
@@ -105,18 +101,18 @@ Esegui: `npx tsx test-email.ts`
 File: `/src/lib/email-templates/client-confirmation.ts`
 
 Puoi modificare:
-- Colori header (linea 55)
+- Colori header
 - Logo (aggiungi `<img>`)
 - Footer con link social
-- IBAN per bonifici (linea 116)
+- IBAN per bonifici
 
 ### Template Admin
 File: `/src/lib/email-templates/admin-notification.ts`
 
 Puoi modificare:
-- Colori header (linea 55)
-- Link dashboard (linea 140)
-- Alert pagamento (linea 148)
+- Colori header
+- Link dashboard
+- Alert pagamento
 
 ---
 
@@ -130,7 +126,7 @@ Puoi modificare:
 | API Keys | 3 | Illimitate |
 | Retention | 30 giorni | 90 giorni |
 
-Per piccole attività, il free tier è più che sufficiente!
+Per il traffico normale il free tier è sufficiente. Attenzione però ai test: ogni prenotazione di prova invia mail (cliente + admin) e consuma la quota giornaliera. Per i test e2e usa `npm run e2e:preview:fast` (senza invio mail) e lancia la suite completa `npm run e2e:preview` una sola volta per rilascio.
 
 ---
 
@@ -194,18 +190,9 @@ Per Next.js, **Resend è la scelta migliore**.
 
 ---
 
-## Prossimi Passi
-
-- [ ] Registrati su Resend
-- [ ] Copia API key in `.env.local`
-- [ ] Testa email locale
-- [ ] Configura dominio personalizzato
-- [ ] Aggiungi API key su Vercel
-- [ ] Testa in produzione
-
 ---
 
 **Documentazione Resend**: https://resend.com/docs  
 **Support**: support@resend.com
 
-Ultimo aggiornamento: 8 Febbraio 2026
+Ultimo aggiornamento: 6 Novembre 2026

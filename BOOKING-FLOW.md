@@ -6,7 +6,7 @@ Documentazione del flusso completo di prenotazione, gestione appuntamenti e perc
 
 ## 1. Prenotazione
 
-### Step del form (`/prenota`)
+### Step del form (`/{locale}/booking`)
 
 | Step | Contenuto |
 |------|-----------|
@@ -17,16 +17,22 @@ Documentazione del flusso completo di prenotazione, gestione appuntamenti e perc
 
 **Regole:**
 - Il bonifico bancario è disabilitato se l'appuntamento è entro **5 giorni**
-- Per servizi a pagamento è obbligatorio accettare la [policy di cancellazione](/policy-cancellazione) prima di confermare
-- Per i **percorsi (3/6 mesi)** il form può essere raggiunto tramite link follow-up (`/prenota?followUp=TOKEN`) che pre-seleziona il servizio e salta direttamente al calendario
+- Per servizi a pagamento è obbligatorio accettare la [policy di cancellazione](/cancellation-policy) prima di confermare
+- Per i **percorsi (3/6 mesi)** il form può essere raggiunto tramite link follow-up (`/booking/follow-up/TOKEN`) che pre-seleziona il servizio e salta direttamente al calendario
 
 ### Stato post-prenotazione
 
 | Metodo pagamento | Status iniziale | isPaid |
 |-----------------|-----------------|--------|
-| Carta / PayPal | `CONFIRMED` | `true` |
+| Carta (Stripe) | `PENDING` fino al webhook `checkout.session.completed`, poi `CONFIRMED` | `true` dopo il pagamento |
 | Bonifico | `PENDING` | `false` |
 | Gratuito | `CONFIRMED` | `true` |
+
+PayPal, Satispay e Klarna non sono integrati (vedi `PAYMENT-SETUP.md`).
+
+**Checkout carta abbandonato:** la sessione Stripe scade dopo 30 minuti. Il webhook `checkout.session.expired` annulla la subscription non pagata e l'appuntamento `PENDING` (liberando lo slot). Rete di sicurezza: il cron (sezione 3) chiude le sessioni rimaste aperte dopo 2 ore.
+
+**Prima call gratuita:** il cliente non è idoneo se ha già una subscription non `CANCELLED` (qualsiasi tipo). Se il cliente cancella la call gratuita, la subscription viene annullata e può riprenotarla.
 
 ### Email inviate alla prenotazione
 - **Cliente** → conferma con dettagli appuntamento, allegato `.ics`, link gestione, istruzioni bonifico (se applicabile)
@@ -53,7 +59,7 @@ Se dopo 72 ore lo stato è ancora `PENDING`:
 
 ## 3. Cron Job Giornaliero
 
-Eseguito ogni giorno alle **9:00 (ora italiana)** tramite Vercel Cron Jobs → `GET /api/cron/reminders`
+Eseguito ogni giorno alle **08:00 UTC** (`vercel.json`, solo in produzione) tramite Vercel Cron Jobs → `GET /api/cron/reminders`
 
 La route è protetta da `CRON_SECRET` nell'header `Authorization: Bearer`.
 
@@ -62,7 +68,8 @@ La route è protetta da `CRON_SECRET` nell'header `Authorization: Bearer`.
 | Operazione | Condizione | Azione |
 |-----------|-----------|--------|
 | Promemoria | Appuntamenti `CONFIRMED` con data = tra 3 giorni | Email al cliente con dettagli e cosa portare |
-| Scadenza bonifici | Appuntamenti `PENDING` con `createdAt` > 72h fa | Cancella + email cliente + notifica Arianna |
+| Scadenza bonifici | Appuntamenti `PENDING` con subscription `BANK_TRANSFER` e `createdAt` > 72h fa | Cancella appuntamento e subscription non pagata + email cliente + notifica Arianna |
+| Checkout carta abbandonati | Subscription `STRIPE` non pagate `ACTIVE` con `createdAt` > 2h fa | Subscription → `CANCELLED`, appuntamenti `PENDING` collegati → `CANCELLED`, nessuna email |
 | Scadenza percorsi | Subscription `ACTIVE` con `expiresAt` < oggi | Passa a `EXHAUSTED` |
 
 ---
@@ -118,7 +125,7 @@ Dashboard: `/admin`
 ### Flusso follow-up
 1. Arianna segna la visita come **"Svolta"** nel dashboard
 2. Se `usedSessions < totalSessions` → email automatica al cliente con link follow-up
-3. Link: `/prenota?followUp=FOLLOW_UP_TOKEN`
+3. Link: `/booking/follow-up/FOLLOW_UP_TOKEN`
 4. Cliente prenota la prossima sessione → agganciata alla subscription esistente
 5. Se il cliente perde l'email → Arianna clicca **"Rimanda link follow-up"** dal dashboard
 
@@ -135,7 +142,7 @@ Il cron job giornaliero marca come `EXHAUSTED` le subscription con `expiresAt` p
 
 ## 7. Policy di Cancellazione
 
-Pagina pubblica: `/policy-cancellazione`
+Pagina pubblica: `/cancellation-policy`
 
 | Fascia | Spostamento | Rimborso |
 |--------|------------|---------|
@@ -175,4 +182,4 @@ Client
 
 ---
 
-*Ultimo aggiornamento: 30 Maggio 2026*
+*Ultimo aggiornamento: 6 Novembre 2026*
